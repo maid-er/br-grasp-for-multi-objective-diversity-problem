@@ -1,7 +1,20 @@
 '''Auxiliar function to read and process instances'''
 
 
-def readInstance(path):
+def readInstance(path: str) -> dict:
+    '''Reads and processes data from a file to create a dictionary representing an instance for the
+    diversity problem with number of candidate nodes, number of elements to be selected, and
+    distances between them.
+
+    Args:
+      path (str): file path to the instance file that contains the data to be read and processed by
+    the function.
+
+    Returns:
+      (dict): contains the instance data. The dictionary includes the number of nodes `n`, the
+    number of nodes to be selected `p`, and a distance matrix `d` representing the distances from
+    each node to the rest of the nodes.
+    '''
     instance = {}
     with open(path, "r") as f:
         n, p = map(int, f.readline().split())

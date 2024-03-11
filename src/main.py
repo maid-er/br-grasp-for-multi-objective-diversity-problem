@@ -1,9 +1,8 @@
+'''Main function'''
 import os
 import random
 
 from structure import solution, instance
-from constructives import greedy, cgrasp
-from localsearch import lsfirstimprove
 from algorithms import grasp
 import datetime
 

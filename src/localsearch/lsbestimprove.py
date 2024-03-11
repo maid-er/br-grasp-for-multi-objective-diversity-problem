@@ -1,16 +1,41 @@
-'''Auxiliar function to apply best improve Local Search'''
-import random
-
+'''
+Auxiliar function to apply Best Improve Local Search.
+The worst selected element and best unselected element are interchanged to improve
+the initial solution.
+'''
 from structure import solution
 
 
-def improve(sol):
+def improve(sol: dict):
+    '''Iteratively tries to improve a solution until no further improvements can be made.
+
+    Args:
+      sol (dict): contains the solution information in three key-value pairs: 'sol' with the set
+    of selected candidates for the solution, 'of' with the objective value, and 'instance' that
+    contains the instance data, with key 'd' representing the distance matrix between all the
+    candidate nodes.
+    '''
     improve = True
     while improve:
         improve = tryImprove(sol)
 
 
-def tryImprove(sol):
+def tryImprove(sol: dict) -> bool:
+    '''Attempts to improve a solution by selecting and interchanging a selected element (node)
+    with an unselected element. The improvement is obtained if the sum of the distances of the
+    new element to the rest of the selected nodes is higher than the distance of the previous
+    selection.
+
+    Args:
+      sol (dict): contains the solution information in three key-value pairs: 'sol' with the set
+    of selected candidates for the solution, 'of' with the objective value, and 'instance' that
+    contains the instance data, with key 'd' representing the distance matrix between all the
+    candidate nodes.
+
+    Returns:
+      (bool): `True` if the improvement was successful (i.e., if `ofVarSel` is less than
+    `ofVarUnsel`), and `False` otherwise.
+    '''
     sel, ofVarSel, unSel, ofVarUnsel = selectInterchange(sol)
     if ofVarSel < ofVarUnsel:
         solution.removeFromSolution(sol, sel, ofVarSel)
@@ -19,7 +44,23 @@ def tryImprove(sol):
     return False
 
 
-def selectInterchange(sol):
+def selectInterchange(sol: dict):
+    '''Interchanges the worst element in solution (lowest sum of distances to the rest of the
+    selected elements) with the best unselected element (highest sum of distances to the rest
+    of the selected elements).
+
+    Args:
+      sol (dict): contains the solution information in three key-value pairs: 'sol' with the set
+    of selected candidates for the solution, 'of' with the objective value, and 'instance' that
+    contains the instance data, with key 'd' representing the distance matrix between all the
+    candidate nodes.
+
+    Returns:
+      sel (int): worst selected element ID.
+      bestSel (float): sum of distances from `sel` to the rest of the elements in solution.
+      unsel (int): best unselected element ID.
+      bestUnsel (float): sum of distances from `unsel` to the rest of the elements in solution.
+    '''
     n = sol['instance']['n']
     sel = -1
     bestSel = 0x3f3f3f3f
