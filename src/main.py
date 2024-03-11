@@ -7,12 +7,14 @@ from localsearch import lsfirstimprove
 from algorithms import grasp
 import datetime
 
+
 def executeInstance():
     random.seed(1309)
     path = "instances/preliminar/MDG-a_1_100_m10.txt"
     inst = instance.readInstance(path)
     sol = grasp.execute(inst, 100, -1)
     solution.printSol(sol)
+
 
 def executeDir():
     dir = "instances/preliminar"
@@ -27,11 +29,11 @@ def executeDir():
             start = datetime.datetime.now()
             sol = grasp.execute(inst, 100, -1)
             elapsed = datetime.datetime.now() - start
-            secs = round(elapsed.total_seconds(),2)
+            secs = round(elapsed.total_seconds(), 2)
             print(str(sol['of'])+"\t"+str(secs))
-            results.write(str(round(sol['of'],2))+"\t" + str(secs) + "\n")
+            results.write(str(round(sol['of'], 2))+"\t" + str(secs) + "\n")
 
 
 if __name__ == '__main__':
-    #executeInstance()
+    # executeInstance()
     executeDir()

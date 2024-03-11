@@ -1,3 +1,5 @@
+'''Auxiliar function to handle candidate solutions'''
+
 
 def createEmptySolution(instance):
     solution = {}
@@ -16,7 +18,7 @@ def evaluate(sol):
     return of
 
 
-def addToSolution(sol, u, ofVariation = -1):
+def addToSolution(sol, u, ofVariation=-1):
     if ofVariation == -1:
         for s in sol['sol']:
             sol['of'] += sol['instance']['d'][u][s]
@@ -25,7 +27,7 @@ def addToSolution(sol, u, ofVariation = -1):
     sol['sol'].add(u)
 
 
-def removeFromSolution(sol, u, ofVariation = -1):
+def removeFromSolution(sol, u, ofVariation=-1):
     sol['sol'].remove(u)
     if ofVariation == -1:
         for s in sol['sol']:
@@ -38,12 +40,13 @@ def contains(sol, u):
     return u in sol['sol']
 
 
-def distanceToSolution(sol, u, without = -1):
+def distanceToSolution(sol, u, without=-1):
     d = 0
     for s in sol['sol']:
         if s != without:
             d += sol['instance']['d'][s][u]
     return round(d, 2)
+
 
 def isFeasible(sol):
     return len(sol['sol']) == sol['instance']['p']
@@ -51,9 +54,4 @@ def isFeasible(sol):
 
 def printSol(sol):
     print("SOL: "+str(sol['sol']))
-    print("OF: "+str(round(sol['of'],2)))
-
-
-
-
-
+    print("OF: "+str(round(sol['of'], 2)))

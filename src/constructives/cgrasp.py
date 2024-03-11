@@ -1,10 +1,11 @@
 from structure import solution, instance
 import random
 
+
 def construct(inst, alpha):
     sol = solution.createEmptySolution(inst)
     n = inst['n']
-    u = random.randint(0,n-1)
+    u = random.randint(0, n-1)
     solution.addToSolution(sol, u)
     cl = createCandidateList(sol, u)
     alpha = alpha if alpha >= 0 else random.random()

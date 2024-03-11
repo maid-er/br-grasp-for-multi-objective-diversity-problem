@@ -1,6 +1,8 @@
+'''Auxiliar function to apply best improve Local Search'''
 import random
 
 from structure import solution
+
 
 def improve(sol):
     improve = True
@@ -35,4 +37,3 @@ def selectInterchange(sol):
                 bestUnsel = d
                 unsel = v
     return sel, bestSel, unsel, bestUnsel
-

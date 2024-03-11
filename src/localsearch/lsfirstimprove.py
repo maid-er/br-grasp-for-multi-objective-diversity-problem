@@ -1,6 +1,8 @@
+'''Auxiliar function to apply first improve Local Search'''
 import random
 
 from structure import solution
+
 
 def improve(sol):
     improve = True

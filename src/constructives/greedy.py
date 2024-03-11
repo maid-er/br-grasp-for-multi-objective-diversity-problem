@@ -44,6 +44,7 @@ def createCandidateList(sol):
                 bestIndex = len(cl)-1
     return cl, bestIndex
 
+
 def updateCandidateList(sol, cl, added):
     bestIndex = 0
     largest = 0

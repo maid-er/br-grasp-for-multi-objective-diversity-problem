@@ -1,3 +1,5 @@
+'''Auxiliar function to read and process instances'''
+
 
 def readInstance(path):
     instance = {}
