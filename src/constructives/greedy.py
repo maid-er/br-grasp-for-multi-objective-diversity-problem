@@ -1,9 +1,13 @@
-'''Auxiliar functions to construct greedy solution'''
+'''Auxiliar functions to construct a greedy solution'''
 from structure import solution
 
 
 def construct(inst: dict):
     '''Constructs a solution by iteratively adding elements to it until it becomes feasible.
+    The strategy is to start by adding the two nodes (u, v) with the largest distance between
+    them. Then, for each iteration the candidate with the largest sum of distances to the rest
+    of the nodes in the actual solution is added in each iteration, until the number of
+    selected elements is equal to the requirement.
 
     Args:
       inst (dict): contains the instance data. The dictionary includes the number of nodes `n`,
@@ -67,7 +71,8 @@ def createCandidateList(sol: dict):
 
     Returns:
       (list): candidate solutions.
-      (int): index of the best candidate solution.
+      (int): the index of the candidate with the highest sum of distances to the rest of the nodes
+    in the actual solution.
     '''
     n = sol['instance']['n']
     cl = []
@@ -84,8 +89,8 @@ def createCandidateList(sol: dict):
 
 
 def updateCandidateList(sol: dict, cl: list, added: int) -> int:
-    '''This function updates a candidate list by calculating the best index based on certain 
-    criteria.
+    '''This function updates a candidate list by calculating the best index based on which node
+    has the highest sum of distances with the rest of the elements in the current solution `sol`.
 
     Args:
       sol (dict): contains the solution information in three key-value pairs: 'sol' with the set
