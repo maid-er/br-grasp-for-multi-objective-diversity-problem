@@ -5,7 +5,7 @@ import random
 
 def construct(inst: dict, alpha: float) -> dict:
     '''The function constructs a solution for a given instance using a Greedy Randomized Adaptive
-    Search (GRSP) procedure with a specified alpha parameter.
+    Search (GRASP) procedure with a specified alpha parameter.
 
     Args:
       inst (dict): a dictionary containing the instance data. The dictionary includes the number of
@@ -13,8 +13,9 @@ def construct(inst: dict, alpha: float) -> dict:
     distances from each node to the rest of the nodes.
     alpha
       alpha (float): a value that determines the trade-off between exploration and exploitation in
-    the construction of a solution. It is used to calculate a threshold value `th` which is then
-    used to select elements from a candidate list for adding to the solution.
+    the construction of a solution. It is used to calculate a threshold value `th`. This value is
+    used to restrict the candidate list from which the element to be added to the solution is
+    selected.
 
     Returns:
         (dict): contains the solution information in three key-value pairs: 'sol' with the set
