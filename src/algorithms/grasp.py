@@ -1,9 +1,9 @@
 '''GRASP execution function (construction and LS calls)'''
-from constructives import cgrasp
+from constructives import greedy, cgrasp, biased_randomized
 from localsearch import lsfirstimprove, lsbestimprove
 
 
-def execute(inst: dict, iters: int, alpha: float) -> dict:
+def execute(inst: dict, iters: int, strategy: str, alpha: float) -> dict:
     '''The function executes a GRASP algorithm with a specified number of iterations and a given
     alpha value, selecting the best solution found during the iterations.
 
@@ -30,7 +30,12 @@ def execute(inst: dict, iters: int, alpha: float) -> dict:
     best = None
     for i in range(iters):
         print("IT " + str(i + 1))
-        sol = cgrasp.construct(inst, alpha)
+        if strategy == 'Restricted list':
+            sol = cgrasp.construct(inst, alpha)
+        elif strategy == 'Biased Randomized':
+            sol = biased_randomized.construct(inst, 'Geometric', alpha)
+        else:
+            sol = greedy.construct(inst)
         print("\tC: "+str(sol['of']))
         # lsfirstimprove.improve(sol)
         lsbestimprove.improve(sol)
