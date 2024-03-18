@@ -3,8 +3,8 @@
 
 def readInstance(path: str) -> dict:
     '''Reads and processes data from a file to create a dictionary representing an instance for the
-    diversity problem with number of candidate nodes, number of elements to be selected, and
-    distances between them.
+    diversity problem with number of candidate nodes `n`, number of elements to be selected `p`, and
+    distances between each node pair `d`.
 
     Args:
       path (str): file path to the instance file that contains the data to be read and processed by
