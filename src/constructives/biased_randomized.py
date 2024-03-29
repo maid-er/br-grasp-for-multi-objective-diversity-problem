@@ -4,7 +4,7 @@ import random
 import math
 
 
-def construct(inst: dict, distribution: str, beta: float = -1) -> dict:
+def construct(inst: dict, parameters: dict) -> dict:
     '''The function constructs a solution for a given instance using a Greedy Randomized Adaptive
     Search (GRASP) procedure with a specified alpha parameter.
 
@@ -24,6 +24,8 @@ def construct(inst: dict, distribution: str, beta: float = -1) -> dict:
     contains the instance data, with key 'd' representing the distance matrix between all the
     candidate nodes.
     '''
+    distribution = parameters.get('distribution')
+
     sol = solution.createEmptySolution(inst)
     n = inst['n']
     u = random.randint(0, n-1)
@@ -33,6 +35,7 @@ def construct(inst: dict, distribution: str, beta: float = -1) -> dict:
         cl.sort(key=lambda row: -row[0])
 
         if distribution == 'Geometric':
+            beta = parameters.get('beta')
             beta = beta if beta >= 0 else random.random()
             selIdx = int(math.log(random.random()) / math.log(1 - beta))
             selIdx = selIdx % len(cl)

@@ -2,8 +2,12 @@
 from constructives import greedy, cgrasp, biased_randomized
 from localsearch import lsfirstimprove, lsbestimprove
 
+from utils.logger import load_logger
 
-def execute(inst: dict, iters: int, strategy: str, alpha: float) -> dict:
+logging = load_logger(__name__)
+
+
+def execute(inst: dict, iters: int, config: dict) -> dict:
     '''The function executes a GRASP algorithm with a specified number of iterations and a given
     alpha value, selecting the best solution found during the iterations.
 
@@ -27,13 +31,18 @@ def execute(inst: dict, iters: int, strategy: str, alpha: float) -> dict:
     that contains the instance data, with key 'd' representing the distance matrix between all the
     candidate nodes.
     '''
+    strategy = config.get('construction_method')
+    parameters = config.get('parameters')
+
+    logging.info('Executing GRASP algorithm with %s construction method', strategy)
+
     best = None
     for i in range(iters):
         print("IT " + str(i + 1))
         if strategy == 'Restricted list':
-            sol = cgrasp.construct(inst, alpha)
+            sol = cgrasp.construct(inst, parameters)
         elif strategy == 'Biased Randomized':
-            sol = biased_randomized.construct(inst, 'Geometric', alpha)
+            sol = biased_randomized.construct(inst, parameters)
         else:
             sol = greedy.construct(inst)
         print("\tC: "+str(sol['of']))

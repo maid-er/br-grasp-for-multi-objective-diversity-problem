@@ -3,7 +3,7 @@ from structure import solution
 import random
 
 
-def construct(inst: dict, alpha: float) -> dict:
+def construct(inst: dict, parameters: dict) -> dict:
     '''The function constructs a solution for a given instance using a Greedy Randomized Adaptive
     Search (GRASP) procedure with a specified alpha parameter.
 
@@ -23,6 +23,8 @@ def construct(inst: dict, alpha: float) -> dict:
     contains the instance data, with key 'd' representing the distance matrix between all the
     candidate nodes.
     '''
+    alpha = parameters.get('alpha')
+
     sol = solution.createEmptySolution(inst)
     n = inst['n']
     u = random.randint(0, n-1)

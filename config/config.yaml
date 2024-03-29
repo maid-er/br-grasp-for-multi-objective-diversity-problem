@@ -1,0 +1,4 @@
+construction_method: 'Biased Randomized'
+parameters:
+  distribution: 'Triangular'
+  beta: 10
