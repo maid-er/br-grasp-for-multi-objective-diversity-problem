@@ -34,22 +34,23 @@ def execute(inst: dict, iters: int, config: dict) -> dict:
     strategy = config.get('construction_method')
     parameters = config.get('parameters')
 
-    logging.info('Executing GRASP algorithm with %s construction method', strategy)
+    logging.info('Executing GRASP algorithm with %s construction method and parameters %s',
+                 strategy, parameters)
 
     best = None
     for i in range(iters):
-        print("IT " + str(i + 1))
+        logging.info("IT %s", i + 1)
         if strategy == 'Restricted list':
             sol = cgrasp.construct(inst, parameters)
         elif strategy == 'Biased Randomized':
             sol = biased_randomized.construct(inst, parameters)
         else:
             sol = greedy.construct(inst)
-        print("\tC: "+str(sol['of']))
+        logging.info("\tConstruction phase: %s", sol['of'])
         # lsfirstimprove.improve(sol)
         lsbestimprove.improve(sol)
-        print("\tLS: " + str(sol['of']))
+        logging.info("\tLocal Search improvement phase: %s", sol['of'])
         if best is None or best['of'] < sol['of']:
             best = sol
-        print("\tB: " + str(best['of']))
+        logging.info("\tBest result so far: %s", best['of'])
     return best

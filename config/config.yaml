@@ -1,4 +1,48 @@
-construction_method: 'Biased Randomized'
-parameters:
-  distribution: 'Triangular'
-  beta: 10
+- construction_method: 'Restricted List'
+  parameters:
+    alpha: -1
+
+- construction_method: 'Restricted List'
+  parameters:
+    alpha: 0.3
+
+- construction_method: 'Restricted List'
+  parameters:
+    alpha: 0.5
+
+- construction_method: 'Restricted List'
+  parameters:
+    alpha: 0.7
+
+- construction_method: 'Restricted List'
+  parameters:
+    alpha: 0.9
+
+- construction_method: 'Biased Randomized'
+  parameters:
+    distribution: 'Triangular'
+
+- construction_method: 'Biased Randomized'
+  parameters:
+    distribution: 'Geometric'
+    beta: 0.1
+
+- construction_method: 'Biased Randomized'
+  parameters:
+    distribution: 'Geometric'
+    beta: 0.3
+
+- construction_method: 'Biased Randomized'
+  parameters:
+    distribution: 'Geometric'
+    beta: 0.5
+
+- construction_method: 'Biased Randomized'
+  parameters:
+    distribution: 'Geometric'
+    beta: 0.7
+
+- construction_method: 'Biased Randomized'
+  parameters:
+    distribution: 'Geometric'
+    beta: 0.9

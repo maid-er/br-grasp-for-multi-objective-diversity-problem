@@ -11,7 +11,7 @@ from utils.logger import load_logger
 
 logging = load_logger(__name__)
 
-method_config = read_config('config')
+config = read_config('config')
 
 
 def executeInstance():
@@ -26,18 +26,25 @@ def executeDir():
     dir = "instances/preliminar"
     with os.scandir(dir) as files:
         ficheros = [file.name for file in files if file.is_file() and file.name.endswith(".txt")]
-    with open("resultados_BR_Tr.csv", "w") as results:
+
+    with open('resultados.csv', "w") as results:
+        results.write(
+            'instance,RL_01,RL_03,RL_05,RL_07,RL_09,BR_T,BR_G_01,BR_G_03,BR_G_05,BR_G_07,BR_G_09,\n'
+            )
         for f in ficheros:
             path = dir+"/"+f
-            print("Solving "+f+": ", end="")
+            logging.info('Solving instance %s:', f)
             inst = instance.readInstance(path)
-            results.write(f+"\t"+str(inst['n'])+"\t")
-            start = datetime.datetime.now()
-            sol = grasp.execute(inst, 100, method_config)
-            elapsed = datetime.datetime.now() - start
-            secs = round(elapsed.total_seconds(), 2)
-            print(str(sol['of'])+"\t"+str(secs))
-            results.write(str(round(sol['of'], 2))+"\t" + str(secs) + "\n")
+            results.write(f + ',')
+            for method_config in config:
+                start = datetime.datetime.now()
+                sol = grasp.execute(inst, 100, method_config)
+                elapsed = datetime.datetime.now() - start
+                secs = round(elapsed.total_seconds(), 2)
+                logging.info('Objective function value for the best result: %s', sol['of'])
+                logging.info('Execution time: %s', secs)
+                results.write(str(round(sol['of'], 2)) + ',')
+            results.write('\n')
 
 
 if __name__ == '__main__':
