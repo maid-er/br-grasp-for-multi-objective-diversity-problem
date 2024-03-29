@@ -6,7 +6,7 @@ the initial solution.
 from structure import solution
 
 
-def improve(sol: dict):
+def improve(sol: dict, maxIter: int = 50):
     '''Iteratively tries to improve a solution until no further improvements can be made.
 
     Args:
@@ -15,9 +15,11 @@ def improve(sol: dict):
     contains the instance data, with key 'd' representing the distance matrix between all the
     candidate nodes.
     '''
-    improve = True
-    while improve:
+    count = 0
+    while count < maxIter:
         improve = tryImprove(sol)
+        if not improve:
+            count += 1
 
 
 def tryImprove(sol: dict) -> bool:
