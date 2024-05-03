@@ -1,6 +1,7 @@
 '''GRASP execution function (construction and LS calls)'''
 from constructives import greedy, cgrasp, biased_randomized
 from localsearch import lsbestimprove
+from structure import solution
 
 from utils.logger import load_logger
 
@@ -46,11 +47,17 @@ def execute(inst: dict, iters: int, config: dict) -> dict:
             sol = biased_randomized.construct(inst, parameters)
         else:
             sol = greedy.construct(inst)
-        logging.info("\tConstruction phase: %s", sol['of'])
-        # lsfirstimprove.improve(sol)
+        logging.info("\tConstruction phase:")
+        logging.info('\t\tMaxSum: %s', sol['of_MaxSum'])
+        logging.info('\t\tMaxMin: %s', sol['of_MaxMin'])
+
         lsbestimprove.improve(sol)
-        logging.info("\tLocal Search improvement phase: %s", sol['of'])
-        if best is None or best['of'] < sol['of']:
+        logging.info("\tLocal Search improvement phase:")
+        logging.info('\t\tMaxSum: %s', sol['of_MaxSum'])
+        logging.info('\t\tMaxMin: %s', sol['of_MaxMin'])
+        if solution.isDominant(sol, best):
             best = sol
-        logging.info("\tBest result so far: %s", best['of'])
+        logging.info("\tBest result so far:")
+        logging.info('\t\tMaxSum: %s', sol['of_MaxSum'])
+        logging.info('\t\tMaxMin: %s', sol['of_MaxMin'])
     return best

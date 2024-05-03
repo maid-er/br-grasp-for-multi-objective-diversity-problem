@@ -3,6 +3,13 @@ from structure import solution
 import random
 import math
 
+from utils.logger import load_logger
+
+logging = load_logger(__name__)
+
+OBJECTIVE_FUNCTIONS = {0: 'MaxSum',
+                       1: 'MaxMin'}
+
 
 def construct(inst: dict, parameters: dict) -> dict:
     '''The function constructs a solution for a given instance using a Greedy Randomized Adaptive
@@ -32,7 +39,10 @@ def construct(inst: dict, parameters: dict) -> dict:
     solution.addToSolution(sol, u)
     cl = createCandidateList(sol, u)
     while not solution.isFeasible(sol):
-        cl.sort(key=lambda row: -row[0])
+        objective = len(cl) % 2  # 0: MaxSum, 1: MaxMin
+        cl.sort(key=lambda row: -row[objective])
+        logging.info('Sorted biased candidate list with %s objective.',
+                     OBJECTIVE_FUNCTIONS.get(objective))
 
         if distribution == 'Geometric':
             beta = parameters.get('beta')
@@ -43,9 +53,9 @@ def construct(inst: dict, parameters: dict) -> dict:
             selIdx = int(len(cl) * (1 - math.sqrt(random.random())))
 
         cSel = cl[selIdx]
-        solution.addToSolution(sol, cSel[1], cSel[0])
+        solution.addToSolution(sol, cSel[2], cSel[1], cSel[0])
         cl.remove(cSel)
-        updateCandidateList(sol, cl, cSel[1])
+        updateCandidateList(sol, cl, cSel[2])
     return sol
 
 
@@ -70,8 +80,9 @@ def createCandidateList(sol: dict, first: int):
     cl = []
     for c in range(n):
         if c != first:
-            d = solution.distanceSumToSolution(sol, c)
-            cl.append([d, c])
+            d_sum = solution.distanceSumToSolution(sol, c)
+            d_min = solution.minimumDistanceToSolution(sol, c)
+            cl.append([d_sum, d_min, c])
     return cl
 
 
@@ -91,4 +102,8 @@ def updateCandidateList(sol: dict, cl: list, added: int):
     '''
     for i in range(len(cl)):
         c = cl[i]
-        c[0] += sol['instance']['d'][added][c[1]]
+        c_to_added_distance = sol['instance']['d'][added][c[2]]
+
+        c[0] += c_to_added_distance
+        if c_to_added_distance < c[1]:
+            c[1] = c_to_added_distance

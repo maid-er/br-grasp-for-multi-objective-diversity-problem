@@ -38,10 +38,10 @@ def tryImprove(sol: dict) -> bool:
       (bool): `True` if the improvement was successful (i.e., if `ofVarSel` is less than
     `ofVarUnsel`), and `False` otherwise.
     '''
-    sel, ofVarSel, unSel, ofVarUnsel = selectInterchange(sol)
-    if ofVarSel < ofVarUnsel:
-        solution.removeFromSolution(sol, sel, ofVarSel)
-        solution.addToSolution(sol, unSel, ofVarUnsel)
+    sel, ofVarSumSel, ofMinSel, unSel, ofVarSumUnsel, ofMinUnsel = selectInterchange(sol)
+    if ofVarSumSel < ofVarSumUnsel and ofMinSel < ofMinUnsel:
+        solution.addToSolution(sol, sel, ofMinSel, ofVarSumSel)
+        solution.removeFromSolution(sol, unSel, ofMinUnsel, ofVarSumUnsel)
         return True
     return False
 
@@ -65,18 +65,24 @@ def selectInterchange(sol: dict):
     '''
     n = sol['instance']['n']
     sel = -1
-    bestSel = 0x3f3f3f3f
+    bestSumSel = 0x3f3f3f3f
+    bestMinSel = 0x3f3f3f3f
     unsel = -1
-    bestUnsel = 0
+    bestSumUnsel = 0
+    bestMinUnsel = 0
     for v in sol['sol']:
-        d = solution.distanceSumToSolution(sol, v)
-        if d < bestSel:
-            bestSel = d
+        d_sum = solution.distanceSumToSolution(sol, v)
+        d_min = solution.minimumDistanceToSolution(sol, v)
+        if d_sum < bestSumSel and d_min < bestMinSel:
+            bestSumSel = d_sum
+            bestMinSel = d_min
             sel = v
     for v in range(n):
         if not solution.contains(sol, v):
-            d = solution.distanceSumToSolution(sol, v, without=sel)
-            if d > bestUnsel:
-                bestUnsel = d
+            d_sum = solution.distanceSumToSolution(sol, v, without=sel)
+            d_min = solution.minimumDistanceToSolution(sol, v, without=sel)
+            if d_sum > bestSumUnsel and d_min > bestMinSel:
+                bestSumUnsel = d_sum
+                bestMinUnsel = d_min
                 unsel = v
-    return sel, bestSel, unsel, bestUnsel
+    return sel, bestSumSel, bestMinUnsel, unsel, bestSumUnsel, bestMinUnsel

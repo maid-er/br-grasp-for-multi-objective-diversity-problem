@@ -15,7 +15,8 @@ def createEmptySolution(instance: dict) -> dict:
     '''
     solution = {}
     solution['sol'] = set()
-    solution['of'] = 0
+    solution['of_MaxSum'] = 0
+    solution['of_MaxMin'] = 0x3f3f3f3f
     solution['instance'] = instance
     return solution
 
@@ -43,7 +44,7 @@ def evaluate(sol: dict) -> float:
     return of
 
 
-def addToSolution(sol: dict, u: int, ofVariation: float = -1):
+def addToSolution(sol: dict, u: int, minDistance: float = -1, ofVariation: float = -1):
     '''Updates a solution by adding a specified element and its corresponding value to the objective
     function.
 
@@ -59,11 +60,16 @@ def addToSolution(sol: dict, u: int, ofVariation: float = -1):
     candidate is added, the `ofVariation` is received as an input representing the sum of the
     distances from the added element `u` and the rest of the nodes in the solution.
     '''
-    if ofVariation == -1:
+    if ofVariation == -1 or minDistance == -1:
         for s in sol['sol']:
-            sol['of'] += sol['instance']['d'][u][s]
+            distance_u_s = sol['instance']['d'][u][s]
+            sol['of_MaxSum'] += distance_u_s
+            if sol['of_MaxMin'] > distance_u_s:
+                sol['of_MaxMin'] = distance_u_s
     else:
-        sol['of'] += ofVariation
+        sol['of_MaxSum'] += ofVariation
+        if sol['of_MaxMin'] > minDistance:
+            sol['of_MaxMin'] = minDistance
     sol['sol'].add(u)
 
 
@@ -83,9 +89,9 @@ def removeFromSolution(sol: dict, u: int, ofVariation: float = -1):
     sol['sol'].remove(u)
     if ofVariation == -1:
         for s in sol['sol']:
-            sol['of'] -= sol['instance']['d'][u][s]
+            sol['of_MaxSum'] -= sol['instance']['d'][u][s]
     else:
-        sol['of'] -= ofVariation
+        sol['of_MaxSum'] -= ofVariation
 
 
 def contains(sol: dict, u: int) -> bool:
@@ -179,6 +185,16 @@ def isFeasible(sol: dict) -> float:
     return len(sol['sol']) == sol['instance']['p']
 
 
+def isDominant(new_sol: dict, best_sol: dict):
+
+    if best_sol:
+        max_sum_dominance = best_sol['of_MaxSum'] <= new_sol['of_MaxSum']
+        max_min_dominance = best_sol['of_MaxMin'] <= new_sol['of_MaxMin']
+
+        return max_sum_dominance and max_min_dominance
+    return True
+
+
 def printSol(sol: dict):
     '''Prints the solution.
 
@@ -189,4 +205,5 @@ def printSol(sol: dict):
     candidate nodes.
     '''
     print("SOL: "+str(sol['sol']))
-    print("OF: "+str(round(sol['of'], 2)))
+    print("OF MaxSum: "+str(round(sol['of_MaxSum'], 2)))
+    print("OF MaxMin: "+str(round(sol['of_MaxMin'], 2)))
