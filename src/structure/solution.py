@@ -131,6 +131,35 @@ def distanceSumToSolution(sol: dict, u: int, without: int = -1) -> float:
     return round(d, 2)
 
 
+def minimumDistanceToSolution(sol: dict, u: int, without: int = -1) -> float:
+    '''Calculates the minimum distance from a given node to the rest of the nodes in the
+    solution graph, excluding the node specified with the optional input `without`.
+
+    Args:
+      sol (dict): contains the solution information in three key-value pairs: 'sol' with the set
+    of selected candidates for the solution, 'of' with the objective value, and 'instance' that
+    contains the instance data, with key 'd' representing the distance matrix between all the
+    candidate nodes.
+      u (int): represents the ID of the candidate element (node) from which we want to find the
+    minimum distance to the rest of the nodes.
+      without (int): it is an optional parameter that allows you to specify the ID of the node that
+    should be excluded from the search of the minimum distance. If the `without` parameter
+    is provided, the function will skip calculating the distance to the specified value in the
+    solution.
+
+    Returns:
+      (float): returns the minimum distance value from a given node `u` to the rest of the nodes in
+    solution `sol`, excluding the distance to a specific node `without` if provided.
+    '''
+    min_d = 0x3f3f3f3f
+    for s in sol['sol']:
+        if s != without:
+            d = sol['instance']['d'][s][u]
+            if d < min_d:
+                min_d = d
+    return round(min_d, 2)
+
+
 def isFeasible(sol: dict) -> float:
     '''Checks if a solution has the same number of elements specified in the instance parameter `p`.
 
