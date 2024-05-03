@@ -1,6 +1,6 @@
 '''GRASP execution function (construction and LS calls)'''
 from constructives import greedy, cgrasp, biased_randomized
-from localsearch import lsfirstimprove, lsbestimprove
+from localsearch import lsbestimprove
 
 from utils.logger import load_logger
 
