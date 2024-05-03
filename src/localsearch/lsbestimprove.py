@@ -69,13 +69,13 @@ def selectInterchange(sol: dict):
     unsel = -1
     bestUnsel = 0
     for v in sol['sol']:
-        d = solution.distanceToSolution(sol, v)
+        d = solution.distanceSumToSolution(sol, v)
         if d < bestSel:
             bestSel = d
             sel = v
     for v in range(n):
         if not solution.contains(sol, v):
-            d = solution.distanceToSolution(sol, v, without=sel)
+            d = solution.distanceSumToSolution(sol, v, without=sel)
             if d > bestUnsel:
                 bestUnsel = d
                 unsel = v

@@ -67,7 +67,7 @@ def createCandidateList(sol: dict, first: int):
     cl = []
     for c in range(n):
         if c != first:
-            d = solution.distanceToSolution(sol, c)
+            d = solution.distanceSumToSolution(sol, c)
             cl.append([d, c])
     return cl
 

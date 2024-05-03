@@ -104,7 +104,7 @@ def contains(sol: dict, u: int) -> bool:
     return u in sol['sol']
 
 
-def distanceToSolution(sol: dict, u: int, without: int = -1) -> float:
+def distanceSumToSolution(sol: dict, u: int, without: int = -1) -> float:
     '''Calculates the sum of the distances from a given node to the rest of the nodes in the
     solution graph, excluding the node specified with the optional input `without`.
 

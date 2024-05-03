@@ -80,7 +80,7 @@ def createCandidateList(sol: dict):
     bestIndex = 0
     for c in range(n):
         if not solution.contains(sol, c):
-            d = solution.distanceToSolution(sol, c)
+            d = solution.distanceSumToSolution(sol, c)
             cl.append([c, d])
             if d > largest:
                 largest = d
