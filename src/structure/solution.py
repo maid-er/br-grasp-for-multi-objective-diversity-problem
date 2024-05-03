@@ -76,7 +76,9 @@ def removeFromSolution(sol: dict, u: int, ofVariation: float = -1):
     contains the instance data, with key 'd' representing the distance matrix between all the
     candidate nodes.
       u (int): represents the ID of an element (node) that will be removed from the solution.
-      ofVariation (): ????????
+      ofVariation (float): is an optional parameter with a default value of -1. Each time a node
+    is removed from the solution, the `ofVariation` is received as an input representing the sum
+    of the distances from the removed element `u` and the rest of the nodes in the solution.
     '''
     sol['sol'].remove(u)
     if ofVariation == -1:
