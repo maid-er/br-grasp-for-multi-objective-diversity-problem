@@ -5,6 +5,10 @@ the initial solution.
 '''
 from structure import solution
 
+from utils.logger import load_logger
+
+logging = load_logger(__name__)
+
 
 def improve(sol: dict, maxIter: int = 50):
     '''Iteratively tries to improve a solution until no further improvements can be made.
@@ -16,10 +20,14 @@ def improve(sol: dict, maxIter: int = 50):
     candidate nodes.
     '''
     count = 0
-    while count < maxIter:
+    abs_count = 0
+    while count < maxIter and abs_count < maxIter*2:
         improve = tryImprove(sol)
         if not improve:
             count += 1
+        abs_count += 1
+    logging.info('Local search stopped with %s total IT and %s IT with no improvements.',
+                 abs_count, count)
 
 
 def tryImprove(sol: dict) -> bool:
@@ -39,9 +47,9 @@ def tryImprove(sol: dict) -> bool:
     `ofVarUnsel`), and `False` otherwise.
     '''
     sel, ofVarSumSel, ofMinSel, unSel, ofVarSumUnsel, ofMinUnsel = selectInterchange(sol)
-    if ofVarSumSel < ofVarSumUnsel and ofMinSel < ofMinUnsel:
-        solution.addToSolution(sol, sel, ofMinSel, ofVarSumSel)
-        solution.removeFromSolution(sol, unSel, ofMinUnsel, ofVarSumUnsel)
+    if ofVarSumSel <= ofVarSumUnsel and ofMinSel <= ofMinUnsel:
+        solution.addToSolution(sol, unSel, ofMinUnsel, ofVarSumUnsel)
+        solution.removeFromSolution(sol, sel, ofVarSumSel)
         return True
     return False
 
@@ -73,7 +81,7 @@ def selectInterchange(sol: dict):
     for v in sol['sol']:
         d_sum = solution.distanceSumToSolution(sol, v)
         d_min = solution.minimumDistanceToSolution(sol, v)
-        if d_sum < bestSumSel and d_min < bestMinSel:
+        if d_sum <= bestSumSel and d_min <= bestMinSel:
             bestSumSel = d_sum
             bestMinSel = d_min
             sel = v
@@ -81,7 +89,7 @@ def selectInterchange(sol: dict):
         if not solution.contains(sol, v):
             d_sum = solution.distanceSumToSolution(sol, v, without=sel)
             d_min = solution.minimumDistanceToSolution(sol, v, without=sel)
-            if d_sum > bestSumUnsel and d_min > bestMinSel:
+            if d_sum >= bestSumUnsel and d_min >= bestMinUnsel:
                 bestSumUnsel = d_sum
                 bestMinUnsel = d_min
                 unsel = v

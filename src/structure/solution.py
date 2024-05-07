@@ -161,7 +161,7 @@ def minimumDistanceToSolution(sol: dict, u: int, without: int = -1) -> float:
     '''
     min_d = 0x3f3f3f3f
     for s in sol['sol']:
-        if s != without:
+        if s != without and s != u:
             d = sol['instance']['d'][s][u]
             if d < min_d:
                 min_d = d
