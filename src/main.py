@@ -35,7 +35,7 @@ def executeDir():
             'instance,BR_T_MaxSum,BR_T_MaxMin,\n'
         )
         for f in ficheros:
-            path = dir+"/"+f
+            path = os.path.join(dir, f)
             logging.info('Solving instance %s:', f)
             inst = instance.readInstance(path)
             results.write(f + ',')
