@@ -58,6 +58,6 @@ def execute(inst: dict, iters: int, config: dict) -> dict:
         if solution.isDominant(sol, best):
             best = sol
         logging.info("\tBest result so far:")
-        logging.info('\t\tMaxSum: %s', sol['of_MaxSum'])
-        logging.info('\t\tMaxMin: %s', sol['of_MaxMin'])
+        logging.info('\t\tMaxSum: %s', best['of_MaxSum'])
+        logging.info('\t\tMaxMin: %s', best['of_MaxMin'])
     return best
