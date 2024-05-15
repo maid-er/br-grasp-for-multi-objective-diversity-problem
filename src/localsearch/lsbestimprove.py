@@ -47,10 +47,12 @@ def tryImprove(sol: dict) -> bool:
     `ofVarUnsel`), and `False` otherwise.
     '''
     sel, ofVarSumSel, ofMinSel, unSel, ofVarSumUnsel, ofMinUnsel = selectInterchange(sol)
-    if ofVarSumSel <= ofVarSumUnsel and ofMinSel <= ofMinUnsel:
+    if (ofVarSumSel <= ofVarSumUnsel and ofMinSel <= ofMinUnsel
+        and solution.satisfiesCost(sol, unSel, sel)
+            and solution.satisfiesCapacity(sol, unSel, sel)):
+
         solution.addToSolution(sol, unSel, ofMinUnsel, ofVarSumUnsel)
         solution.removeFromSolution(sol, sel, ofVarSumSel)
-        return True
     return False
 
 

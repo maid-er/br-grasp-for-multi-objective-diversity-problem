@@ -38,8 +38,12 @@ def construct(inst: dict, parameters: dict) -> dict:
     u = random.randint(0, n-1)
     solution.addToSolution(sol, u)
     cl = createCandidateList(sol, u)
-    while not solution.isFeasible(sol):
+    while not solution.satisfiesCapacity(sol):
         objective = len(cl) % 2  # 0: MaxSum, 1: MaxMin
+        cl = [c for c in cl if solution.satisfiesCost(sol, c[2])]
+        if len(cl) == 0:
+            logging.error('No feasible solution reached in the construction phase.')
+            break
         cl.sort(key=lambda row: -row[objective])
         logging.info('Sorted biased candidate list with %s objective.',
                      OBJECTIVE_FUNCTIONS.get(objective))
