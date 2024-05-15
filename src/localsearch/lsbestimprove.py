@@ -53,6 +53,7 @@ def tryImprove(sol: dict) -> bool:
 
         solution.addToSolution(sol, unSel, ofMinUnsel, ofVarSumUnsel)
         solution.removeFromSolution(sol, sel, ofVarSumSel)
+        return True
     return False
 
 
