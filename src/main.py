@@ -1,6 +1,6 @@
 '''Main function'''
 import datetime
-import matplotlib.pyplot as plt
+import plotly.express as px
 import os
 import pandas as pd
 import random
@@ -32,10 +32,10 @@ def executeDir():
     result_table = pd.DataFrame(columns=['Solution', 'MaxSum', 'MaxMin', 'Cost', 'Capacity'])
 
     for f in ficheros:
-        for _ in range(8):
+        for _ in range(10):
             path = os.path.join(dir, f)
             logging.info('Solving instance %s:', f)
-            inst = instance.read_USCAP_instance(path)
+            inst = instance.read_instance(path)
             for method_config in config:
                 start = datetime.datetime.now()
                 sol = grasp.execute(inst, 100, method_config)
@@ -63,9 +63,10 @@ def executeDir():
                          sol['of_MaxMin'])
             logging.info('Cost: %s, Capacity: %s', sol['total_cost'], sol['total_capacity'])
 
-        result_table.to_csv(f'results_{dir}.csv', index=False)
-        result_table.plot.scatter(x='MaxSum', y='MaxMin')
-        plt.show()
+        result_table.to_csv(f'results_{f.split(".")[0]}.csv', index=False)
+
+        fig = px.scatter(result_table, x='MaxSum', y='MaxMin', color='Solution')
+        fig.show()
 
 
 if __name__ == '__main__':
