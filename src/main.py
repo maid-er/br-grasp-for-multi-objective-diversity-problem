@@ -19,22 +19,23 @@ config = read_config('config')
 def executeInstance():
     random.seed(1309)
     path = "instances/preliminar/MDG-a_1_100_m10.txt"
-    inst = instance.readInstance(path)
-    sol = grasp.execute(inst, 100, -1)
+    inst = instance.read_instance(path)
+    sol = grasp.execute(inst, 100, config[0])
     solution.printSol(sol)
 
 
 def executeDir():
-    dir = "instances/USCAP"
+    dir = "instances/GDP"
     with os.scandir(dir) as files:
         ficheros = [file.name for file in files if file.is_file() and file.name.endswith(".txt")]
 
     result_table = pd.DataFrame(columns=['Solution', 'MaxSum', 'MaxMin', 'Cost', 'Capacity'])
 
     for f in ficheros:
-        for _ in range(10):
+        logging.info('Solving instance %s:', f)
+        for i in range(5):
             path = os.path.join(dir, f)
-            logging.info('Solving instance %s:', f)
+            logging.info(f'Finding solution #{i+1}')
             inst = instance.read_instance(path)
             for method_config in config:
                 start = datetime.datetime.now()
