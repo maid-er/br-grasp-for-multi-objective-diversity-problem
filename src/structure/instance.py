@@ -37,8 +37,8 @@ def read_instance(path: str):
         for i in range(n):
             u, a, _, c = f.readline().split()
             u = int(u) - 1  # Node u
-            a = int(a)  # Cost of node u
-            c = int(c)  # Capacity of node u
+            a = int(float(a))  # Cost of node u
+            c = int(float(c))  # Capacity of node u
             instance['a'][u] = a
             instance['c'][u] = c
         K, _, B = map(int, f.readline().split())
