@@ -6,7 +6,7 @@ __pycache__/
 *.log
 
 # Benchmark instances
-*.txt
+instances/
 
 # Results
 *.csv
