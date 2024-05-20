@@ -25,6 +25,7 @@ def executeInstance():
 
 
 def executeDir():
+    all_solutions = []
     dir = "instances/GDP"
     with os.scandir(dir) as files:
         ficheros = [file.name for file in files if file.is_file() and file.name.endswith(".txt")]
@@ -33,7 +34,7 @@ def executeDir():
 
     for f in ficheros:
         logging.info('Solving instance %s:', f)
-        for i in range(5):
+        for i in range(20):
             path = os.path.join(dir, f)
             logging.info(f'Finding solution #{i+1}')
             inst = instance.read_instance(path)
@@ -48,7 +49,9 @@ def executeDir():
                              sol['of_MaxMin'])
                 logging.info('Execution time: %s', secs)
 
-                selected_nodes = ' - '.join([str(s+1) for s in sol['sol']])
+                all_solutions.append(sol)
+
+                selected_nodes = ' - '.join([str(s+1) for s in sorted(sol['sol'])])
                 result_table.loc[len(result_table)] = [selected_nodes] + [sol.get(key)
                                                                           for key in [
                                                                               'of_MaxSum',
@@ -64,9 +67,14 @@ def executeDir():
                          sol['of_MaxMin'])
             logging.info('Cost: %s, Capacity: %s', sol['total_cost'], sol['total_capacity'])
 
+        fig = px.scatter(result_table, x='MaxMin', y='MaxSum', color='Solution')
+        fig.show()
+
+        is_non_dominated = solution.get_nondominated_solutions(all_solutions)
+        result_table = result_table[is_non_dominated].reset_index(drop=True)
         result_table.to_csv(f'results_{f.split(".")[0]}.csv', index=False)
 
-        fig = px.scatter(result_table, x='MaxSum', y='MaxMin', color='Solution')
+        fig = px.scatter(result_table, x='MaxMin', y='MaxSum', color='Solution')
         fig.show()
 
 

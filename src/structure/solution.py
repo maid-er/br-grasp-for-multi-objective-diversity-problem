@@ -237,3 +237,14 @@ def printSol(sol: dict):
     print(f"OF MaxMin: {round(sol['of_MaxMin'], 2)}")
     print(f"Total cost: {round(sol['total_cost'], 2)}")
     print(f"Total capacity: {round(sol['total_capacity'], 2)}")
+
+
+def get_nondominated_solutions(all_solutions):
+    is_non_dominated = [True] * len(all_solutions)
+    for i, sol_i in enumerate(all_solutions):
+        for j, sol_j in enumerate(all_solutions):
+            if i != j and isDominant(sol_j, sol_i):
+                is_non_dominated[i] = False
+                break
+
+    return is_non_dominated
