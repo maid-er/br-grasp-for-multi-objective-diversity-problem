@@ -21,7 +21,7 @@ def executeInstance():
     path = "instances/preliminar/MDG-a_1_100_m10.txt"
     inst = instance.read_instance(path)
     sol = grasp.execute(inst, 100, config[0])
-    solution.printSol(sol)
+    solution.print_sol(sol)
 
 
 def executeDir():
@@ -34,7 +34,7 @@ def executeDir():
 
     for f in ficheros:
         logging.info('Solving instance %s:', f)
-        for i in range(20):
+        for i in range(100):
             path = os.path.join(dir, f)
             logging.info(f'Finding solution #{i+1}')
             inst = instance.read_instance(path)

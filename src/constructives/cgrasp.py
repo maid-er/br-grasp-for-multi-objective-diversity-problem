@@ -25,13 +25,13 @@ def construct(inst: dict, parameters: dict) -> dict:
     '''
     alpha = parameters.get('alpha')
 
-    sol = solution.createEmptySolution(inst)
+    sol = solution.create_empty_solution(inst)
     n = inst['n']
     u = random.randint(0, n-1)
-    solution.addToSolution(sol, u)
-    cl = createCandidateList(sol, u)
+    solution.add_to_solution(sol, u)
+    cl = create_candidate_list(sol, u)
     alpha = alpha if alpha >= 0 else random.random()
-    while not solution.isFeasible(sol):
+    while not solution.is_feasible(sol):
         gmin, gmax = evalGminGmax(cl)
         th = gmax - alpha * (gmax - gmin)
         rcl = []
@@ -40,13 +40,13 @@ def construct(inst: dict, parameters: dict) -> dict:
                 rcl.append(cl[i])
         selIdx = random.randint(0, len(rcl)-1)
         cSel = rcl[selIdx]
-        solution.addToSolution(sol, cSel[1], cSel[0])
+        solution.add_to_solution(sol, cSel[1], cSel[0])
         cl.remove(cSel)
-        updateCandidateList(sol, cl, cSel[1])
+        update_candidate_list(sol, cl, cSel[1])
     return sol
 
 
-def createCandidateList(sol: dict, first: int):
+def create_candidate_list(sol: dict, first: int):
     '''The function creates a list of candidate solutions based on the distance to the given
     solution and excluding the first candidate.
 
@@ -67,7 +67,7 @@ def createCandidateList(sol: dict, first: int):
     cl = []
     for c in range(n):
         if c != first:
-            d = solution.distanceSumToSolution(sol, c)
+            d = solution.distance_sum_to_solution(sol, c)
             cl.append([d, c])
     return cl
 
@@ -93,7 +93,7 @@ def evalGminGmax(cl: list) -> tuple:
     return gmin, gmax
 
 
-def updateCandidateList(sol: dict, cl: list, added: int):
+def update_candidate_list(sol: dict, cl: list, added: int):
     '''Iterates through a candidate list and updates the first element (sum of distances) of each
     candidate adding the distance to the new `added` element.
 

@@ -1,7 +1,7 @@
 '''Auxiliar function to handle candidate solutions'''
 
 
-def createEmptySolution(instance: dict) -> dict:
+def create_empty_solution(instance: dict) -> dict:
     '''The function creates an empty solution dictionary with keys 'sol', 'of', and 'instance'.
 
     Args:
@@ -46,7 +46,7 @@ def evaluate(sol: dict) -> float:
     return of
 
 
-def addToSolution(sol: dict, u: int, minDistance: float = -1, ofVariation: float = -1):
+def add_to_solution(sol: dict, u: int, min_distance: float = -1, sum_variation: float = -1):
     '''Updates a solution by adding a specified element and its corresponding value to the objective
     function.
 
@@ -62,22 +62,22 @@ def addToSolution(sol: dict, u: int, minDistance: float = -1, ofVariation: float
     candidate is added, the `ofVariation` is received as an input representing the sum of the
     distances from the added element `u` and the rest of the nodes in the solution.
     '''
-    if ofVariation == -1 or minDistance == -1:
+    if sum_variation == -1 or min_distance == -1:
         for s in sol['sol']:
             distance_u_s = sol['instance']['d'][u][s]
             sol['of_MaxSum'] += distance_u_s
             if sol['of_MaxMin'] > distance_u_s:
                 sol['of_MaxMin'] = distance_u_s
     else:
-        sol['of_MaxSum'] += ofVariation
-        if sol['of_MaxMin'] > minDistance:
-            sol['of_MaxMin'] = minDistance
+        sol['of_MaxSum'] += sum_variation
+        if sol['of_MaxMin'] > min_distance:
+            sol['of_MaxMin'] = min_distance
     sol['total_cost'] += sol['instance']['a'][u]
     sol['total_capacity'] += sol['instance']['c'][u]
     sol['sol'].add(u)
 
 
-def removeFromSolution(sol: dict, u: int, ofVariation: float = -1):
+def remove_from_solution(sol: dict, u: int, sum_variation: float = -1):
     '''Removes an element from a solution and updates the objective function value accordingly.
 
     Args:
@@ -91,11 +91,11 @@ def removeFromSolution(sol: dict, u: int, ofVariation: float = -1):
     of the distances from the removed element `u` and the rest of the nodes in the solution.
     '''
     sol['sol'].remove(u)
-    if ofVariation == -1:
+    if sum_variation == -1:
         for s in sol['sol']:
             sol['of_MaxSum'] -= sol['instance']['d'][u][s]
     else:
-        sol['of_MaxSum'] -= ofVariation
+        sol['of_MaxSum'] -= sum_variation
     sol['total_cost'] -= sol['instance']['a'][u]
     sol['total_capacity'] -= sol['instance']['c'][u]
 
@@ -118,7 +118,7 @@ def contains(sol: dict, u: int) -> bool:
     return u in sol['sol']
 
 
-def distanceSumToSolution(sol: dict, u: int, without: int = -1) -> float:
+def distance_sum_to_solution(sol: dict, u: int, without: int = -1) -> float:
     '''Calculates the sum of the distances from a given node to the rest of the nodes in the
     solution graph, excluding the node specified with the optional input `without`.
 
@@ -145,7 +145,7 @@ def distanceSumToSolution(sol: dict, u: int, without: int = -1) -> float:
     return round(d, 2)
 
 
-def minimumDistanceToSolution(sol: dict, u: int, without: int = -1) -> float:
+def minimum_distance_to_solution(sol: dict, u: int, without: int = -1) -> float:
     '''Calculates the minimum distance from a given node to the rest of the nodes in the
     solution graph, excluding the node specified with the optional input `without`.
 
@@ -174,7 +174,7 @@ def minimumDistanceToSolution(sol: dict, u: int, without: int = -1) -> float:
     return round(min_d, 2)
 
 
-def isFeasible(sol: dict) -> float:
+def is_feasible(sol: dict) -> float:
     '''Checks if a solution has the same number of elements specified in the instance parameter `p`.
 
     Args:
@@ -192,7 +192,7 @@ def isFeasible(sol: dict) -> float:
     return len(sol['sol']) > 1
 
 
-def satisfiesCost(sol: dict, u: int, v: int = -1):
+def satisfies_cost(sol: dict, u: int, v: int = -1):
     removing_candidate = 0
     if v != -1:
         removing_candidate = sol['instance']['a'][v]
@@ -201,7 +201,7 @@ def satisfiesCost(sol: dict, u: int, v: int = -1):
     return possible_cost < sol['instance']['K']
 
 
-def satisfiesCapacity(sol: dict, u: int = -1, v: int = -1):
+def satisfies_capacity(sol: dict, u: int = -1, v: int = -1):
     new_candidate = 0
     if u != -1:
         new_candidate = sol['instance']['c'][u]
@@ -213,7 +213,7 @@ def satisfiesCapacity(sol: dict, u: int = -1, v: int = -1):
     return possible_capacity > sol['instance']['B']
 
 
-def isDominant(new_sol: dict, best_sol: dict):
+def is_dominant(new_sol: dict, best_sol: dict):
 
     if best_sol:
         max_sum_dominance = best_sol['of_MaxSum'] <= new_sol['of_MaxSum']
@@ -223,7 +223,7 @@ def isDominant(new_sol: dict, best_sol: dict):
     return True
 
 
-def printSol(sol: dict):
+def print_sol(sol: dict):
     '''Prints the solution.
 
     Args:
@@ -239,11 +239,11 @@ def printSol(sol: dict):
     print(f"Total capacity: {round(sol['total_capacity'], 2)}")
 
 
-def get_nondominated_solutions(all_solutions):
+def get_nondominated_solutions(all_solutions: list):
     is_non_dominated = [True] * len(all_solutions)
     for i, sol_i in enumerate(all_solutions):
         for j, sol_j in enumerate(all_solutions):
-            if i != j and isDominant(sol_j, sol_i):
+            if i != j and is_dominant(sol_j, sol_i):
                 is_non_dominated[i] = False
                 break
 

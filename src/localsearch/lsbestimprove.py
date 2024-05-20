@@ -22,7 +22,7 @@ def improve(sol: dict, maxIter: int = 50):
     count = 0
     abs_count = 0
     while count < maxIter and abs_count < maxIter*2:
-        improve = tryImprove(sol)
+        improve = try_improvement(sol)
         if not improve:
             count += 1
         abs_count += 1
@@ -30,7 +30,7 @@ def improve(sol: dict, maxIter: int = 50):
                  abs_count, count)
 
 
-def tryImprove(sol: dict) -> bool:
+def try_improvement(sol: dict) -> bool:
     '''Attempts to improve a solution by selecting and interchanging a selected element (node)
     with an unselected element. The improvement is obtained if the sum of the distances of the
     new element to the rest of the selected nodes is higher than the distance of the previous
@@ -46,18 +46,20 @@ def tryImprove(sol: dict) -> bool:
       (bool): `True` if the improvement was successful (i.e., if `ofVarSel` is less than
     `ofVarUnsel`), and `False` otherwise.
     '''
-    sel, ofVarSumSel, ofMinSel, unSel, ofVarSumUnsel, ofMinUnsel = selectInterchange(sol)
-    if (ofVarSumSel <= ofVarSumUnsel and ofMinSel <= ofMinUnsel
-        and solution.satisfiesCost(sol, unSel, sel)
-            and solution.satisfiesCapacity(sol, unSel, sel)):
+    (worst_selected, sel_maxsum_variability, sel_maxmin,
+     best_unselected, unsel_maxsum_variability, unsel_maxmin) = select_interchange(sol)
 
-        solution.addToSolution(sol, unSel, ofMinUnsel, ofVarSumUnsel)
-        solution.removeFromSolution(sol, sel, ofVarSumSel)
+    if (sel_maxsum_variability <= unsel_maxsum_variability and sel_maxmin <= unsel_maxmin
+        and solution.satisfies_cost(sol, best_unselected, worst_selected)
+            and solution.satisfies_capacity(sol, best_unselected, worst_selected)):
+
+        solution.add_to_solution(sol, best_unselected, unsel_maxmin, unsel_maxsum_variability)
+        solution.remove_from_solution(sol, worst_selected, sel_maxsum_variability)
         return True
     return False
 
 
-def selectInterchange(sol: dict):
+def select_interchange(sol: dict):
     '''Interchanges the worst element in solution (lowest sum of distances to the rest of the
     selected elements) with the best unselected element (highest sum of distances to the rest
     of the selected elements).
@@ -76,24 +78,24 @@ def selectInterchange(sol: dict):
     '''
     n = sol['instance']['n']
     sel = -1
-    bestSumSel = 0x3f3f3f3f
-    bestMinSel = 0x3f3f3f3f
+    best_sum_sel = 0x3f3f3f3f
+    best_min_sel = 0x3f3f3f3f
     unsel = -1
-    bestSumUnsel = 0
-    bestMinUnsel = 0
+    best_sum_unsel = 0
+    best_min_unsel = 0
     for v in sol['sol']:
-        d_sum = solution.distanceSumToSolution(sol, v)
-        d_min = solution.minimumDistanceToSolution(sol, v)
-        if d_sum <= bestSumSel and d_min <= bestMinSel:
-            bestSumSel = d_sum
-            bestMinSel = d_min
+        d_sum = solution.distance_sum_to_solution(sol, v)
+        d_min = solution.minimum_distance_to_solution(sol, v)
+        if d_sum <= best_sum_sel and d_min <= best_min_sel:
+            best_sum_sel = d_sum
+            best_min_sel = d_min
             sel = v
     for v in range(n):
         if not solution.contains(sol, v):
-            d_sum = solution.distanceSumToSolution(sol, v, without=sel)
-            d_min = solution.minimumDistanceToSolution(sol, v, without=sel)
-            if d_sum >= bestSumUnsel and d_min >= bestMinUnsel:
-                bestSumUnsel = d_sum
-                bestMinUnsel = d_min
+            d_sum = solution.distance_sum_to_solution(sol, v, without=sel)
+            d_min = solution.minimum_distance_to_solution(sol, v, without=sel)
+            if d_sum >= best_sum_unsel and d_min >= best_min_unsel:
+                best_sum_unsel = d_sum
+                best_min_unsel = d_min
                 unsel = v
-    return sel, bestSumSel, bestMinUnsel, unsel, bestSumUnsel, bestMinUnsel
+    return sel, best_sum_sel, best_min_unsel, unsel, best_sum_unsel, best_min_unsel

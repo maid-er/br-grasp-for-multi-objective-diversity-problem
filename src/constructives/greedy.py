@@ -20,17 +20,17 @@ def construct(inst: dict):
     contains the instance data, with key 'd' representing the distance matrix between all the
     candidate nodes.
     '''
-    sol = solution.createEmptySolution(inst)
+    sol = solution.create_empty_solution(inst)
     u, v = findLargestDistance(inst)
-    solution.addToSolution(sol, u)
-    solution.addToSolution(sol, v)
-    cl, pos = createCandidateList(sol)
-    while not solution.isFeasible(sol):
+    solution.add_to_solution(sol, u)
+    solution.add_to_solution(sol, v)
+    cl, pos = create_candidate_list(sol)
+    while not solution.is_feasible(sol):
         c = cl[pos][0]
         d = cl[pos][1]
-        solution.addToSolution(sol, c, d)
+        solution.add_to_solution(sol, c, d)
         del cl[pos]
-        pos = updateCandidateList(sol, cl, c)
+        pos = update_candidate_list(sol, cl, c)
     return sol
 
 
@@ -59,7 +59,7 @@ def findLargestDistance(inst: dict):
     return best1, best2
 
 
-def createCandidateList(sol: dict):
+def create_candidate_list(sol: dict):
     '''Generates a list of candidate solutions based on the input solution and returns the list
     along with the index of the best candidate.
 
@@ -80,7 +80,7 @@ def createCandidateList(sol: dict):
     bestIndex = 0
     for c in range(n):
         if not solution.contains(sol, c):
-            d = solution.distanceSumToSolution(sol, c)
+            d = solution.distance_sum_to_solution(sol, c)
             cl.append([c, d])
             if d > largest:
                 largest = d
@@ -88,7 +88,7 @@ def createCandidateList(sol: dict):
     return cl, bestIndex
 
 
-def updateCandidateList(sol: dict, cl: list, added: int) -> int:
+def update_candidate_list(sol: dict, cl: list, added: int) -> int:
     '''This function updates a candidate list by calculating the best index based on which node
     has the highest sum of distances with the rest of the elements in the current solution `sol`.
 

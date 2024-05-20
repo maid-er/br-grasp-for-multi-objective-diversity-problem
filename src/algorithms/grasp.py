@@ -57,7 +57,7 @@ def execute(inst: dict, iters: int, config: dict) -> dict:
         logging.info('\t\tMaxSum: %s', sol['of_MaxSum'])
         logging.info('\t\tMaxMin: %s', sol['of_MaxMin'])
         logging.info('Cost: %s, Capacity: %s', sol['total_cost'], sol['total_capacity'])
-        if solution.isDominant(sol, best):
+        if solution.is_dominant(sol, best):
             best = sol
         logging.info("\tBest result so far:")
         logging.info('\t\tMaxSum: %s', best['of_MaxSum'])

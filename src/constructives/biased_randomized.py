@@ -33,14 +33,14 @@ def construct(inst: dict, parameters: dict) -> dict:
     '''
     distribution = parameters.get('distribution')
 
-    sol = solution.createEmptySolution(inst)
+    sol = solution.create_empty_solution(inst)
     n = inst['n']
     u = random.randint(0, n-1)
-    solution.addToSolution(sol, u)
-    cl = createCandidateList(sol, u)
-    while not solution.satisfiesCapacity(sol):
+    solution.add_to_solution(sol, u)
+    cl = create_candidate_list(sol, u)
+    while not solution.satisfies_capacity(sol):
         objective = len(cl) % 2  # 0: MaxSum, 1: MaxMin
-        cl = [c for c in cl if solution.satisfiesCost(sol, c[2])]
+        cl = [c for c in cl if solution.satisfies_cost(sol, c[2])]
         if len(cl) == 0:
             logging.error('No feasible solution reached in the construction phase.')
             break
@@ -57,13 +57,13 @@ def construct(inst: dict, parameters: dict) -> dict:
             selIdx = int(len(cl) * (1 - math.sqrt(random.random())))
 
         cSel = cl[selIdx]
-        solution.addToSolution(sol, cSel[2], cSel[1], cSel[0])
+        solution.add_to_solution(sol, cSel[2], cSel[1], cSel[0])
         cl.remove(cSel)
-        updateCandidateList(sol, cl, cSel[2])
+        update_candidate_list(sol, cl, cSel[2])
     return sol
 
 
-def createCandidateList(sol: dict, first: int):
+def create_candidate_list(sol: dict, first: int):
     '''The function creates a list of candidate solutions based on the distance to the given
     solution and excluding the first candidate.
 
@@ -84,13 +84,13 @@ def createCandidateList(sol: dict, first: int):
     cl = []
     for c in range(n):
         if c != first:
-            d_sum = solution.distanceSumToSolution(sol, c)
-            d_min = solution.minimumDistanceToSolution(sol, c)
+            d_sum = solution.distance_sum_to_solution(sol, c)
+            d_min = solution.minimum_distance_to_solution(sol, c)
             cl.append([d_sum, d_min, c])
     return cl
 
 
-def updateCandidateList(sol: dict, cl: list, added: int):
+def update_candidate_list(sol: dict, cl: list, added: int):
     '''Iterates through a candidate list and updates the first element (sum of distances) of each
     candidate adding the distance to the new `added` element.
 
