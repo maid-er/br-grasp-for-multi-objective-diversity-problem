@@ -214,12 +214,18 @@ def satisfies_capacity(sol: dict, u: int = -1, v: int = -1):
 
 
 def is_dominant(new_sol: dict, best_sol: dict):
-
+    '''
+    Checks if `best_sol` is dominated by `new_sol`. A solution is dominated if another solution
+    is no worse in all objectives and better in at least one.
+    '''
     if best_sol:
-        max_sum_dominance = best_sol['of_MaxSum'] <= new_sol['of_MaxSum']
-        max_min_dominance = best_sol['of_MaxMin'] <= new_sol['of_MaxMin']
+        condition1 = all([best_sol['of_MaxSum'] <= new_sol['of_MaxSum'],
+                          best_sol['of_MaxMin'] <= new_sol['of_MaxMin']])
 
-        return max_sum_dominance and max_min_dominance
+        condition2 = any([best_sol['of_MaxSum'] < new_sol['of_MaxSum'],
+                          best_sol['of_MaxMin'] < new_sol['of_MaxMin']])
+
+        return condition1 and condition2
     return True
 
 
