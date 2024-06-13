@@ -26,7 +26,7 @@ def executeInstance():
 
 def executeDir():
     all_solutions = []
-    dir = "instances/GDP"
+    dir = "instances/USCAP"
     with os.scandir(dir) as files:
         ficheros = [file.name for file in files if file.is_file() and file.name.endswith(".txt")]
 
@@ -72,10 +72,23 @@ def executeDir():
 
         is_non_dominated = solution.get_nondominated_solutions(all_solutions)
         result_table = result_table[is_non_dominated].reset_index(drop=True)
-        result_table.to_csv(f'results_{f.split(".")[0]}.csv', index=False)
 
-        fig = px.scatter(result_table, x='MaxMin', y='MaxSum', color='Solution')
+        result_table['Constraint values'] = ('Cost: ' + result_table.Cost.astype(str) +
+                                             ' & Capacity: ' + result_table.Capacity.astype(str))
+        fig = px.scatter(result_table, x='MaxMin', y='MaxSum', color='Constraint values')
+        fig.update_layout(title_text=f.split(".")[0])
         fig.show()
+
+        with open('temp/execution.txt', 'r+') as ex_file:
+            execution_n = ex_file.read()
+            ex_file.seek(0)
+            ex_file.write(str(int(execution_n) + 1))
+            ex_file.truncate()
+        os.makedirs(f'output/{f.split(".")[0]}', exist_ok=True)
+
+        result_table.to_csv(f'output/{f.split(".")[0]}/results_{f.split(".")[0]}_{execution_n}.csv',
+                            index=False)
+        fig.write_html(f'output/{f.split(".")[0]}/solution_{execution_n}.html')
 
 
 if __name__ == '__main__':
