@@ -2,6 +2,7 @@
 
 
 class Solution:
+    '''Auxiliar class to handle solution information'''
     def __init__(self, instance: dict):
         self.solution_set = set()
         self.of_MaxSum = 0
