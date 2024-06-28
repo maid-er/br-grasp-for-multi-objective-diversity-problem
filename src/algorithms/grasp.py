@@ -1,6 +1,6 @@
 '''GRASP execution function (construction and LS calls)'''
 from constructives import biased_randomized
-from localsearch import lsbestimprove
+from localsearch import lsbestimprove, lsfirstimprove, variable_neighborhood_descent
 from structure.solution import Solution
 
 from utils.logger import load_logger
@@ -34,7 +34,15 @@ def execute(inst: dict, config: dict) -> Solution:
     logging.info('\t\tMaxMin: %s', sol.of_MaxMin)
     logging.info('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
 
-    lsbestimprove.improve(sol)
+    ls_strategy = config.get('strategy')
+    if ls_strategy == 'Best':
+        lsbestimprove.improve(sol)
+    elif ls_strategy == 'First':
+        lsfirstimprove.improve(sol)
+    elif ls_strategy == 'VND':
+        variable_neighborhood_descent.improve(sol)
+    else:
+        logging.error('Invalid Local Search strategy %s.', ls_strategy)
     logging.info("\tLocal Search improvement phase:")
     logging.info('\t\tMaxSum: %s', sol.of_MaxSum)
     logging.info('\t\tMaxMin: %s', sol.of_MaxMin)

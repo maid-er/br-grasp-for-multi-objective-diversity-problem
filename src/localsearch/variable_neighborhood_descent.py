@@ -16,14 +16,11 @@ logging = load_logger(__name__)
 LS = 'first'
 
 
-def improve(sol: Solution, max_iter: int = 50):
+def improve(sol: Solution):
     '''Iteratively tries to improve a solution until no further improvements can be made.
 
     Args:
-      sol (dict): contains the solution information in three key-value pairs: 'sol' with the set
-    of selected candidates for the solution, 'of' with the objective value, and 'instance' that
-    contains the instance data, with key 'd' representing the distance matrix between all the
-    candidate nodes.
+      sol (Solution): contains the solution information.
     '''
     neighborhoods = {1: [1, 1],
                      2: [1, 2],
@@ -33,7 +30,7 @@ def improve(sol: Solution, max_iter: int = 50):
     count = 0
     abs_count = 0
     improve = True
-    while count < max_iter and (improve or nb <= len(neighborhoods)):
+    while improve or nb <= len(neighborhoods):
         switch = neighborhoods[nb]
         logging.info('Local searching in neighbourhood %s with switch type %s.', nb, switch)
         if LS == 'best':
@@ -62,10 +59,7 @@ class BestImprove:
         selection.
 
         Args:
-        sol (dict): contains the solution information in three key-value pairs: 'sol' with the set
-        of selected candidates for the solution, 'of' with the objective value, and 'instance' that
-        contains the instance data, with key 'd' representing the distance matrix between all the
-        candidate nodes.
+            sol (Solution): contains the solution information.
 
         Returns:
         (bool): `True` if the improvement was successful (i.e., if `ofVarSel` is less than
@@ -169,8 +163,8 @@ class FirstImprove:
         return False
 
     def createSelectedUnselected(self, sol: Solution):
-        '''Takes a solution dictionary as input and returns two lists - one containing selected items
-        and the other containing unselected items based on the solution.
+        '''Takes a solution dictionary as input and returns two lists - one containing selected
+        items and the other containing unselected items based on the solution.
         Args:
         sol (dict): contains the solution information in three key-value pairs: 'sol' with the set
         of selected candidates for the solution, 'of' with the objective value, and 'instance' that

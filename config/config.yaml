@@ -1,48 +1,30 @@
-- construction_method: 'Restricted List'
-  parameters:
-    alpha: -1
+# - construction_method: 'Biased Randomized'
+#   parameters:
+#     distribution: 'Triangular'
 
-- construction_method: 'Restricted List'
-  parameters:
-    alpha: 0.3
+# - construction_method: 'Biased Randomized'
+#   parameters:
+#     distribution: 'Geometric'
+#     beta: 0.1
 
-- construction_method: 'Restricted List'
-  parameters:
-    alpha: 0.5
+# - construction_method: 'Biased Randomized'
+#   parameters:
+#     distribution: 'Geometric'
+#     beta: 0.3
 
-- construction_method: 'Restricted List'
+- construction_method: 'Biased Randomized'  # AltBwS or AltInS
   parameters:
-    alpha: 0.7
+    distribution: 'Geometric'  # Triangular or Geometric
+    beta: 0.5  # From 0 to 1
+  local_search: 'Dominance'  # Dominance or Alternate
+  strategy: 'Best'  # Best, First, or VND
 
-- construction_method: 'Restricted List'
-  parameters:
-    alpha: 0.9
+# - construction_method: 'Biased Randomized'
+#   parameters:
+#     distribution: 'Geometric'
+#     beta: 0.7
 
-- construction_method: 'Biased Randomized'
-  parameters:
-    distribution: 'Triangular'
-
-- construction_method: 'Biased Randomized'
-  parameters:
-    distribution: 'Geometric'
-    beta: 0.1
-
-- construction_method: 'Biased Randomized'
-  parameters:
-    distribution: 'Geometric'
-    beta: 0.3
-
-- construction_method: 'Biased Randomized'
-  parameters:
-    distribution: 'Geometric'
-    beta: 0.5
-
-- construction_method: 'Biased Randomized'
-  parameters:
-    distribution: 'Geometric'
-    beta: 0.7
-
-- construction_method: 'Biased Randomized'
-  parameters:
-    distribution: 'Geometric'
-    beta: 0.9
+# - construction_method: 'Biased Randomized'
+#   parameters:
+#     distribution: 'Geometric'
+#     beta: 0.9

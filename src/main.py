@@ -39,7 +39,7 @@ def executeDir():
             inst = instance.read_instance(path)
             for method_config in config:
                 start = datetime.datetime.now()
-                sol = grasp.execute(inst, 100, method_config)
+                sol = grasp.execute(inst, method_config)
                 elapsed = datetime.datetime.now() - start
                 secs = round(elapsed.total_seconds(), 2)
                 logging.info('MaxSum objective function value for the best result: %s',
