@@ -50,8 +50,8 @@ def try_improvement(sol: dict) -> bool:
      best_unselected, unsel_maxsum_variability, unsel_maxmin) = select_interchange(sol)
 
     if ((sel_maxsum_variability <= unsel_maxsum_variability) and (sel_maxmin <= unsel_maxmin)
-        and solution.satisfies_cost(sol, best_unselected, worst_selected)
-            and solution.satisfies_capacity(sol, best_unselected, worst_selected)):
+        and solution.satisfies_cost(sol, [best_unselected], [worst_selected])
+            and solution.satisfies_capacity(sol, [best_unselected], [worst_selected])):
 
         solution.add_to_solution(sol, best_unselected, unsel_maxmin, unsel_maxsum_variability)
         solution.remove_from_solution(sol, worst_selected, sel_maxsum_variability)

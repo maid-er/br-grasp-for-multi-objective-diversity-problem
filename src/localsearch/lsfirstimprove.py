@@ -40,12 +40,14 @@ def tryImprove(sol: dict) -> bool:
     random.shuffle(selected)
     random.shuffle(unselected)
     for s in selected:
-        ds = solution.distanceToSolution(sol, s)
+        d_sum_s = solution.distance_sum_to_solution(sol, s)
+        d_min_s = solution.minimum_distance_to_solution(sol, s)
         for u in unselected:
-            du = solution.distanceToSolution(sol, u, s)
-            if du > ds:
-                solution.removeFromSolution(sol, s)
-                solution.addToSolution(sol, u)
+            d_sum_u = solution.distance_sum_to_solution(sol, u, s)
+            d_min_u = solution.minimum_distance_to_solution(sol, u, s)
+            if d_sum_u > d_sum_s and d_min_u > d_min_s:
+                solution.remove_from_solution(sol, s, d_sum_s)
+                solution.add_to_solution(sol, u, d_min_u, d_sum_u)
                 return True
     return False
 

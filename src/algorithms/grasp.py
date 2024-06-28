@@ -1,6 +1,6 @@
 '''GRASP execution function (construction and LS calls)'''
 from constructives import greedy, cgrasp, biased_randomized
-from localsearch import lsbestimprove, variable_neighborhood_descent
+from localsearch import lsbestimprove, lsfirstimprove, variable_neighborhood_descent
 from structure import solution
 
 from utils.logger import load_logger
@@ -39,28 +39,28 @@ def execute(inst: dict, iters: int, config: dict) -> dict:
                  strategy, parameters)
 
     best = None
-    for i in range(iters):
-        logging.info("IT %s", i + 1)
-        if strategy == 'Restricted list':
-            sol = cgrasp.construct(inst, parameters)
-        elif strategy == 'Biased Randomized':
-            sol = biased_randomized.construct(inst, parameters)
-        else:
-            sol = greedy.construct(inst)
-        logging.info("\tConstruction phase:")
-        logging.info('\t\tMaxSum: %s', sol['of_MaxSum'])
-        logging.info('\t\tMaxMin: %s', sol['of_MaxMin'])
-        logging.info('Cost: %s, Capacity: %s', sol['total_cost'], sol['total_capacity'])
+    # for i in range(iters):
+    # logging.info("IT %s", i + 1)
+    if strategy == 'Restricted list':
+        sol = cgrasp.construct(inst, parameters)
+    elif strategy == 'Biased Randomized':
+        sol = biased_randomized.construct(inst, parameters)
+    else:
+        sol = greedy.construct(inst)
+    logging.info("\tConstruction phase:")
+    logging.info('\t\tMaxSum: %s', sol['of_MaxSum'])
+    logging.info('\t\tMaxMin: %s', sol['of_MaxMin'])
+    logging.info('Cost: %s, Capacity: %s', sol['total_cost'], sol['total_capacity'])
 
-        variable_neighborhood_descent.improve(sol)
-        logging.info("\tLocal Search improvement phase:")
-        logging.info('\t\tMaxSum: %s', sol['of_MaxSum'])
-        logging.info('\t\tMaxMin: %s', sol['of_MaxMin'])
-        logging.info('Cost: %s, Capacity: %s', sol['total_cost'], sol['total_capacity'])
-        if solution.is_dominant(sol, best):
-            best = sol
-        logging.info("\tBest result so far:")
-        logging.info('\t\tMaxSum: %s', best['of_MaxSum'])
-        logging.info('\t\tMaxMin: %s', best['of_MaxMin'])
-        logging.info('Cost: %s, Capacity: %s', sol['total_cost'], sol['total_capacity'])
+    lsbestimprove.improve(sol)
+    logging.info("\tLocal Search improvement phase:")
+    logging.info('\t\tMaxSum: %s', sol['of_MaxSum'])
+    logging.info('\t\tMaxMin: %s', sol['of_MaxMin'])
+    logging.info('Cost: %s, Capacity: %s', sol['total_cost'], sol['total_capacity'])
+    if solution.is_dominant(sol, best):
+        best = sol
+    logging.info("\tBest result so far:")
+    logging.info('\t\tMaxSum: %s', best['of_MaxSum'])
+    logging.info('\t\tMaxMin: %s', best['of_MaxMin'])
+    logging.info('Cost: %s, Capacity: %s', sol['total_cost'], sol['total_capacity'])
     return best
