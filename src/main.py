@@ -1,12 +1,12 @@
 '''Main function'''
 import datetime
-import plotly.express as px
 import os
 import pandas as pd
 
-from structure import instance, dominance
 from algorithms import grasp
+from structure import instance, dominance
 
+from utils.results import pareto_front
 from utils.config import read_config
 from utils.logger import load_logger
 
@@ -40,13 +40,12 @@ def execute_dir():
             inst = instance.read_instance(path)
             for method_config in config:
                 sol = grasp.execute(inst, method_config)
+                all_solutions.append(sol)
 
                 logging.info('MaxSum objective function value for the best result: %s',
                              sol.of_MaxSum)
                 logging.info('MaxMin objective function value for the best result: %s',
                              sol.of_MaxMin)
-
-                all_solutions.append(sol)
 
                 selected_nodes = ' - '.join([str(s+1) for s in sorted(sol.solution_set)])
                 result_table.loc[len(result_table)] = [selected_nodes] + [sol.of_MaxSum,
@@ -62,17 +61,10 @@ def execute_dir():
                          sol.of_MaxMin)
             logging.info('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
 
-        fig = px.scatter(result_table, x='MaxMin', y='MaxSum', color='Solution')
-        fig.show()
-
         is_non_dominated = dominance.get_nondominated_solutions(all_solutions)
         result_table = result_table[is_non_dominated].reset_index(drop=True)
 
-        result_table['Constraint values'] = ('Cost: ' + result_table.Cost.astype(str) +
-                                             ' & Capacity: ' + result_table.Capacity.astype(str))
-        fig = px.scatter(result_table, x='MaxMin', y='MaxSum', color='Constraint values')
-        fig.update_layout(title_text=f.split(".")[0])
-        fig.show()
+        fig = pareto_front(result_table, f)
 
         with open('temp/execution.txt', 'r+') as ex_file:
             execution_n = ex_file.read()
