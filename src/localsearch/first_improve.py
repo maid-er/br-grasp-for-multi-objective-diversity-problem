@@ -5,6 +5,7 @@ when the unselected element's result improves the selected one's, they are inter
 in the solution.
 '''
 import random
+from itertools import combinations
 
 from structure.solution import Solution
 
@@ -20,7 +21,7 @@ def improve(sol: Solution):
         improve = try_improvement(sol)
 
 
-def try_improvement(sol: Solution) -> bool:
+def try_improvement(sol: Solution, switch: list = [1, 1]) -> bool:
     '''Attempts to improve a solution by selecting and interchanging a selected element (node)
     with an unselected element. The improvement is obtained if the sum of the distances of the
     new element to the rest of the selected nodes is higher than the distance of the previous
@@ -28,6 +29,10 @@ def try_improvement(sol: Solution) -> bool:
 
     Args:
       sol (Solution): contains the solution information.
+      switch (list): indicates the neighborhood being analized in the local search. The first
+    element defines how many nodes will be removed from the solution and the second element
+    determines the number of nodes that will be added to the solution. Defaults to [1, 1] for
+    a standard 1-1 exchange.
 
     Returns:
       (bool): `True` if the improvement was successful (i.e., if the objective values are
@@ -36,15 +41,21 @@ def try_improvement(sol: Solution) -> bool:
     selected, unselected = create_selected_unselected(sol)
     random.shuffle(selected)
     random.shuffle(unselected)
-    for s in selected:
-        d_sum_s = sol.distance_sum_to_solution(s)
-        d_min_s = sol.minimum_distance_to_solution(s)
-        for u in unselected:
-            d_sum_u = sol.distance_sum_to_solution(u, s)
-            d_min_u = sol.minimum_distance_to_solution(u, s)
-            if d_sum_u > d_sum_s and d_min_u > d_min_s:
-                sol.remove_from_solution(s, d_min_s, d_sum_s)
-                sol.add_to_solution(u, d_min_u, d_sum_u)
+    for combo_s in combinations(selected, switch[0]):
+        d_sum_s = [sol.distance_sum_to_solution(v) for v in combo_s]
+        d_min_s = [sol.minimum_distance_to_solution(v) for v in combo_s]
+        for combo_u in combinations(unselected, switch[1]):
+            d_sum_u = [sol.distance_sum_to_solution(v) for v in combo_u]
+            d_min_u = [sol.minimum_distance_to_solution(v) for v in combo_u]
+            if sum(d_sum_u) > sum(d_sum_s) and max(d_min_u) > max(d_min_s) \
+                and sol.satisfies_cost(combo_u, combo_s) \
+                    and sol.satisfies_capacity(combo_u, combo_s):
+
+                for v in combo_u:
+                    sol.add_to_solution(v, max(d_min_u), sum(d_sum_u))
+                for u in combo_s:
+                    sol.remove_from_solution(u, max(d_min_s), sum(d_sum_s))
+
                 return True
     return False
 

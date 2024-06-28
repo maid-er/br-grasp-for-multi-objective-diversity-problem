@@ -3,10 +3,8 @@ Auxiliar function to apply Variable Neighborhood Descent with Best Improve Local
 The worst selected element and best unselected element are interchanged to improve
 the initial solution.
 '''
-import random
-from itertools import combinations
-
 from localsearch import best_improve as bs
+from localsearch import first_improve as fs
 from structure.solution import Solution
 
 from utils.logger import load_logger
@@ -37,8 +35,7 @@ def improve(sol: Solution):
         if LS == 'best':
             improve = bs.try_improvement(sol, switch)
         else:
-            first_improve = FirstImprove()
-            improve = first_improve.tryImprove(sol, switch)
+            improve = fs.try_improvement(sol, switch)
         if not improve:
             logging.info('Unable to improve solution. Change neighborhood.')
             count += 1
@@ -49,62 +46,3 @@ def improve(sol: Solution):
         abs_count += 1
     logging.info('Local search stopped with %s total IT and %s IT with no improvements.',
                  abs_count, count)
-
-
-class FirstImprove:
-    def tryImprove(self, sol: Solution, switch) -> bool:
-        '''Attempts to improve a solution by selecting and interchanging a selected element (node)
-        with an unselected element. The improvement is obtained if the sum of the distances of the
-        new element to the rest of the selected nodes is higher than the distance of the previous
-        selection.
-        Args:
-        sol (dict): contains the solution information in three key-value pairs: 'sol' with the set
-        of selected candidates for the solution, 'of' with the objective value, and 'instance' that
-        contains the instance data, with key 'd' representing the distance matrix between all the
-        candidate nodes.
-        Returns:
-        (bool): `True` if the improvement was successful (i.e., if `ofVarSel` is less than
-        `ofVarUnsel`), and `False` otherwise.
-        '''
-        selected, unselected = self.createSelectedUnselected(sol)
-        random.shuffle(selected)
-        random.shuffle(unselected)
-        for combo_s in combinations(selected, switch[0]):
-            d_sum_s = [sol.distance_sum_to_solution(v) for v in combo_s]
-            d_min_s = [sol.minimum_distance_to_solution(v) for v in combo_s]
-            for combo_u in combinations(selected, switch[1]):
-                d_sum_u = [sol.distance_sum_to_solution(v) for v in combo_u]
-                d_min_u = [sol.minimum_distance_to_solution(v) for v in combo_u]
-                if sum(d_sum_u) > sum(d_sum_s) and max(d_min_u) > max(d_min_s) \
-                    and sol.satisfies_cost(combo_u, combo_s) \
-                        and sol.satisfies_capacity(combo_u, combo_s):
-
-                    for v in combo_u:
-                        sol.add_to_solution(v, max(d_min_u), sum(d_sum_u))
-                    for u in combo_s:
-                        sol.remove_from_solution(u, max(d_min_s), sum(d_sum_s))
-
-                    return True
-        return False
-
-    def createSelectedUnselected(self, sol: Solution):
-        '''Takes a solution dictionary as input and returns two lists - one containing selected
-        items and the other containing unselected items based on the solution.
-        Args:
-        sol (dict): contains the solution information in three key-value pairs: 'sol' with the set
-        of selected candidates for the solution, 'of' with the objective value, and 'instance' that
-        contains the instance data, with key 'd' representing the distance matrix between all the
-        candidate nodes.
-        Returns:
-        selected (list): contains the candidates selected in the current solution.
-        unselected (list): contains the unselected candidates in the current solution.
-        '''
-        selected = []
-        unselected = []
-        n = sol.instance['n']
-        for v in range(n):
-            if sol.contains(v):
-                selected.append(v)
-            else:
-                unselected.append(v)
-        return selected, unselected
