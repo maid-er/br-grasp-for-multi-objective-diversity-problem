@@ -1,6 +1,6 @@
 '''GRASP execution function (construction and LS calls)'''
 from constructives import biased_randomized
-from localsearch import lsbestimprove, lsfirstimprove, variable_neighborhood_descent
+from localsearch import best_improve, first_improve, variable_neighborhood_descent
 from structure.solution import Solution
 
 from utils.logger import load_logger
@@ -36,9 +36,9 @@ def execute(inst: dict, config: dict) -> Solution:
 
     ls_strategy = config.get('strategy')
     if ls_strategy == 'Best':
-        lsbestimprove.improve(sol)
+        best_improve.improve(sol)
     elif ls_strategy == 'First':
-        lsfirstimprove.improve(sol)
+        first_improve.improve(sol)
     elif ls_strategy == 'VND':
         variable_neighborhood_descent.improve(sol)
     else:

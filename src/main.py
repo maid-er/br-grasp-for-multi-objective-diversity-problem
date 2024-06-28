@@ -23,7 +23,7 @@ config = read_config('config')
 #     solution.print_sol(sol)
 
 
-def executeDir():
+def execute_dir():
     all_solutions = []
     dir = "instances/USCAP"
     with os.scandir(dir) as files:
@@ -93,4 +93,4 @@ def executeDir():
 if __name__ == '__main__':
     logging.info('Initializing diversity maximization algorithm...')
     # executeInstance()
-    executeDir()
+    execute_dir()

@@ -17,10 +17,10 @@ def improve(sol: Solution):
     '''
     improve = True
     while improve:
-        improve = tryImprove(sol)
+        improve = try_improvement(sol)
 
 
-def tryImprove(sol: Solution) -> bool:
+def try_improvement(sol: Solution) -> bool:
     '''Attempts to improve a solution by selecting and interchanging a selected element (node)
     with an unselected element. The improvement is obtained if the sum of the distances of the
     new element to the rest of the selected nodes is higher than the distance of the previous
@@ -33,7 +33,7 @@ def tryImprove(sol: Solution) -> bool:
       (bool): `True` if the improvement was successful (i.e., if the objective values are
     improved and constraints are met with the interchange), and `False` otherwise.
     '''
-    selected, unselected = createSelectedUnselected(sol)
+    selected, unselected = create_selected_unselected(sol)
     random.shuffle(selected)
     random.shuffle(unselected)
     for s in selected:
@@ -49,7 +49,7 @@ def tryImprove(sol: Solution) -> bool:
     return False
 
 
-def createSelectedUnselected(sol: Solution):
+def create_selected_unselected(sol: Solution):
     '''Takes a solution instance as input and returns two lists - one containing selected items
     and the other containing unselected items based on the solution.
 
