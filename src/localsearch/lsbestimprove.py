@@ -10,18 +10,16 @@ from utils.logger import load_logger
 logging = load_logger(__name__)
 
 
-def improve(sol: Solution, maxIter: int = 50):
+def improve(sol: Solution, max_iter: int = 50):
     '''Iteratively tries to improve a solution until no further improvements can be made.
 
     Args:
-      sol (dict): contains the solution information in three key-value pairs: 'sol' with the set
-    of selected candidates for the solution, 'of' with the objective value, and 'instance' that
-    contains the instance data, with key 'd' representing the distance matrix between all the
-    candidate nodes.
+      sol (Solution): contains the solution information.
+      max_iter (int): maximum number of iterations with no improvements.
     '''
     count = 0
     abs_count = 0
-    while count < maxIter and abs_count < maxIter*2:
+    while count < max_iter and abs_count < max_iter*2:
         improve = try_improvement(sol)
         if not improve:
             count += 1
@@ -37,14 +35,11 @@ def try_improvement(sol: Solution) -> bool:
     selection.
 
     Args:
-      sol (dict): contains the solution information in three key-value pairs: 'sol' with the set
-    of selected candidates for the solution, 'of' with the objective value, and 'instance' that
-    contains the instance data, with key 'd' representing the distance matrix between all the
-    candidate nodes.
+      sol (Solution): contains the solution information.
 
     Returns:
-      (bool): `True` if the improvement was successful (i.e., if `ofVarSel` is less than
-    `ofVarUnsel`), and `False` otherwise.
+      (bool): `True` if the improvement was successful (i.e., if the objective values are
+    improved and constraints are met with the interchange), and `False` otherwise.
     '''
     (worst_selected, sel_maxsum_variability, sel_maxmin,
      best_unselected, unsel_maxsum_variability, unsel_maxmin) = select_interchange(sol)
@@ -65,16 +60,17 @@ def select_interchange(sol: Solution):
     of the selected elements).
 
     Args:
-      sol (dict): contains the solution information in three key-value pairs: 'sol' with the set
-    of selected candidates for the solution, 'of' with the objective value, and 'instance' that
-    contains the instance data, with key 'd' representing the distance matrix between all the
-    candidate nodes.
+      sol (Solution): contains the solution information.
 
     Returns:
       sel (int): worst selected element ID.
-      bestSel (float): sum of distances from `sel` to the rest of the elements in solution.
+      best_sum_sel (float): sum of distances from `sel` to the rest of the elements in solution.
+      best_min_sel (float): minimum distance from `sel` to the rest of the elements in solution.
       unsel (int): best unselected element ID.
-      bestUnsel (float): sum of distances from `unsel` to the rest of the elements in solution.
+      best_sum_unsel (float): sum of distances from `unsel` to the rest of the elements in
+    solution.
+      best_min_unsel (float): minimum distance from `unsel` to the rest of the elements in
+    solution.
     '''
     n = sol.instance['n']
     sel = -1

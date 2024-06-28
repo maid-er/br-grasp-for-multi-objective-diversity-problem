@@ -11,11 +11,9 @@ from structure.solution import Solution
 
 def improve(sol: Solution):
     '''Iteratively tries to improve a solution until no further improvements can be made.
+
     Args:
-      sol (dict): contains the solution information in three key-value pairs: 'sol' with the set
-    of selected candidates for the solution, 'of' with the objective value, and 'instance' that
-    contains the instance data, with key 'd' representing the distance matrix between all the
-    candidate nodes.
+      sol (Solution): contains the solution information.
     '''
     improve = True
     while improve:
@@ -27,14 +25,13 @@ def tryImprove(sol: Solution) -> bool:
     with an unselected element. The improvement is obtained if the sum of the distances of the
     new element to the rest of the selected nodes is higher than the distance of the previous
     selection.
+
     Args:
-      sol (dict): contains the solution information in three key-value pairs: 'sol' with the set
-    of selected candidates for the solution, 'of' with the objective value, and 'instance' that
-    contains the instance data, with key 'd' representing the distance matrix between all the
-    candidate nodes.
+      sol (Solution): contains the solution information.
+
     Returns:
-      (bool): `True` if the improvement was successful (i.e., if `ofVarSel` is less than
-    `ofVarUnsel`), and `False` otherwise.
+      (bool): `True` if the improvement was successful (i.e., if the objective values are
+    improved and constraints are met with the interchange), and `False` otherwise.
     '''
     selected, unselected = createSelectedUnselected(sol)
     random.shuffle(selected)
@@ -53,13 +50,12 @@ def tryImprove(sol: Solution) -> bool:
 
 
 def createSelectedUnselected(sol: Solution):
-    '''Takes a solution dictionary as input and returns two lists - one containing selected items
+    '''Takes a solution instance as input and returns two lists - one containing selected items
     and the other containing unselected items based on the solution.
+
     Args:
-      sol (dict): contains the solution information in three key-value pairs: 'sol' with the set
-    of selected candidates for the solution, 'of' with the objective value, and 'instance' that
-    contains the instance data, with key 'd' representing the distance matrix between all the
-    candidate nodes.
+      sol (Solution): contains the solution information.
+
     Returns:
       selected (list): contains the candidates selected in the current solution.
       unselected (list): contains the unselected candidates in the current solution.
