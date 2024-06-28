@@ -32,21 +32,19 @@ def executeDir():
     result_table = pd.DataFrame(columns=['Solution', 'MaxSum', 'MaxMin', 'Cost', 'Capacity'])
 
     for f in ficheros:
+        start = datetime.datetime.now()
         logging.info('Solving instance %s:', f)
         for i in range(100):
             path = os.path.join(dir, f)
             logging.info(f'Finding solution #{i+1}')
             inst = instance.read_instance(path)
             for method_config in config:
-                start = datetime.datetime.now()
                 sol = grasp.execute(inst, method_config)
-                elapsed = datetime.datetime.now() - start
-                secs = round(elapsed.total_seconds(), 2)
+
                 logging.info('MaxSum objective function value for the best result: %s',
                              sol.of_MaxSum)
                 logging.info('MaxMin objective function value for the best result: %s',
                              sol.of_MaxMin)
-                logging.info('Execution time: %s', secs)
 
                 all_solutions.append(sol)
 
@@ -86,6 +84,10 @@ def executeDir():
         result_table.to_csv(f'output/{f.split(".")[0]}/results_{f.split(".")[0]}_{execution_n}.csv',
                             index=False)
         fig.write_html(f'output/{f.split(".")[0]}/solution_{execution_n}.html')
+
+        elapsed = datetime.datetime.now() - start
+        secs = round(elapsed.total_seconds(), 2)
+        logging.info('Execution time: %s', secs)
 
 
 if __name__ == '__main__':
