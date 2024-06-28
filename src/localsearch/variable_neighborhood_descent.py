@@ -13,7 +13,7 @@ from utils.logger import load_logger
 logging = load_logger(__name__)
 
 
-LS = 'first'
+LS = 'best'
 
 
 def improve(sol: Solution):
@@ -75,7 +75,7 @@ class BestImprove:
             for v in best_unselected:
                 sol.add_to_solution(v, unsel_maxmin, unsel_maxsum_variability)
             for u in worst_selected:
-                sol.remove_from_solution(u, sel_maxsum_variability)
+                sol.remove_from_solution(u, sel_maxmin, sel_maxsum_variability)
             return True
         return False
 
@@ -157,7 +157,7 @@ class FirstImprove:
                     for v in combo_u:
                         sol.add_to_solution(v, max(d_min_u), sum(d_sum_u))
                     for u in combo_s:
-                        sol.remove_from_solution(u, sum(d_sum_s))
+                        sol.remove_from_solution(u, max(d_min_s), sum(d_sum_s))
 
                     return True
         return False

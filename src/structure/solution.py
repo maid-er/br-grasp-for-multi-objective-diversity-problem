@@ -38,22 +38,29 @@ class Solution:
         self.total_capacity += self.instance['c'][u]
         self.solution_set.add(u)
 
-    def remove_from_solution(self, u: int, sum_variation: float = -1):
+    def remove_from_solution(self, u: int, min_distance: float = -1, sum_variation: float = -1):
         '''Removes an element from a solution and updates the objective function value accordingly.
 
         Args:
           u (int): represents the ID of an element (node) that will be removed from the solution.
+          min_distance (float): is an optional parameter with a default value of -1. The default
+        value -1 is used when the first candidate is added to set.
           sum_variation (float): is an optional parameter with a default value of -1. Each time a
         node is removed from the solution, the `ofVariation` is received as an input representing
         the sum of the distances from the removed element `u` and the rest of the nodes in the
         solution.
         '''
         self.solution_set.remove(u)
-        if sum_variation == -1:
+        if sum_variation == -1 or min_distance == -1:
             for s in self.solution_set:
-                self.of_MaxSum -= self.instance['d'][u][s]
+                distance_u_s = self.instance['d'][u][s]
+                self.of_MaxSum -= distance_u_s
+                if self.of_MaxMin == distance_u_s:
+                    self.of_MaxMin = self.minimum_distance_in_solution()
         else:
             self.of_MaxSum -= sum_variation
+            if self.of_MaxMin == min_distance:
+                self.of_MaxMin = self.minimum_distance_in_solution()
         self.total_cost -= self.instance['a'][u]
         self.total_capacity -= self.instance['c'][u]
 
@@ -114,6 +121,14 @@ class Solution:
                 d = self.instance['d'][s][u]
                 if d < min_d:
                     min_d = d
+        return round(min_d, 2)
+
+    def minimum_distance_in_solution(self):
+        min_d = 0x3f3f3f3f
+        for s in self.solution_set:
+            d = self.minimum_distance_to_solution(s)
+            if d < min_d:
+                min_d = d
         return round(min_d, 2)
 
     def is_feasible(self) -> float:

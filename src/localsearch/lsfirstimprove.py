@@ -43,7 +43,7 @@ def tryImprove(sol: Solution) -> bool:
             d_sum_u = sol.distance_sum_to_solution(u, s)
             d_min_u = sol.minimum_distance_to_solution(u, s)
             if d_sum_u > d_sum_s and d_min_u > d_min_s:
-                sol.remove_from_solution(s, d_sum_s)
+                sol.remove_from_solution(s, d_min_s, d_sum_s)
                 sol.add_to_solution(u, d_min_u, d_sum_u)
                 return True
     return False

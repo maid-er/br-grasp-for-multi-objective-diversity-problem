@@ -49,7 +49,7 @@ def try_improvement(sol: Solution) -> bool:
             and sol.satisfies_capacity([best_unselected], [worst_selected])):
 
         sol.add_to_solution(best_unselected, unsel_maxmin, unsel_maxsum_variability)
-        sol.remove_from_solution(worst_selected, sel_maxsum_variability)
+        sol.remove_from_solution(worst_selected, sel_maxmin, sel_maxsum_variability)
         return True
     return False
 
