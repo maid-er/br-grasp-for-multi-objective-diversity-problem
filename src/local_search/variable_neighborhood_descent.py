@@ -3,8 +3,8 @@ Auxiliar function to apply Variable Neighborhood Descent with Best Improve Local
 The worst selected element and best unselected element are interchanged to improve
 the initial solution.
 '''
-from localsearch import best_improve as bs
-from localsearch import first_improve as fs
+from local_search import best_improve as bs
+from local_search import first_improve as fs
 from structure.solution import Solution
 
 from utils.logger import load_logger

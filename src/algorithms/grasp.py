@@ -1,6 +1,6 @@
 '''GRASP execution function (construction and LS calls)'''
 from constructives import biased_randomized
-from localsearch import best_improve, first_improve, variable_neighborhood_descent
+from local_search import best_improve, first_improve, variable_neighborhood_descent
 from structure.solution import Solution
 
 from utils.logger import load_logger
