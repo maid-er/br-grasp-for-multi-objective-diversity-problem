@@ -193,22 +193,33 @@ def is_feasible(sol: dict) -> float:
 
 
 def satisfies_cost(sol: dict, u: int, v: int = -1):
-    removing_candidate = 0
+    # removing_candidate = 0
+    # if v != -1:
+    #     removing_candidate = sol['instance']['a'][v]
+    possible_cost = sol['total_cost']
     if v != -1:
-        removing_candidate = sol['instance']['a'][v]
-    possible_cost = sol['total_cost'] + sol['instance']['a'][u] - removing_candidate
+        for q in v:
+            possible_cost -= sol['instance']['a'][q]
+    for q in u:
+        possible_cost += sol['instance']['a'][q]
 
     return possible_cost < sol['instance']['K']
 
 
 def satisfies_capacity(sol: dict, u: int = -1, v: int = -1):
-    new_candidate = 0
-    if u != -1:
-        new_candidate = sol['instance']['c'][u]
-    removing_candidate = 0
+    # new_candidate = 0
+    # if u != -1:
+    #     new_candidate = sol['instance']['c'][u]
+    # removing_candidate = 0
+    # if v != -1:
+    #     removing_candidate = sol['instance']['c'][v]
+    possible_capacity = sol['total_capacity']
     if v != -1:
-        removing_candidate = sol['instance']['c'][v]
-    possible_capacity = sol['total_capacity'] + new_candidate - removing_candidate
+        for q in v:
+            possible_capacity -= sol['instance']['c'][q]
+    if u != -1:
+        for q in u:
+            possible_capacity += sol['instance']['c'][q]
 
     return possible_capacity > sol['instance']['B']
 

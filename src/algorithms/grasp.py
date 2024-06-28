@@ -1,6 +1,6 @@
 '''GRASP execution function (construction and LS calls)'''
 from constructives import greedy, cgrasp, biased_randomized
-from localsearch import lsbestimprove
+from localsearch import lsbestimprove, variable_neighborhood_descent
 from structure import solution
 
 from utils.logger import load_logger
@@ -52,7 +52,7 @@ def execute(inst: dict, iters: int, config: dict) -> dict:
         logging.info('\t\tMaxMin: %s', sol['of_MaxMin'])
         logging.info('Cost: %s, Capacity: %s', sol['total_cost'], sol['total_capacity'])
 
-        lsbestimprove.improve(sol)
+        variable_neighborhood_descent.improve(sol)
         logging.info("\tLocal Search improvement phase:")
         logging.info('\t\tMaxSum: %s', sol['of_MaxSum'])
         logging.info('\t\tMaxMin: %s', sol['of_MaxMin'])

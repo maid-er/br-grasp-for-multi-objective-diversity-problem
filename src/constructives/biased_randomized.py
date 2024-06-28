@@ -40,7 +40,7 @@ def construct(inst: dict, parameters: dict) -> dict:
     cl = create_candidate_list(sol, u)
     while not solution.satisfies_capacity(sol):
         objective = len(cl) % 2  # 0: MaxSum, 1: MaxMin
-        cl = [c for c in cl if solution.satisfies_cost(sol, c[2])]
+        cl = [c for c in cl if solution.satisfies_cost(sol, [c[2]])]
         if len(cl) == 0:
             logging.error('No feasible solution reached in the construction phase.')
             break
