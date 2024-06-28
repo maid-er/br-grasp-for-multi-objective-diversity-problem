@@ -1,7 +1,7 @@
 '''Auxiliar function to read and process instances'''
 
 
-def read_instance(path: str):
+def read_instance(path: str) -> dict:
     '''Reads and processes data from a file to create a dictionary representing an instance for the
     diversity problem with number of candidate nodes `n`, number of elements to be selected `p`,
     distances between each node pair `d`, cost of each node `a`, and capacity of each node `c`.

@@ -16,10 +16,12 @@ class Solution:
 
         Args:
           u (int): represents the ID of an element (node) that will be added to the solution.
-          ofVariation (float): is an optional parameter with a default value of -1. The default
+          min_distance (float): is an optional parameter with a default value of -1. The default
+        value -1 is used when the first candidate is added to set.
+          sum_variation (float): is an optional parameter with a default value of -1. The default
         value -1 is used when the first candidate is added to sum all the distances from selected
         candidate `u` to the rest of the candidates in the objective function 'of'. Then, each
-        time a new candidate is added, the `ofVariation` is received as an input representing the
+        time a new candidate is added, the `sum_variation` is received as an input representing the
         sum of the distances from the added element `u` and the rest of the nodes in the solution.
         '''
         if sum_variation == -1 or min_distance == -1:
@@ -41,9 +43,10 @@ class Solution:
 
         Args:
           u (int): represents the ID of an element (node) that will be removed from the solution.
-          ofVariation (float): is an optional parameter with a default value of -1. Each time a node
-        is removed from the solution, the `ofVariation` is received as an input representing the sum
-        of the distances from the removed element `u` and the rest of the nodes in the solution.
+          sum_variation (float): is an optional parameter with a default value of -1. Each time a
+        node is removed from the solution, the `ofVariation` is received as an input representing
+        the sum of the distances from the removed element `u` and the rest of the nodes in the
+        solution.
         '''
         self.solution_set.remove(u)
         if sum_variation == -1:
@@ -55,8 +58,8 @@ class Solution:
         self.total_capacity -= self.instance['c'][u]
 
     def contains(self, u: int) -> bool:
-        '''Checks if a given candidate ID `u` is present in the current solution dictionary `sol`
-        under the key 'sol'.
+        '''Checks if a given candidate ID `u` is present in the current solution attribute
+        `solution_set`.
 
         Args:
           u (int): represents the ID of a candidate element (node).
@@ -114,16 +117,27 @@ class Solution:
         return round(min_d, 2)
 
     def is_feasible(self) -> float:
-        '''Checks if a solution has the same number of elements specified in the instance parameter `p`.
+        '''Checks if a solution has at least 2 nodes.
 
         Returns:
-          (bool): indicates whether the length of the 'sol' key in the input dictionary 'sol', that is,
-        the selected candidates in the solution, is equal to the required number of selected elements
-        'p' in the 'instance'.
+          (bool): indicates whether the length of the solution_set attribute, that is, the selected
+        candidates in the solution, is higer than 2.
         '''
         return len(self.solution_set) > 2
 
     def satisfies_cost(self, u: int, v: int = -1):
+        '''Checks if a solution meets the cost constraint.
+
+        Args:
+          u (int): represents the ID of the candidate element (node) that would be added to the
+        solution set.
+          v (int): it is an optional parameter that allows you to specify the ID of the node that
+        might be removed from the solution set.
+
+        Returns:
+          (bool): indicates whether the new solution with node `u` added and `v` removed, would
+        meet the cost constraint.
+        '''
         # removing_candidate = 0
         # if v != -1:
         #     removing_candidate = sol['instance']['a'][v]
@@ -137,6 +151,18 @@ class Solution:
         return possible_cost < self.instance['K']
 
     def satisfies_capacity(self, u: int = -1, v: int = -1):
+        '''Checks if a solution meets the capacity constraint.
+
+        Args:
+          u (int): it is an optional parameter that allows you to specify the ID of the candidate
+        element (node) that might be added to the solution set.
+          v (int): it is an optional parameter that allows you to specify the ID of the node that
+        might be removed from the solution set.
+
+        Returns:
+          (bool): indicates whether the new solution with node `u` added and `v` removed, would
+        meet the capacity constraint.
+        '''
         # new_candidate = 0
         # if u != -1:
         #     new_candidate = sol['instance']['c'][u]
@@ -154,14 +180,7 @@ class Solution:
         return possible_capacity > self.instance['B']
 
     def print_sol(self):
-        '''Prints the solution.
-
-        Args:
-          sol (dict): contains the solution information in three key-value pairs: 'sol' with the set
-        of selected candidates for the solution, 'of' with the objective value, and 'instance' that
-        contains the instance data, with key 'd' representing the distance matrix between all the
-        candidate nodes.
-        '''
+        '''Prints the solution.'''
         print(f"SOL: {self.solution_set}")
         print(f"OF MaxSum: {round(self.of_MaxSum, 2)}")
         print(f"OF MaxMin: {round(self.of_MaxMin, 2)}")

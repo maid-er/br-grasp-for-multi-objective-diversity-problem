@@ -12,24 +12,24 @@ OBJECTIVE_FUNCTIONS = {0: 'MaxSum',
 
 
 def construct(inst: dict, parameters: dict) -> Solution:
-    '''The function constructs a solution for a given instance using a Greedy Randomized Adaptive
-    Search (GRASP) procedure with a specified alpha parameter.
+    '''The function constructs a solution for a given instance using a Biased Greedy Randomized
+    Adaptive Search (B-GRASP) procedure with specified parameters.
 
     Args:
       inst (dict): a dictionary containing the instance data. The dictionary includes the number of
     nodes `n`, the number of nodes to be selected `p`, and a distance matrix `d` representing the
     distances from each node to the rest of the nodes.
     alpha
-      alpha (float): a value that determines the trade-off between exploration and exploitation in
-    the construction of a solution. It is used to calculate a threshold value `th`. This value is
-    used to restrict the candidate list from which the element to be added to the solution is
-    selected.
+      parameters (dict): always contains a 'distibution' key that indicates the probability
+    distribution that will be used to biase the node selection from the candidate list. If the
+    distribution is geometric, it contains another 'beta' key with the its parameter, which
+    determines the trade-off between exploration and exploitation in the construction of a solution.
+    The closer 'beta' is from 0, the more uniform random will be the selection, thus, the
+    construction will have a more exploratory behavior. If 'beta' is closer to 1, a greedier
+    solution will be constructed.
 
     Returns:
-        (dict): contains the solution information in three key-value pairs: 'sol' with the set
-    of selected candidates for the solution, 'of' with the objective value, and 'instance' that
-    contains the instance data, with key 'd' representing the distance matrix between all the
-    candidate nodes.
+        (Solution): contains the solution information..
     '''
     distribution = parameters.get('distribution')
 
@@ -63,15 +63,12 @@ def construct(inst: dict, parameters: dict) -> Solution:
     return sol
 
 
-def create_candidate_list(sol: Solution, first: int):
+def create_candidate_list(sol: Solution, first: int) -> list:
     '''The function creates a list of candidate solutions based on the distance to the given
     solution and excluding the first candidate.
 
     Args:
-      sol (dict): contains the solution information in three key-value pairs: 'sol' with the set
-    of selected candidates for the solution, 'of' with the objective value, and 'instance' that
-    contains the instance data, with key 'd' representing the distance matrix between all the
-    candidate nodes.
+      sol (Solution): contains the solution information.
       first (int): represents the ID of the first candidate element (node) in the solution. This
     index is used to exclude the first candidate from the candidate list that is being created.
 
@@ -95,13 +92,10 @@ def update_candidate_list(sol: Solution, cl: list, added: int):
     candidate adding the distance to the new `added` element.
 
     Args:
-      sol (dict): contains the solution information in three key-value pairs: 'sol' with the set
-    of selected candidates for the solution, 'of' with the objective value, and 'instance' that
-    contains the instance data, with key 'd' representing the distance matrix between all the
-    candidate nodes.
+      sol (Solution): contains the solution information.
       cl (list): a list of candidate solutions. Each candidate solution is represented as a list
-    containing the sum of the distances to the rest of the nodes in the solution and the index
-    of the candidate solution.
+    containing the sum of the distances and the minimum distance to the rest of the nodes in the
+    solution, and the index of the candidate solution.
       added (int): represents the ID of the candidate that was added to the solution.
     '''
     for i in range(len(cl)):

@@ -16,7 +16,7 @@ logging = load_logger(__name__)
 LS = 'first'
 
 
-def improve(sol: dict, max_iter: int = 50):
+def improve(sol: Solution, max_iter: int = 50):
     '''Iteratively tries to improve a solution until no further improvements can be made.
 
     Args:

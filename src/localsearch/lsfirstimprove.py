@@ -9,7 +9,7 @@ import random
 from structure.solution import Solution
 
 
-def improve(sol: dict):
+def improve(sol: Solution):
     '''Iteratively tries to improve a solution until no further improvements can be made.
     Args:
       sol (dict): contains the solution information in three key-value pairs: 'sol' with the set

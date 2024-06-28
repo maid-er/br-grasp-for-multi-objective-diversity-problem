@@ -10,7 +10,7 @@ from utils.logger import load_logger
 logging = load_logger(__name__)
 
 
-def improve(sol: dict, maxIter: int = 50):
+def improve(sol: Solution, maxIter: int = 50):
     '''Iteratively tries to improve a solution until no further improvements can be made.
 
     Args:

@@ -3,7 +3,6 @@ import datetime
 import plotly.express as px
 import os
 import pandas as pd
-import random
 
 from structure import instance, dominance
 from algorithms import grasp
