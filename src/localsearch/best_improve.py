@@ -36,11 +36,15 @@ def try_improvement(sol: Solution, neighborhood: int = [1, 1]) -> bool:
     selection.
 
     Args:
-        sol (Solution): contains the solution information.
+      sol (Solution): contains the solution information.
+      switch (list): indicates the neighborhood being analized in the local search. The first
+    element defines how many nodes will be removed from the solution and the second element
+    determines the number of nodes that will be added to the solution. Defaults to [1, 1] for
+    a standard 1-1 exchange.
 
     Returns:
-    (bool): `True` if the improvement was successful (i.e., if `ofVarSel` is less than
-    `ofVarUnsel`), and `False` otherwise.
+      (bool): `True` if the improvement was successful (i.e., if the objective values are
+    improved and constraints are met with the interchange), and `False` otherwise.
     '''
     (worst_selected,
      sel_maxsum_variability, sel_maxmin,
@@ -63,16 +67,17 @@ def select_interchange(sol: Solution, neighborhood: list):
     of the selected elements).
 
     Args:
-    sol (dict): contains the solution information in three key-value pairs: 'sol' with the set
-    of selected candidates for the solution, 'of' with the objective value, and 'instance' that
-    contains the instance data, with key 'd' representing the distance matrix between all the
-    candidate nodes.
+      sol (Solution): contains the solution information.
 
     Returns:
-    sel (int): worst selected element ID.
-    bestSel (float): sum of distances from `sel` to the rest of the elements in solution.
-    unsel (int): best unselected element ID.
-    bestUnsel (float): sum of distances from `unsel` to the rest of the elements in solution.
+      sel (int): worst selected element ID.
+      best_sum_sel (float): sum of distances from `sel` to the rest of the elements in solution.
+      best_min_sel (float): minimum distance from `sel` to the rest of the elements in solution.
+      unsel (int): best unselected element ID.
+      best_sum_unsel (float): sum of distances from `unsel` to the rest of the elements in
+    solution.
+      best_min_unsel (float): minimum distance from `unsel` to the rest of the elements in
+    solution.
     '''
     n = sol.instance['n']
     sel = -1
