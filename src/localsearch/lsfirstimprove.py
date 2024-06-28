@@ -6,7 +6,7 @@ in the solution.
 '''
 import random
 
-from structure import solution
+from structure.solution import Solution
 
 
 def improve(sol: dict):
@@ -22,7 +22,7 @@ def improve(sol: dict):
         improve = tryImprove(sol)
 
 
-def tryImprove(sol: dict) -> bool:
+def tryImprove(sol: Solution) -> bool:
     '''Attempts to improve a solution by selecting and interchanging a selected element (node)
     with an unselected element. The improvement is obtained if the sum of the distances of the
     new element to the rest of the selected nodes is higher than the distance of the previous
@@ -40,19 +40,19 @@ def tryImprove(sol: dict) -> bool:
     random.shuffle(selected)
     random.shuffle(unselected)
     for s in selected:
-        d_sum_s = solution.distance_sum_to_solution(sol, s)
-        d_min_s = solution.minimum_distance_to_solution(sol, s)
+        d_sum_s = sol.distance_sum_to_solution(s)
+        d_min_s = sol.minimum_distance_to_solution(s)
         for u in unselected:
-            d_sum_u = solution.distance_sum_to_solution(sol, u, s)
-            d_min_u = solution.minimum_distance_to_solution(sol, u, s)
+            d_sum_u = sol.distance_sum_to_solution(u, s)
+            d_min_u = sol.minimum_distance_to_solution(u, s)
             if d_sum_u > d_sum_s and d_min_u > d_min_s:
-                solution.remove_from_solution(sol, s, d_sum_s)
-                solution.add_to_solution(sol, u, d_min_u, d_sum_u)
+                sol.remove_from_solution(s, d_sum_s)
+                sol.add_to_solution(u, d_min_u, d_sum_u)
                 return True
     return False
 
 
-def createSelectedUnselected(sol: dict):
+def createSelectedUnselected(sol: Solution):
     '''Takes a solution dictionary as input and returns two lists - one containing selected items
     and the other containing unselected items based on the solution.
     Args:
@@ -66,9 +66,9 @@ def createSelectedUnselected(sol: dict):
     '''
     selected = []
     unselected = []
-    n = sol['instance']['n']
+    n = sol.instance['n']
     for v in range(n):
-        if solution.contains(sol, v):
+        if sol.contains(v):
             selected.append(v)
         else:
             unselected.append(v)

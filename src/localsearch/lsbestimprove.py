@@ -3,7 +3,7 @@ Auxiliar function to apply Best Improve Local Search.
 The worst selected element and best unselected element are interchanged to improve
 the initial solution.
 '''
-from structure import solution
+from structure.solution import Solution
 
 from utils.logger import load_logger
 
@@ -30,7 +30,7 @@ def improve(sol: dict, maxIter: int = 50):
                  abs_count, count)
 
 
-def try_improvement(sol: dict) -> bool:
+def try_improvement(sol: Solution) -> bool:
     '''Attempts to improve a solution by selecting and interchanging a selected element (node)
     with an unselected element. The improvement is obtained if the sum of the distances of the
     new element to the rest of the selected nodes is higher than the distance of the previous
@@ -50,16 +50,16 @@ def try_improvement(sol: dict) -> bool:
      best_unselected, unsel_maxsum_variability, unsel_maxmin) = select_interchange(sol)
 
     if ((sel_maxsum_variability <= unsel_maxsum_variability) and (sel_maxmin <= unsel_maxmin)
-        and solution.satisfies_cost(sol, [best_unselected], [worst_selected])
-            and solution.satisfies_capacity(sol, [best_unselected], [worst_selected])):
+        and sol.satisfies_cost([best_unselected], [worst_selected])
+            and sol.satisfies_capacity([best_unselected], [worst_selected])):
 
-        solution.add_to_solution(sol, best_unselected, unsel_maxmin, unsel_maxsum_variability)
-        solution.remove_from_solution(sol, worst_selected, sel_maxsum_variability)
+        sol.add_to_solution(best_unselected, unsel_maxmin, unsel_maxsum_variability)
+        sol.remove_from_solution(worst_selected, sel_maxsum_variability)
         return True
     return False
 
 
-def select_interchange(sol: dict):
+def select_interchange(sol: Solution):
     '''Interchanges the worst element in solution (lowest sum of distances to the rest of the
     selected elements) with the best unselected element (highest sum of distances to the rest
     of the selected elements).
@@ -76,24 +76,24 @@ def select_interchange(sol: dict):
       unsel (int): best unselected element ID.
       bestUnsel (float): sum of distances from `unsel` to the rest of the elements in solution.
     '''
-    n = sol['instance']['n']
+    n = sol.instance['n']
     sel = -1
     best_sum_sel = 0x3f3f3f3f
     best_min_sel = 0x3f3f3f3f
     unsel = -1
     best_sum_unsel = 0
     best_min_unsel = 0
-    for v in sol['sol']:
-        d_sum = solution.distance_sum_to_solution(sol, v)
-        d_min = solution.minimum_distance_to_solution(sol, v)
+    for v in sol.solution_set:
+        d_sum = sol.distance_sum_to_solution(v)
+        d_min = sol.minimum_distance_to_solution(v)
         if d_sum <= best_sum_sel and d_min <= best_min_sel:
             best_sum_sel = d_sum
             best_min_sel = d_min
             sel = v
     for v in range(n):
-        if not solution.contains(sol, v):
-            d_sum = solution.distance_sum_to_solution(sol, v, without=sel)
-            d_min = solution.minimum_distance_to_solution(sol, v, without=sel)
+        if not sol.contains(v):
+            d_sum = sol.distance_sum_to_solution(v, without=sel)
+            d_min = sol.minimum_distance_to_solution(v, without=sel)
             if d_sum >= best_sum_unsel and d_min >= best_min_unsel:
                 best_sum_unsel = d_sum
                 best_min_unsel = d_min

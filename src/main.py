@@ -5,7 +5,7 @@ import os
 import pandas as pd
 import random
 
-from structure import solution, instance
+from structure import instance, dominance
 from algorithms import grasp
 
 from utils.config import read_config
@@ -16,12 +16,12 @@ logging = load_logger(__name__)
 config = read_config('config')
 
 
-def executeInstance():
-    random.seed(1309)
-    path = "instances/preliminar/MDG-a_1_100_m10.txt"
-    inst = instance.read_instance(path)
-    sol = grasp.execute(inst, 100, config[0])
-    solution.print_sol(sol)
+# def executeInstance():
+#     random.seed(1309)
+#     path = "instances/preliminar/MDG-a_1_100_m10.txt"
+#     inst = instance.read_instance(path)
+#     sol = grasp.execute(inst, 100, config[0])
+#     solution.print_sol(sol)
 
 
 def executeDir():
@@ -44,33 +44,31 @@ def executeDir():
                 elapsed = datetime.datetime.now() - start
                 secs = round(elapsed.total_seconds(), 2)
                 logging.info('MaxSum objective function value for the best result: %s',
-                             sol['of_MaxSum'])
+                             sol.of_MaxSum)
                 logging.info('MaxMin objective function value for the best result: %s',
-                             sol['of_MaxMin'])
+                             sol.of_MaxMin)
                 logging.info('Execution time: %s', secs)
 
                 all_solutions.append(sol)
 
-                selected_nodes = ' - '.join([str(s+1) for s in sorted(sol['sol'])])
-                result_table.loc[len(result_table)] = [selected_nodes] + [sol.get(key)
-                                                                          for key in [
-                                                                              'of_MaxSum',
-                                                                              'of_MaxMin',
-                                                                              'total_cost',
-                                                                              'total_capacity']]
+                selected_nodes = ' - '.join([str(s+1) for s in sorted(sol.solution_set)])
+                result_table.loc[len(result_table)] = [selected_nodes] + [sol.of_MaxSum,
+                                                                          sol.of_MaxMin,
+                                                                          sol.total_cost,
+                                                                          sol.total_capacity]
 
             logging.info('Final solution:')
-            logging.info('Selected elements: %s', sol['sol'])
+            logging.info('Selected elements: %s', sol.solution_set)
             logging.info('MaxSum objective function value for the best result: %s',
-                         sol['of_MaxSum'])
+                         sol.of_MaxSum)
             logging.info('MaxMin objective function value for the best result: %s',
-                         sol['of_MaxMin'])
-            logging.info('Cost: %s, Capacity: %s', sol['total_cost'], sol['total_capacity'])
+                         sol.of_MaxMin)
+            logging.info('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
 
         fig = px.scatter(result_table, x='MaxMin', y='MaxSum', color='Solution')
         fig.show()
 
-        is_non_dominated = solution.get_nondominated_solutions(all_solutions)
+        is_non_dominated = dominance.get_nondominated_solutions(all_solutions)
         result_table = result_table[is_non_dominated].reset_index(drop=True)
 
         result_table['Constraint values'] = ('Cost: ' + result_table.Cost.astype(str) +

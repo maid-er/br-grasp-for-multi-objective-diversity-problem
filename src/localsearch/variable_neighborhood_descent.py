@@ -6,7 +6,7 @@ the initial solution.
 import random
 from itertools import combinations
 
-from structure import solution
+from structure.solution import Solution
 
 from utils.logger import load_logger
 
@@ -55,7 +55,7 @@ def improve(sol: dict, max_iter: int = 50):
 
 
 class BestImprove:
-    def try_improvement(self, sol: dict, neighborhood) -> bool:
+    def try_improvement(self, sol: Solution, neighborhood: int) -> bool:
         '''Attempts to improve a solution by selecting and interchanging a selected element (node)
         with an unselected element. The improvement is obtained if the sum of the distances of the
         new element to the rest of the selected nodes is higher than the distance of the previous
@@ -79,13 +79,13 @@ class BestImprove:
         if (sel_maxsum_variability <= unsel_maxsum_variability) and (sel_maxmin <= unsel_maxmin):
 
             for v in best_unselected:
-                solution.add_to_solution(sol, v, unsel_maxmin, unsel_maxsum_variability)
+                sol.add_to_solution(v, unsel_maxmin, unsel_maxsum_variability)
             for u in worst_selected:
-                solution.remove_from_solution(sol, u, sel_maxsum_variability)
+                sol.remove_from_solution(u, sel_maxsum_variability)
             return True
         return False
 
-    def select_interchange(self, sol: dict, neighborhood: list):
+    def select_interchange(self, sol: Solution, neighborhood: list):
         '''Interchanges the worst element in solution (lowest sum of distances to the rest of the
         selected elements) with the best unselected element (highest sum of distances to the rest
         of the selected elements).
@@ -102,28 +102,28 @@ class BestImprove:
         unsel (int): best unselected element ID.
         bestUnsel (float): sum of distances from `unsel` to the rest of the elements in solution.
         '''
-        n = sol['instance']['n']
+        n = sol.instance['n']
         sel = -1
         best_sum_sel = 0x3f3f3f3f
         best_min_sel = 0x3f3f3f3f
         unsel = -1
         best_sum_unsel = 0
         best_min_unsel = 0
-        for combo in combinations(sol['sol'], neighborhood[0]):
-            d_sum = [solution.distance_sum_to_solution(sol, v) for v in combo]
-            d_min = [solution.minimum_distance_to_solution(sol, v) for v in combo]
+        for combo in combinations(sol.solution_set, neighborhood[0]):
+            d_sum = [sol.distance_sum_to_solution(v) for v in combo]
+            d_min = [sol.minimum_distance_to_solution(v) for v in combo]
             if sum(d_sum) <= best_sum_sel and max(d_min) <= best_min_sel:
                 best_sum_sel = sum(d_sum)
                 best_min_sel = max(d_min)
                 sel = list(combo)
 
         for combo in combinations(range(n), neighborhood[1]):
-            if not any(solution.contains(sol, v) for v in combo):
-                d_sum = [solution.distance_sum_to_solution(sol, v, without=sel) for v in combo]
-                d_min = [solution.minimum_distance_to_solution(sol, v, without=sel) for v in combo]
+            if not any(sol.contains(v) for v in combo):
+                d_sum = [sol.distance_sum_to_solution(v, without=sel) for v in combo]
+                d_min = [sol.minimum_distance_to_solution(v, without=sel) for v in combo]
                 if sum(d_sum) >= best_sum_unsel and max(d_min) >= best_min_unsel \
-                    and solution.satisfies_cost(sol, combo, sel) \
-                        and solution.satisfies_capacity(sol, combo, sel):
+                    and sol.satisfies_cost(combo, sel) \
+                        and sol.satisfies_capacity(combo, sel):
 
                     best_sum_unsel = sum(d_sum)
                     best_min_unsel = max(d_min)
@@ -133,7 +133,7 @@ class BestImprove:
 
 
 class FirstImprove:
-    def tryImprove(self, sol: dict, switch) -> bool:
+    def tryImprove(self, sol: Solution, switch) -> bool:
         '''Attempts to improve a solution by selecting and interchanging a selected element (node)
         with an unselected element. The improvement is obtained if the sum of the distances of the
         new element to the rest of the selected nodes is higher than the distance of the previous
@@ -151,24 +151,24 @@ class FirstImprove:
         random.shuffle(selected)
         random.shuffle(unselected)
         for combo_s in combinations(selected, switch[0]):
-            d_sum_s = [solution.distance_sum_to_solution(sol, v) for v in combo_s]
-            d_min_s = [solution.minimum_distance_to_solution(sol, v) for v in combo_s]
+            d_sum_s = [sol.distance_sum_to_solution(v) for v in combo_s]
+            d_min_s = [sol.minimum_distance_to_solution(v) for v in combo_s]
             for combo_u in combinations(selected, switch[1]):
-                d_sum_u = [solution.distance_sum_to_solution(sol, v) for v in combo_u]
-                d_min_u = [solution.minimum_distance_to_solution(sol, v) for v in combo_u]
+                d_sum_u = [sol.distance_sum_to_solution(v) for v in combo_u]
+                d_min_u = [sol.minimum_distance_to_solution(v) for v in combo_u]
                 if sum(d_sum_u) > sum(d_sum_s) and max(d_min_u) > max(d_min_s) \
-                    and solution.satisfies_cost(sol, combo_u, combo_s) \
-                        and solution.satisfies_capacity(sol, combo_u, combo_s):
+                    and sol.satisfies_cost(combo_u, combo_s) \
+                        and sol.satisfies_capacity(combo_u, combo_s):
 
                     for v in combo_u:
-                        solution.add_to_solution(sol, v, max(d_min_u), sum(d_sum_u))
+                        sol.add_to_solution(v, max(d_min_u), sum(d_sum_u))
                     for u in combo_s:
-                        solution.remove_from_solution(sol, u, sum(d_sum_s))
+                        sol.remove_from_solution(u, sum(d_sum_s))
 
                     return True
         return False
 
-    def createSelectedUnselected(self, sol: dict):
+    def createSelectedUnselected(self, sol: Solution):
         '''Takes a solution dictionary as input and returns two lists - one containing selected items
         and the other containing unselected items based on the solution.
         Args:
@@ -182,9 +182,9 @@ class FirstImprove:
         '''
         selected = []
         unselected = []
-        n = sol['instance']['n']
+        n = sol.instance['n']
         for v in range(n):
-            if solution.contains(sol, v):
+            if sol.contains(v):
                 selected.append(v)
             else:
                 unselected.append(v)

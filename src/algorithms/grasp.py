@@ -1,14 +1,14 @@
 '''GRASP execution function (construction and LS calls)'''
-from constructives import greedy, cgrasp, biased_randomized
+from constructives import biased_randomized
 from localsearch import lsbestimprove, lsfirstimprove, variable_neighborhood_descent
-from structure import solution
+from structure.solution import Solution
 
 from utils.logger import load_logger
 
 logging = load_logger(__name__)
 
 
-def execute(inst: dict, iters: int, config: dict) -> dict:
+def execute(inst: dict, iters: int, config: dict) -> Solution:
     '''The function executes a GRASP algorithm with a specified number of iterations and a given
     alpha value, selecting the best solution found during the iterations.
 
@@ -41,26 +41,16 @@ def execute(inst: dict, iters: int, config: dict) -> dict:
     best = None
     # for i in range(iters):
     # logging.info("IT %s", i + 1)
-    if strategy == 'Restricted list':
-        sol = cgrasp.construct(inst, parameters)
-    elif strategy == 'Biased Randomized':
-        sol = biased_randomized.construct(inst, parameters)
-    else:
-        sol = greedy.construct(inst)
+    sol = biased_randomized.construct(inst, parameters)
     logging.info("\tConstruction phase:")
-    logging.info('\t\tMaxSum: %s', sol['of_MaxSum'])
-    logging.info('\t\tMaxMin: %s', sol['of_MaxMin'])
-    logging.info('Cost: %s, Capacity: %s', sol['total_cost'], sol['total_capacity'])
+    logging.info('\t\tMaxSum: %s', sol.of_MaxSum)
+    logging.info('\t\tMaxMin: %s', sol.of_MaxMin)
+    logging.info('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
 
     lsbestimprove.improve(sol)
     logging.info("\tLocal Search improvement phase:")
-    logging.info('\t\tMaxSum: %s', sol['of_MaxSum'])
-    logging.info('\t\tMaxMin: %s', sol['of_MaxMin'])
-    logging.info('Cost: %s, Capacity: %s', sol['total_cost'], sol['total_capacity'])
-    if solution.is_dominant(sol, best):
-        best = sol
-    logging.info("\tBest result so far:")
-    logging.info('\t\tMaxSum: %s', best['of_MaxSum'])
-    logging.info('\t\tMaxMin: %s', best['of_MaxMin'])
-    logging.info('Cost: %s, Capacity: %s', sol['total_cost'], sol['total_capacity'])
-    return best
+    logging.info('\t\tMaxSum: %s', sol.of_MaxSum)
+    logging.info('\t\tMaxMin: %s', sol.of_MaxMin)
+    logging.info('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
+
+    return sol
