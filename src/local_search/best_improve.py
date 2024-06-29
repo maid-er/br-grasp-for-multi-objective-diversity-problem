@@ -5,6 +5,7 @@ the initial solution.
 '''
 from itertools import combinations
 
+from structure.instance import get_all_pairwise_distances
 from structure.solution import Solution
 from utils.logger import load_logger
 
@@ -87,23 +88,25 @@ def select_interchange(sol: Solution, neighborhood: list):
     best_sum_unsel = 0
     best_min_unsel = 0
     for combo in combinations(sol.solution_set, neighborhood[0]):
-        d_sum = [sol.distance_sum_to_solution(v) for v in combo]
-        d_min = [sol.minimum_distance_to_solution(v) for v in combo]
-        if sum(d_sum) <= best_sum_sel and max(d_min) <= best_min_sel:
+        pairwise_d = get_all_pairwise_distances(sol.instance, combo)
+        d_sum = [sol.distance_sum_to_solution(v) for v in combo] + pairwise_d
+        d_min = [sol.minimum_distance_to_solution(v) for v in combo] + pairwise_d
+        if sum(d_sum) <= best_sum_sel and min(d_min) <= best_min_sel:
             best_sum_sel = sum(d_sum)
-            best_min_sel = max(d_min)
+            best_min_sel = min(d_min)
             sel = list(combo)
 
     for combo in combinations(range(n), neighborhood[1]):
         if not any(sol.contains(v) for v in combo):
-            d_sum = [sol.distance_sum_to_solution(v, without=sel) for v in combo]
-            d_min = [sol.minimum_distance_to_solution(v, without=sel) for v in combo]
-            if sum(d_sum) >= best_sum_unsel and max(d_min) >= best_min_unsel \
+            pairwise_d = get_all_pairwise_distances(sol.instance, combo)
+            d_sum = [sol.distance_sum_to_solution(v, without=sel) for v in combo] + pairwise_d
+            d_min = [sol.minimum_distance_to_solution(v, without=sel) for v in combo] + pairwise_d
+            if sum(d_sum) >= best_sum_unsel and min(d_min) >= best_min_unsel \
                 and sol.satisfies_cost(combo, sel) \
                     and sol.satisfies_capacity(combo, sel):
 
                 best_sum_unsel = sum(d_sum)
-                best_min_unsel = max(d_min)
+                best_min_unsel = min(d_min)
                 unsel = list(combo)
 
     return sel, best_sum_sel, best_min_sel, unsel, best_sum_unsel, best_min_unsel

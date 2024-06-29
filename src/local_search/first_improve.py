@@ -7,6 +7,7 @@ in the solution.
 import random
 from itertools import combinations
 
+from structure.instance import get_all_pairwise_distances
 from structure.solution import Solution
 
 
@@ -42,19 +43,21 @@ def try_improvement(sol: Solution, switch: list = [1, 1]) -> bool:
     random.shuffle(selected)
     random.shuffle(unselected)
     for combo_s in combinations(selected, switch[0]):
-        d_sum_s = [sol.distance_sum_to_solution(v) for v in combo_s]
-        d_min_s = [sol.minimum_distance_to_solution(v) for v in combo_s]
+        pairwise_d = get_all_pairwise_distances(sol.instance, combo_s)
+        d_sum_s = [sol.distance_sum_to_solution(v) for v in combo_s] + pairwise_d
+        d_min_s = [sol.minimum_distance_to_solution(v) for v in combo_s] + pairwise_d
         for combo_u in combinations(unselected, switch[1]):
-            d_sum_u = [sol.distance_sum_to_solution(v) for v in combo_u]
-            d_min_u = [sol.minimum_distance_to_solution(v) for v in combo_u]
-            if sum(d_sum_u) > sum(d_sum_s) and max(d_min_u) > max(d_min_s) \
+            pairwise_d = get_all_pairwise_distances(sol.instance, combo_u)
+            d_sum_u = [sol.distance_sum_to_solution(v) for v in combo_u] + pairwise_d
+            d_min_u = [sol.minimum_distance_to_solution(v) for v in combo_u] + pairwise_d
+            if sum(d_sum_u) > sum(d_sum_s) and min(d_min_u) > min(d_min_s) \
                 and sol.satisfies_cost(combo_u, combo_s) \
                     and sol.satisfies_capacity(combo_u, combo_s):
 
                 for v in combo_u:
-                    sol.add_to_solution(v, max(d_min_u), sum(d_sum_u))
+                    sol.add_to_solution(v, min(d_min_u), sum(d_sum_u))
                 for u in combo_s:
-                    sol.remove_from_solution(u, max(d_min_s), sum(d_sum_s))
+                    sol.remove_from_solution(u, min(d_min_s), sum(d_sum_s))
 
                 return True
     return False

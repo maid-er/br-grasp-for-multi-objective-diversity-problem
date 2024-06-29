@@ -45,3 +45,11 @@ def read_instance(path: str) -> dict:
         instance['K'] = K  # Maximum budget
         instance['B'] = B  # Minimum capacity
     return instance
+
+
+def get_all_pairwise_distances(instance, node_list):
+    distance_between = []
+    for i, u in enumerate(node_list):
+        for v in node_list[i+1:]:
+            distance_between.append(instance['d'][u][v])
+    return distance_between
