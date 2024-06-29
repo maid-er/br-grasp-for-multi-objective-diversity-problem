@@ -6,7 +6,7 @@ import pandas as pd
 from algorithms import grasp
 from structure import instance, dominance
 
-from utils.results import pareto_front
+from utils import results
 from utils.config import read_config
 from utils.logger import load_logger
 
@@ -32,13 +32,15 @@ def execute_dir():
     result_table = pd.DataFrame(columns=['Solution', 'MaxSum', 'MaxMin', 'Cost', 'Capacity'])
 
     for f in ficheros:
-        start = datetime.datetime.now()
         logging.info('Solving instance %s:', f)
-        for i in range(100):
-            path = os.path.join(dir, f)
-            logging.info(f'Finding solution #{i+1}')
-            inst = instance.read_instance(path)
-            for method_config in config:
+        # Read instance
+        path = os.path.join(dir, f)
+        inst = instance.read_instance(path)
+        for method_config in config:
+            start = datetime.datetime.now()
+            for i in range(method_config.get('iterations')):
+                # Construct a solution for each iteration
+                logging.info(f'Finding solution #{i+1}')
                 sol = grasp.execute(inst, method_config)
                 all_solutions.append(sol)
 
@@ -53,33 +55,26 @@ def execute_dir():
                                                                           sol.total_cost,
                                                                           sol.total_capacity]
 
-            logging.info('Final solution:')
-            logging.info('Selected elements: %s', sol.solution_set)
-            logging.info('MaxSum objective function value for the best result: %s',
-                         sol.of_MaxSum)
-            logging.info('MaxMin objective function value for the best result: %s',
-                         sol.of_MaxMin)
-            logging.info('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
+                logging.info('Final solution:')
+                logging.info('Selected elements: %s', sol.solution_set)
+                logging.info('MaxSum objective function value for the best result: %s',
+                             sol.of_MaxSum)
+                logging.info('MaxMin objective function value for the best result: %s',
+                             sol.of_MaxMin)
+                logging.info('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
 
-        is_non_dominated = dominance.get_nondominated_solutions(all_solutions)
-        result_table = result_table[is_non_dominated].reset_index(drop=True)
+            # Find non-dominated solutions among all constructions
+            is_non_dominated = dominance.get_nondominated_solutions(all_solutions)
+            result_table = result_table[is_non_dominated].reset_index(drop=True)
+            # Build and plot Pareto Front
+            fig = results.pareto_front(result_table, f)
+            # Save table and plot with results
+            results.save(result_table, fig, f)
 
-        fig = pareto_front(result_table, f)
-
-        with open('temp/execution.txt', 'r+') as ex_file:
-            execution_n = ex_file.read()
-            ex_file.seek(0)
-            ex_file.write(str(int(execution_n) + 1))
-            ex_file.truncate()
-        os.makedirs(f'output/{f.split(".")[0]}', exist_ok=True)
-
-        result_table.to_csv(f'output/{f.split(".")[0]}/results_{f.split(".")[0]}_{execution_n}.csv',
-                            index=False)
-        fig.write_html(f'output/{f.split(".")[0]}/solution_{execution_n}.html')
-
-        elapsed = datetime.datetime.now() - start
-        secs = round(elapsed.total_seconds(), 2)
-        logging.info('Execution time: %s', secs)
+            # Compute execution time
+            elapsed = datetime.datetime.now() - start
+            secs = round(elapsed.total_seconds(), 2)
+            logging.info('Execution time: %s', secs)
 
 
 if __name__ == '__main__':

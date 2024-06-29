@@ -12,15 +12,13 @@ from utils.logger import load_logger
 logging = load_logger(__name__)
 
 
-LS = 'best'
-
-
-def improve(sol: Solution):
+def improve(sol: Solution, config: dict):
     '''Iteratively tries to improve a solution until no further improvements can be made.
 
     Args:
       sol (Solution): contains the solution information.
     '''
+    ls_scheme = config.get('scheme')
     neighborhoods = {1: [1, 1],
                      2: [1, 2],
                      3: [2, 1]}
@@ -32,9 +30,9 @@ def improve(sol: Solution):
     while improve or nb <= len(neighborhoods):
         switch = neighborhoods[nb]
         logging.info('Local searching in neighbourhood %s with switch type %s.', nb, switch)
-        if LS == 'best':
+        if ls_scheme == 'Best':
             improve = bs.try_improvement(sol, switch)
-        else:
+        elif ls_scheme == 'First':
             improve = fs.try_improvement(sol, switch)
         if not improve:
             logging.info('Unable to improve solution. Change neighborhood.')

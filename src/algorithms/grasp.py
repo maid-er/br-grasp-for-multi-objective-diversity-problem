@@ -24,9 +24,13 @@ def execute(inst: dict, config: dict) -> Solution:
     '''
     strategy = config.get('construction_method')
     parameters = config.get('parameters')
+    ls_strategy = config.get('strategy')
+    ls_scheme = config.get('scheme')
 
-    logging.info('Executing GRASP algorithm with %s construction method and parameters %s',
-                 strategy, parameters)
+    logging.info('Executing GRASP algorithm with: ')
+    logging.info('\t%s construction method and parameters %s', strategy, parameters)
+    logging.info('\t%s Local Search strategy fllowing the %s Improve scheme',
+                 ls_strategy, ls_scheme)
 
     sol = biased_randomized.construct(inst, parameters)
     logging.info("\tConstruction phase:")
@@ -34,13 +38,13 @@ def execute(inst: dict, config: dict) -> Solution:
     logging.info('\t\tMaxMin: %s', sol.of_MaxMin)
     logging.info('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
 
-    ls_strategy = config.get('strategy')
-    if ls_strategy == 'Best':
-        best_improve.improve(sol)
-    elif ls_strategy == 'First':
-        first_improve.improve(sol)
+    if ls_strategy == 'Standard':
+        if ls_scheme == 'Best':
+            best_improve.improve(sol)
+        elif ls_scheme == 'First':
+            first_improve.improve(sol)
     elif ls_strategy == 'VND':
-        variable_neighborhood_descent.improve(sol)
+        variable_neighborhood_descent.improve(sol, config)
     else:
         logging.error('Invalid Local Search strategy %s.', ls_strategy)
     logging.info("\tLocal Search improvement phase:")

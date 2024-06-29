@@ -1,30 +1,8 @@
-# - construction_method: 'Biased Randomized'
-#   parameters:
-#     distribution: 'Triangular'
-
-# - construction_method: 'Biased Randomized'
-#   parameters:
-#     distribution: 'Geometric'
-#     beta: 0.1
-
-# - construction_method: 'Biased Randomized'
-#   parameters:
-#     distribution: 'Geometric'
-#     beta: 0.3
-
-- construction_method: 'Biased Randomized'  # AltBwS or AltInS
+- iterations: 100  # Number of constructions
+  construction_method: 'AltBwS'  # AltBwS or AltInS
   parameters:
     distribution: 'Geometric'  # Triangular or Geometric
     beta: 0.5  # From 0 to 1
   local_search: 'Dominance'  # Dominance or Alternate
-  strategy: 'Best'  # Best, First, or VND
-
-# - construction_method: 'Biased Randomized'
-#   parameters:
-#     distribution: 'Geometric'
-#     beta: 0.7
-
-# - construction_method: 'Biased Randomized'
-#   parameters:
-#     distribution: 'Geometric'
-#     beta: 0.9
+  strategy: 'VND'  # Standard, or VND
+  scheme: 'Best'  # Best, or First
