@@ -34,13 +34,13 @@ def improve(sol: Solution, config: dict):
             improve = bs.try_improvement(sol, switch)
         elif ls_scheme == 'First':
             improve = fs.try_improvement(sol, switch)
-        if not improve:
+        if improve:
+            logging.info('Improved solution.')
+            nb = 1
+        else:
             logging.info('Unable to improve solution. Change neighborhood.')
             count += 1
             nb += 1
-        else:
-            logging.info('Improved solution.')
-            nb = 1
         abs_count += 1
     logging.info('Local search stopped with %s total IT and %s IT with no improvements.',
                  abs_count, count)
