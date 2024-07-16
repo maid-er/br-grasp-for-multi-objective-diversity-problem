@@ -43,6 +43,8 @@ def construct(inst: dict, parameters: dict) -> Solution:
         cl = [c for c in cl if sol.satisfies_cost([c[2]])]
         if len(cl) == 0:
             logging.error('No feasible solution reached in the construction phase.')
+            sol = Solution(inst)
+            sol.of_MaxMin = 0
             break
         cl.sort(key=lambda row: -row[objective])
         logging.info('Sorted biased candidate list with %s objective.',
