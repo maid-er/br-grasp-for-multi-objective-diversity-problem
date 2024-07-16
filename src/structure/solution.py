@@ -194,11 +194,3 @@ class Solution:
                 possible_capacity += self.instance['c'][q]
 
         return possible_capacity > self.instance['B']
-
-    def print_sol(self):
-        '''Prints the solution.'''
-        print(f"SOL: {self.solution_set}")
-        print(f"OF MaxSum: {round(self.of_MaxSum, 2)}")
-        print(f"OF MaxMin: {round(self.of_MaxMin, 2)}")
-        print(f"Total cost: {round(self.total_cost, 2)}")
-        print(f"Total capacity: {round(self.total_capacity, 2)}")
