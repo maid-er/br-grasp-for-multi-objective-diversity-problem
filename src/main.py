@@ -13,7 +13,7 @@ config = read_config('config')
 if __name__ == '__main__':
     logging.info('Initializing diversity maximization algorithm...')
 
-    path = os.path.join('instances', 'USCAP')
+    path = os.path.join('instances', 'GDP')
 
     # execution.execute_instance(path, config)
     execution.execute_directory(path, config)
