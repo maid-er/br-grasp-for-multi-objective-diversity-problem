@@ -31,7 +31,7 @@ def execute(inst: dict, config: dict) -> Solution:
 
     logging.info('Executing GRASP algorithm with: ')
     logging.info('\t%s construction method and parameters %s', strategy, parameters)
-    logging.info('\t%s Local Search strategy fllowing the %s Improve scheme',
+    logging.info('\t%s Local Search strategy following the %s Improve scheme',
                  ls_strategy, ls_scheme)
 
     # Construction phase (Biased GRASP)
