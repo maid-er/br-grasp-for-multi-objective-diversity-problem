@@ -5,13 +5,13 @@ import pandas as pd
 from algorithms import grasp
 from structure import instance, dominance
 
-from utils import results
+from utils.results import OutputHandler
 from utils.logger import load_logger
 
 logging = load_logger(__name__)
 
 
-def execute_instance(path, config):
+def execute_instance(path: str, config: dict, results: OutputHandler):
 
     all_solutions = []
     result_table = pd.DataFrame(columns=['Solution', 'MaxSum', 'MaxMin', 'Cost', 'Capacity'])
@@ -45,6 +45,12 @@ def execute_instance(path, config):
     # Find non-dominated solutions among all constructions
     is_non_dominated = dominance.get_nondominated_solutions(all_solutions)
     result_table = result_table[is_non_dominated].reset_index(drop=True)
+
+    # Compute execution time
+    elapsed = datetime.datetime.now() - start
+    secs = round(elapsed.total_seconds(), 2)
+    logging.info('Execution time: %s', secs)
+
     # Build and plot Pareto Front
     fig = results.pareto_front(result_table, path)
     # Save table and plot with results
@@ -53,24 +59,21 @@ def execute_instance(path, config):
                         f'_LS{config.get("scheme")}')
     results.save(result_table, fig, algorithm_params, path)
 
-    # Compute execution time
-    elapsed = datetime.datetime.now() - start
-    secs = round(elapsed.total_seconds(), 2)
-    logging.info('Execution time: %s', secs)
-
     return secs
 
 
-def execute_directory(directory, config):
+def execute_directory(directory: str, config: dict):
     with os.scandir(directory) as files:
         ficheros = [file.name for file in files if file.is_file() and file.name.endswith(".txt")]
 
     experiments_table = pd.DataFrame(columns=['Instance', 'Execution time'])
 
+    results = OutputHandler()
+
     for f in ficheros:
         path = os.path.join(directory, f)
         for method_config in config:
-            execution_time = execute_instance(path, method_config)
+            execution_time = execute_instance(path, method_config, results)
 
             experiments_table.loc[len(experiments_table)] = [f.split('.')[0], execution_time]
 
@@ -78,5 +81,5 @@ def execute_directory(directory, config):
                                 f'_beta{method_config.get("parameters").get("beta")}'
                                 f'_LS{method_config.get("scheme")}')
             experiments_table.to_csv(
-                os.path.join('output', f'{algorithm_params}.csv'),
+                os.path.join('output', f'{algorithm_params}_{results.execution_n}.csv'),
                 index=False)
