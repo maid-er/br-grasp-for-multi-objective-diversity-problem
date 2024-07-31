@@ -79,17 +79,17 @@ class Solution:
         '''
         return u in self.solution_set
 
-    def distance_sum_to_solution(self, u: int, without: int = -1) -> float:
+    def distance_sum_to_solution(self, u: int, without: list = [-1]) -> float:
         '''Calculates the sum of the distances from a given node to the rest of the nodes in the
         solution graph, excluding the node specified with the optional input `without`.
 
         Args:
           u (int): represents the ID of the candidate element (node) from which we want to calculate
         the sum of the distances to the rest of the nodes.
-          without (int): it is an optional parameter that allows you to specify the ID of the node
-        that should be excluded from the calculation of the sum of the distances. If the `without`
-        parameter is provided, the function will skip calculating the distance to the specified
-        value in the solution.
+          without (list): it is an optional parameter that allows you to specify the ID of the
+        node(s) that should be excluded from the calculation of the sum of the distances. If the
+        `without` parameter is provided, the function will skip calculating the distance to the
+        specified value in the solution.
 
         Returns:
           (float): returns the sum of the distances from a given node `u` to the rest of the nodes
@@ -97,21 +97,21 @@ class Solution:
         '''
         d = 0
         for s in self.solution_set:
-            if s != without:
+            if s not in without:
                 d += self.instance['d'][s][u]
         return round(d, 2)
 
-    def minimum_distance_to_solution(self, u: int, without: int = -1) -> float:
+    def minimum_distance_to_solution(self, u: int, without: list = [-1]) -> float:
         '''Calculates the minimum distance from a given node to the rest of the nodes in the
         solution graph, excluding the node specified with the optional input `without`.
 
         Args:
           u (int): represents the ID of the candidate element (node) from which we want to find the
         minimum distance to the rest of the nodes.
-          without (int): it is an optional parameter that allows you to specify the ID of the node
-        that should be excluded from the search of the minimum distance. If the `without` parameter
-        is provided, the function will skip calculating the distance to the specified value in the
-        solution.
+          without (list): it is an optional parameter that allows you to specify the ID of the
+        node(s) that should be excluded from the search of the minimum distance. If the `without`
+        parameter is provided, the function will skip calculating the distance to the specified
+        value in the solution.
 
         Returns:
           (float): returns the minimum distance value from a given node `u` to the rest of the
@@ -119,7 +119,7 @@ class Solution:
         '''
         min_d = 0x3f3f3f3f
         for s in self.solution_set:
-            if s != without and s != u:
+            if s not in without and s != u:
                 d = self.instance['d'][s][u]
                 if d < min_d:
                     min_d = d
