@@ -5,6 +5,7 @@ the initial solution.
 '''
 from itertools import combinations
 
+from structure.dominance import exchange_is_dominant
 from structure.instance import get_all_pairwise_distances
 from structure.solution import Solution
 from utils.logger import load_logger
@@ -50,10 +51,12 @@ def try_improvement(sol: Solution, neighborhood: int = [1, 1]) -> bool:
     (worst_selected,
      sel_maxsum_variability, sel_maxmin,
      best_unselected,
-     unsel_maxsum_variability, unsel_maxmin) = select_interchange(sol, neighborhood)
+     unsel_maxsum_variability, unsel_maxmin) = select_exchange(sol, neighborhood)
 
-    if (sel_maxsum_variability <= unsel_maxsum_variability) and (sel_maxmin <= unsel_maxmin):
+    new_dominates_old = exchange_is_dominant(sel_maxsum_variability, sel_maxmin,
+                                             unsel_maxsum_variability, unsel_maxmin)
 
+    if new_dominates_old:
         for v in best_unselected:
             sol.add_to_solution(v, unsel_maxmin, unsel_maxsum_variability)
         for u in worst_selected:
@@ -62,7 +65,7 @@ def try_improvement(sol: Solution, neighborhood: int = [1, 1]) -> bool:
     return False
 
 
-def select_interchange(sol: Solution, neighborhood: list):
+def select_exchange(sol: Solution, neighborhood: list):
     '''Interchanges the worst element in solution (lowest sum of distances to the rest of the
     selected elements) with the best unselected element (highest sum of distances to the rest
     of the selected elements).

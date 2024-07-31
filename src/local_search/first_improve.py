@@ -7,6 +7,7 @@ in the solution.
 import random
 from itertools import combinations
 
+from structure.dominance import exchange_is_dominant
 from structure.instance import get_all_pairwise_distances
 from structure.solution import Solution
 
@@ -50,7 +51,11 @@ def try_improvement(sol: Solution, switch: list = [1, 1]) -> bool:
             pairwise_d = get_all_pairwise_distances(sol.instance, combo_u)
             d_sum_u = [sol.distance_sum_to_solution(v) for v in combo_u] + pairwise_d
             d_min_u = [sol.minimum_distance_to_solution(v) for v in combo_u] + pairwise_d
-            if sum(d_sum_u) > sum(d_sum_s) and min(d_min_u) > min(d_min_s) \
+
+            new_dominates_old = exchange_is_dominant(sum(d_sum_s), min(d_min_s),
+                                                     sum(d_sum_u), min(d_min_u))
+
+            if new_dominates_old \
                 and sol.satisfies_cost(combo_u, combo_s) \
                     and sol.satisfies_capacity(combo_u, combo_s):
 

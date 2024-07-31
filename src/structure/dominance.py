@@ -2,7 +2,19 @@
 from structure.solution import Solution
 
 
-def is_dominant(sol1: Solution, sol2: Solution) -> bool:
+def exchange_is_dominant(sel_maxsum_variability, sel_maxmin,
+                         unsel_maxsum_variability, unsel_maxmin):
+
+    condition1 = all([sel_maxsum_variability <= unsel_maxsum_variability,
+                      sel_maxmin <= unsel_maxmin])
+
+    condition2 = any([sel_maxsum_variability < unsel_maxsum_variability,
+                      sel_maxmin < unsel_maxmin])
+
+    return condition1 and condition2
+
+
+def solution_is_dominant(sol1: Solution, sol2: Solution) -> bool:
     '''
     Checks if `sol2` is dominated by `sol1`. A solution is dominated if another solution
     is no worse in all objectives and better in at least one.
@@ -39,7 +51,7 @@ def get_nondominated_solutions(all_solutions: list) -> list:
     is_non_dominated = [True] * len(all_solutions)
     for i, sol_i in enumerate(all_solutions):
         for j, sol_j in enumerate(all_solutions):
-            if i != j and is_dominant(sol_j, sol_i):
+            if i != j and solution_is_dominant(sol_j, sol_i):
                 is_non_dominated[i] = False
                 break
 
