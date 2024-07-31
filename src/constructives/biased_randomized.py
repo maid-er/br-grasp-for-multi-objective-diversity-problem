@@ -90,8 +90,8 @@ def create_candidate_list(sol: Solution, first: int) -> list:
 
 
 def update_candidate_list(sol: Solution, cl: list, added: int):
-    '''Iterates through a candidate list and updates the first element (sum of distances) of each
-    candidate adding the distance to the new `added` element.
+    '''Iterates through a candidate list and updates the first (sum of distances) and second
+    (minimum distance) elements of each candidate adding the distance to the new `added` element.
 
     Args:
       sol (Solution): contains the solution information.

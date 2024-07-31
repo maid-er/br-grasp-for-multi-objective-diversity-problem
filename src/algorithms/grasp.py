@@ -14,14 +14,16 @@ def execute(inst: dict, config: dict) -> Solution:
 
     Args:
       inst (dict): a dictionary containing the instance data. The dictionary includes the number of
-    nodes `n`, the number of nodes to be selected `p`, and a distance matrix `d` representing the
-    distances from each node to the rest of the nodes.
+    nodes `n`, the number of nodes to be selected `p`, a distance matrix `d` representing the
+    distances from each node to the rest of the nodes, a cost vector `a` with the costs of each
+    node, and a capacity vector `a` with the capacities of each node.
       config (dict): contains the construction and local search strategies defined by the user in
     the config file.
 
     Returns:
         (Solution): the solution found.
     '''
+    # Get config parameters
     strategy = config.get('construction_method')
     parameters = config.get('parameters')
     ls_strategy = config.get('strategy')
@@ -32,12 +34,20 @@ def execute(inst: dict, config: dict) -> Solution:
     logging.info('\t%s Local Search strategy fllowing the %s Improve scheme',
                  ls_strategy, ls_scheme)
 
+    # Construction phase (Biased GRASP)
     sol = biased_randomized.construct(inst, parameters)
     logging.info("\tConstruction phase:")
     logging.info('\t\tMaxSum: %s', sol.of_MaxSum)
     logging.info('\t\tMaxMin: %s', sol.of_MaxMin)
     logging.info('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
 
+    # Local Search phase
+    #   Strategy:
+    #   - Standard: 1-1 exchange
+    #   - VND: Variable Neighborhood Descent (customizable in config)
+    #   Scheme:
+    #   - Best: Best Improve
+    #   - First: First Improve
     if ls_strategy == 'Standard':
         if ls_scheme == 'Best':
             best_improve.improve(sol)

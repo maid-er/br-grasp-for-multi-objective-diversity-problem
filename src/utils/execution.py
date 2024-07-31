@@ -1,3 +1,4 @@
+'''Directory and instance execution auxiliar functions'''
 import datetime
 import os
 import pandas as pd
@@ -11,8 +12,22 @@ from utils.logger import load_logger
 logging = load_logger(__name__)
 
 
-def execute_instance(path: str, config: dict, results: OutputHandler):
+def execute_instance(path: str, config: dict, results: OutputHandler) -> float:
+    '''
+    Reads an instance, iterates to find solutions using GRASP algorithm, evaluates the solutions,
+    identifies non-dominated solutions, computes execution time, and saves results.
 
+    Args:
+      path (str): represents the path to the instance that needs to be solved. This path is used
+    to read the instance data and save the results later on with the same name.
+      config (dict): contains the configuration settings for the algorithm.
+      results (OutputHandler): contains methods for handling and displaying the output of the
+    algorithm, such as generating plots and saving results to files with the ID number of the
+    execution number of each instance.
+
+    Returns:
+      (float): returns the total execution time in seconds.
+    '''
     all_solutions = []
     result_table = pd.DataFrame(columns=['Solution', 'MaxSum', 'MaxMin', 'Cost', 'Capacity'])
 
@@ -63,6 +78,14 @@ def execute_instance(path: str, config: dict, results: OutputHandler):
 
 
 def execute_directory(directory: str, config: dict):
+    '''
+    Scans a directory for text files, executes instances with specified configurations, and saves
+    the results in a CSV file.
+
+    Args:
+      directory (str): represents the path to the directory where the files (instances) are located.
+      config (dict): contains the configuration settings for the algorithm.
+    '''
     with os.scandir(directory) as files:
         ficheros = [file.name for file in files if file.is_file() and file.name.endswith(".txt")]
 

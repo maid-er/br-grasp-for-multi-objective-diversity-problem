@@ -4,6 +4,7 @@
 class Solution:
     '''Auxiliar class to handle solution information'''
     def __init__(self, instance: dict):
+        '''Initialize Solution'''
         self.solution_set = set()
         self.of_MaxSum = 0
         self.of_MaxMin = 0x3f3f3f3f
@@ -125,6 +126,13 @@ class Solution:
         return round(min_d, 2)
 
     def minimum_distance_in_solution(self):
+        '''
+        The function calculates the minimum pairwise distance between the nodes in the solution.
+
+        Returns:
+          (float): the minimum pairwise distance between the nodes in the solution set, rounded to
+        two decimal places.
+        '''
         min_d = 0x3f3f3f3f
         for s in self.solution_set:
             d = self.minimum_distance_to_solution(s)
@@ -179,12 +187,6 @@ class Solution:
           (bool): indicates whether the new solution with node `u` added and `v` removed, would
         meet the capacity constraint.
         '''
-        # new_candidate = 0
-        # if u != -1:
-        #     new_candidate = sol['instance']['c'][u]
-        # removing_candidate = 0
-        # if v != -1:
-        #     removing_candidate = sol['instance']['c'][v]
         possible_capacity = self.total_capacity
         if v != -1:
             for q in v:

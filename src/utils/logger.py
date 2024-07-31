@@ -1,3 +1,4 @@
+'''Functions to handle logs'''
 import datetime
 import logging
 import os
@@ -10,13 +11,16 @@ ANSI_GRAY = "\033[90m"
 
 
 def load_logger(name):
-    """
+    '''
     This function creates and returns a custom logger object.
 
-    :param name: The name of the logger. It is used to identify the logger.
-    :return: The function `load_logger` returns a logger object that has been
-    configured with a console handler and a specific log level and formatter.
-    """
+    Args:
+      param_name: the name of the logger. It is used to identify the logger.
+
+    Returns:
+      A logger object that has been configured with a console handler and a specific
+    log level and formatter.
+    '''
     logger = logging.getLogger(name)
     logger.setLevel(logging.INFO)
 
@@ -46,14 +50,17 @@ def load_logger(name):
 
 class ColoredFormatter(logging.Formatter):
     def format(self, record):
-        """
+        '''
         This function formats log records with colored level names.
 
-        :param record: The log record that is being formatted. It contains information about the log
-        message such as the log level, message, timestamp, and logger name
-        :return: The formatted log record with added color codes for the levelname, logger name, and
+        Args:
+          param record: the log record that is being formatted. It contains information about the
+        log message such as the log level, message, timestamp, and logger name
+
+        Returns:
+          The formatted log record with added color codes for the levelname, logger name, and
         timestamp.
-        """
+        '''
         if record.levelno == logging.ERROR:
             record.colored_levelname = f"{ANSI_RED}{record.levelname}{ANSI_RESET}"
         elif record.levelno == logging.WARNING:

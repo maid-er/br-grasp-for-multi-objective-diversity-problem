@@ -25,9 +25,8 @@ def improve(sol: Solution):
 
 def try_improvement(sol: Solution, switch: list = [1, 1]) -> bool:
     '''Attempts to improve a solution by selecting and interchanging a selected element (node)
-    with an unselected element. The improvement is obtained if the sum of the distances of the
-    new element to the rest of the selected nodes is higher than the distance of the previous
-    selection.
+    with an unselected element. The improvement is obtained if the new solution dominates the
+    previous solution.
 
     Args:
       sol (Solution): contains the solution information.
@@ -38,11 +37,14 @@ def try_improvement(sol: Solution, switch: list = [1, 1]) -> bool:
 
     Returns:
       (bool): `True` if the improvement was successful (i.e., if the objective values are
-    improved and constraints are met with the interchange), and `False` otherwise.
+    dominant and constraints are met with the interchange), and `False` otherwise.
     '''
     selected, unselected = create_selected_unselected(sol)
     random.shuffle(selected)
     random.shuffle(unselected)
+    # Select the first combination of size switch[0] in current solution and the first combination
+    # of size switch[1] in unselected candidate list whose exchange makes a dominant new solution
+    # that mets the constraints.
     for combo_s in combinations(selected, switch[0]):
         pairwise_d = get_all_pairwise_distances(sol.instance, combo_s)
         d_sum_s = [sol.distance_sum_to_solution(v) for v in combo_s] + pairwise_d

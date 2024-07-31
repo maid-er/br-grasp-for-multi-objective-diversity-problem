@@ -47,7 +47,22 @@ def read_instance(path: str) -> dict:
     return instance
 
 
-def get_all_pairwise_distances(instance, node_list):
+def get_all_pairwise_distances(instance: dict, node_list: list) -> list:
+    '''
+    The function calculates all pairwise distances between nodes in a given node list using a
+    distance matrix provided in the instance dictionary.
+
+    Args:
+      instance (dict): a dictionary containing the instance data. The dictionary includes the
+    number of nodes `n`, the number of nodes to be selected `p`, a distance matrix `d` representing
+    the distances from each node to the rest of the nodes, a cost vector `a` with the costs of each
+    node, and a capacity vector `a` with the capacities of each node.
+      node_list (list): a list of nodes for which the pairwise distances are calculated.
+
+    Returns:
+      (list): a list of distances between all pairs of nodes in the `node_list` based on the
+    distances provided in the `instance` dictionary.
+    '''
     distance_between = []
     for i, u in enumerate(node_list):
         for v in node_list[i+1:]:
