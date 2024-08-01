@@ -56,8 +56,8 @@ class OutputHandler:
 
         self._save_execution_time(secs, output_path)
 
-        figure.write_html(os.path.join(output_path,
-                                       f'solution_{self.execution_n}.html'))
+        # figure.write_html(os.path.join(output_path,
+        #                                f'solution_{self.execution_n}.html'))
 
     def _get_execution_number(self):
         '''
@@ -92,4 +92,4 @@ class OutputHandler:
             time_table = pd.DataFrame({'ex_number': [self.execution_n],
                                        'time': [secs]})
 
-        time_table.to_csv(time_file)
+        time_table.to_csv(time_file, index=False)
