@@ -71,10 +71,8 @@ def execute_instance(path: str, config: dict, results: OutputHandler) -> float:
     # Save table and plot with results
     algorithm_params = (f'IT{config.get("iterations")}'
                         f'_beta{config.get("parameters").get("beta")}'
-                        f'_LS{config.get("scheme")}')
-    results.save(result_table, fig, algorithm_params, path)
-
-    return secs
+                        f'_LS{config.get("scheme")}').replace('.', '')
+    results.save(result_table, secs, fig, algorithm_params, path)
 
 
 def execute_directory(directory: str, config: dict):
@@ -89,20 +87,20 @@ def execute_directory(directory: str, config: dict):
     with os.scandir(directory) as files:
         ficheros = [file.name for file in files if file.is_file() and file.name.endswith(".txt")]
 
-    experiments_table = pd.DataFrame(columns=['Instance', 'Execution time'])
+    # experiments_table = pd.DataFrame(columns=['Instance', 'Execution time'])
 
     results = OutputHandler()
 
     for f in ficheros:
         path = os.path.join(directory, f)
         for method_config in config:
-            execution_time = execute_instance(path, method_config, results)
+            execute_instance(path, method_config, results)
 
-            experiments_table.loc[len(experiments_table)] = [f.split('.')[0], execution_time]
+            # experiments_table.loc[len(experiments_table)] = [f.split('.')[0], execution_time]
 
-            algorithm_params = (f'IT{method_config.get("iterations")}'
-                                f'_beta{method_config.get("parameters").get("beta")}'
-                                f'_LS{method_config.get("scheme")}')
-            experiments_table.to_csv(
-                os.path.join('output', f'{algorithm_params}_{results.execution_n}.csv'),
-                index=False)
+            # algorithm_params = (f'IT{method_config.get("iterations")}'
+            #                     f'_beta{method_config.get("parameters").get("beta")}'
+            #                     f'_LS{method_config.get("scheme")}')
+            # experiments_table.to_csv(
+            #     os.path.join('output', f'{algorithm_params}_{results.execution_n}.csv'),
+            #     index=False)

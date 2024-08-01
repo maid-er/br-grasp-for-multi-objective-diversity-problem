@@ -32,7 +32,7 @@ class OutputHandler:
 
         return fig
 
-    def save(self, table: pd.DataFrame, figure: go.Figure, params: str, instance: str):
+    def save(self, table: pd.DataFrame, secs: float, figure: go.Figure, params: str, instance: str):
         '''
         This function saves the solution DataFrame as a CSV and the Figure as an HTML file in a
         specified directory structure that contains the instance name and execution number as ID.
@@ -43,20 +43,20 @@ class OutputHandler:
           params (str): parameter configuration used in the optimization algorithm.
           instance (str): represents the name or path of a specific file (instance).
         '''
-        instance_id = os.path.split(instance)[-1].split(".")[0]
+        instance_path = instance.split(os.sep)[1:]
+        output_path = os.path.join('output',
+                                   *instance_path,
+                                   f'{params}')
 
-        os.makedirs(os.path.join('output',
-                                 f'{params}',
-                                 f'{instance_id}'), exist_ok=True)
+        os.makedirs(output_path, exist_ok=True)
 
-        table.to_csv(os.path.join('output',
-                                  f'{params}',
-                                  f'{instance_id}',
+        table.to_csv(os.path.join(output_path,
                                   f'results_{self.execution_n}.csv'),
                      index=False)
-        figure.write_html(os.path.join('output',
-                                       f'{params}',
-                                       f'{instance_id}',
+
+        self._save_execution_time(secs, output_path)
+
+        figure.write_html(os.path.join(output_path,
                                        f'solution_{self.execution_n}.html'))
 
     def _get_execution_number(self):
@@ -77,3 +77,19 @@ class OutputHandler:
             os.makedirs('temp', exist_ok=True)
             with open(execution_file, 'w') as file:
                 file.write(str(int(self.execution_n) + 1))
+
+    def _save_execution_time(self, secs: float, path: str):
+        '''
+        The function saves algorithm's execution time `secs` in seconds in a csv file.
+        '''
+        time_file = os.path.join(path, 'execution_times.csv')
+        if os.path.exists(time_file):
+            time_table = pd.read_csv(time_file)
+            time_table = time_table.append(
+                pd.DataFrame({'ex_number': [self.execution_n],
+                              'time': [secs]}))
+        else:
+            time_table = pd.DataFrame({'ex_number': [self.execution_n],
+                                       'time': [secs]})
+
+        time_table.to_csv(time_file)
