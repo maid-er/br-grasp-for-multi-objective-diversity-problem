@@ -64,8 +64,16 @@ class OutputHandler:
         The function reads an execution number from a file, increments it by 1, and writes the
         updated number back to the file.
         '''
-        with open('temp/execution.txt', 'r+') as ex_file:
-            self.execution_n = ex_file.read()
-            ex_file.seek(0)
-            ex_file.write(str(int(self.execution_n) + 1))
-            ex_file.truncate()
+        execution_file = os.path.join('temp', 'execution.txt')
+
+        if os.path.exists(execution_file):
+            with open(execution_file, 'r+') as file:
+                self.execution_n = file.read()
+                file.seek(0)
+                file.write(str(int(self.execution_n) + 1))
+                file.truncate()
+        else:
+            self.execution_n = 1
+            os.makedirs('temp', exist_ok=True)
+            with open(execution_file, 'w') as file:
+                file.write(str(int(self.execution_n) + 1))
