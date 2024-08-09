@@ -82,7 +82,7 @@ class OutputHandler:
         '''
         The function saves algorithm's execution time `secs` in seconds in a csv file.
         '''
-        time_file = os.path.join(path, 'execution_times.csv')
+        time_file = os.path.join(path, 'ex_times.csv')
         if os.path.exists(time_file):
             time_table = pd.read_csv(time_file)
             time_table = time_table.append(
