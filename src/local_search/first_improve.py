@@ -51,8 +51,10 @@ def try_improvement(sol: Solution, switch: list = [1, 1]) -> bool:
         d_min_s = [sol.minimum_distance_to_solution(v) for v in combo_s] + pairwise_d
         for combo_u in combinations(unselected, switch[1]):
             pairwise_d = get_all_pairwise_distances(sol.instance, combo_u)
-            d_sum_u = [sol.distance_sum_to_solution(v) for v in combo_u] + pairwise_d
-            d_min_u = [sol.minimum_distance_to_solution(v) for v in combo_u] + pairwise_d
+            d_sum_u = [sol.distance_sum_to_solution(v, without=combo_s)
+                       for v in combo_u] + pairwise_d
+            d_min_u = [sol.minimum_distance_to_solution(v, without=combo_s)
+                       for v in combo_u] + pairwise_d
 
             new_dominates_old = exchange_is_dominant(sum(d_sum_s), min(d_min_s),
                                                      sum(d_sum_u), min(d_min_u))
