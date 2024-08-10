@@ -44,6 +44,7 @@ class OutputHandler:
           instance (str): represents the name or path of a specific file (instance).
         '''
         instance_path = instance.split(os.sep)[1:]
+        instance_path = [s.replace('.txt', '') for s in instance_path]
         output_path = os.path.join('output',
                                    *instance_path,
                                    f'{params}')
