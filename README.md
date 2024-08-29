@@ -56,7 +56,7 @@ python .\src\main.py
 
 ## Code content
 
-The B-GRASP algorithm is executed in ```src\main.py``` and operates through multiple iterations handled in ```src/utils/execution.py```. Each iteration involves two key stages that are called from ```src/algrithms/grasp.py```: construction and improvement.
+The B-GRASP algorithm is executed in ```src/main.py``` and operates through multiple iterations handled in ```src/utils/execution.py```. Each iteration involves two key stages that are called from ```src/algrithms/grasp.py```: construction and improvement.
 
 A trial solution is generated using a greedy randomized approach during the **construction phase**. Elements are selected based on a greedy function, with the selection process randomized using a geometric distribution to give higher probabilities to the most promising candidated. This distribution is controlled by a parameter named beta, which ranges between 0 and 1. When the parameter value is closer to 0, the selection process becomes more uniformly randomized. This stage is coded in ```src/constructives/biased_randomized.py```.
 
@@ -78,3 +78,17 @@ Upon execution, the algorithm generates the following outputs:
 
 These outputs provide the user with multiple optimal solutions and essential information to help select the most suitable option for their specific case.
 
+
+## Algorithm's perfomance evaluation
+
+```evaluation/``` directory includes the source code to compare and evaluate the Pareto Fronts obtained with different configurations of the algorithm for the same instance set by executing:
+
+```console
+python .\evaluation\main.py
+```
+
+It also contains the ```plot_results.py``` script that plots the Pareto Front of a determinate output CSV file with the solution data by executing:
+
+```console
+python .\evaluation\plot_results.py
+```

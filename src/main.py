@@ -13,10 +13,10 @@ config = read_config('config')
 if __name__ == '__main__':
     logging.info('Initializing diversity maximization algorithm...')
 
-    path = os.path.join('instances', 'GDP', 'GKD-b_n50')
+    path = os.path.join('instances', 'GDP', 'GKD-c')
 
     # execution.execute_instance(path, config)
-    for n in range(10):
+    for n in range(1):
         execution.execute_directory(path, config)
 
     os.remove(os.path.join('temp', 'execution.txt'))
