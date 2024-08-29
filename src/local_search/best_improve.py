@@ -13,24 +13,6 @@ from utils.logger import load_logger
 logging = load_logger(__name__)
 
 
-def improve(sol: Solution, max_iter: int = 50):
-    '''Iteratively tries to improve a solution until no further improvements can be made.
-
-    Args:
-      sol (Solution): contains the solution information.
-      max_iter (int): maximum number of iterations with no improvements.
-    '''
-    count = 0
-    abs_count = 0
-    while count < max_iter and abs_count < max_iter*2:
-        improve = try_improvement(sol)
-        if not improve:
-            count += 1
-        abs_count += 1
-    logging.info('Local search stopped with %s total IT and %s IT with no improvements.',
-                 abs_count, count)
-
-
 def try_improvement(sol: Solution, switch: int = [1, 1]) -> bool:
     '''Attempts to improve a solution by selecting and interchanging a selected element (node)
     with an unselected element. The improvement is obtained if the new solution dominates the

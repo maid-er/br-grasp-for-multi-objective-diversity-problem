@@ -17,17 +17,6 @@ from utils.logger import load_logger
 logging = load_logger(__name__)
 
 
-def improve(sol: Solution):
-    '''Iteratively tries to improve a solution until no further improvements can be made.
-
-    Args:
-      sol (Solution): contains the solution information.
-    '''
-    improve = True
-    while improve:
-        improve = try_improvement(sol)
-
-
 def try_improvement(sol: Solution, switch: list = [1, 1], max_time: int = 5) -> bool:
     '''Attempts to improve a solution by selecting and interchanging a selected element (node)
     with an unselected element. The improvement is obtained if the new solution dominates the
