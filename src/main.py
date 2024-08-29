@@ -7,16 +7,17 @@ from utils.logger import load_logger
 
 logging = load_logger(__name__)
 
-config = read_config('config')
+config_list = read_config('config')
 
 
 if __name__ == '__main__':
     logging.info('Initializing diversity maximization algorithm...')
 
-    path = os.path.join('instances', 'GDP_test', 'GKD-c')
+    path = os.path.join('instances', 'GDP_test', 'GKD-b_n150')
 
-    # execution.execute_instance(path, config)
-    for n in range(10):
-        execution.execute_directory(path, config)
+    for config in config_list:
+        # execution.execute_instance(path, config)
+        for n in range(5):
+            execution.execute_directory(path, config)
 
-    os.remove(os.path.join('temp', 'execution.txt'))
+        os.remove(os.path.join('temp', 'execution.txt'))
