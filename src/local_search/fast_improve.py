@@ -1,5 +1,5 @@
 '''
-Auxiliar function to apply Best Improve Local Search.
+Auxiliar function to apply Fast Improve Local Search.
 The worst selected element and best unselected element are interchanged to improve
 the initial solution.
 '''
