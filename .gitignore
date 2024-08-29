@@ -13,8 +13,6 @@ temp/
 
 # Results
 output/
-*.csv
-*.xlsx
 
 # Result evaluation scripts
 evaluation/
