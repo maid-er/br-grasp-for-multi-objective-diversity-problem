@@ -14,6 +14,7 @@ logging = load_logger(__name__)
 
 
 def try_improvement(sol: Solution, switch: int = [1, 1]) -> bool:
+    # TODO
     '''Attempts to improve a solution by selecting and interchanging a selected element (node)
     with an unselected element. The improvement is obtained if the new solution dominates the
     previous solution.
@@ -47,6 +48,7 @@ def try_improvement(sol: Solution, switch: int = [1, 1]) -> bool:
 
 
 def select_exchange(sol: Solution, switch: list):
+    # TODO
     '''Interchanges the worst element in solution (lowest sum of distances to the rest of the
     selected elements) with the best unselected element (highest sum of distances to the rest
     of the selected elements).
