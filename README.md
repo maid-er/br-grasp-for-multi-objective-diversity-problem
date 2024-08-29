@@ -30,7 +30,7 @@ For example:
     1: [1, 1]
     2: [1, 2]
     3: [2, 1]
-  scheme: 'Best'  # Best, or First
+  scheme: 'First'  # Fast, or First
 
 - iterations: 100  # Number of constructions
   # Construction stage
@@ -41,10 +41,10 @@ For example:
   strategy: 'VND'  # Standard, or VND
   neighborhoods:
     1: [1, 1]
-  scheme: 'Best'  # Best, or First
+  scheme: 'First'  # Fast, or First
 ```
 
-In this case the B-GRASP with VND algorithm will be executed twice. In the first place, the algorithm will be configured with a `beta` value of 0.5 and the `neighborhoods` to be explored in the Local Search phase will be a 1-1 switch, 1-2 switch, and 2-1 switch between selected and unselected nodes. Next, in the second run, the algorithm will find the solutions for the BOCDP with a random `beta` value for each construction, and a standard Best Improve Local Search with a 1-1 node exchange.
+In this case the B-GRASP with VND algorithm will be executed twice. In the first place, the algorithm will be configured with a `beta` value of 0.5 and the `neighborhoods` to be explored in the Local Search phase will be a 1-1 switch, 1-2 switch, and 2-1 switch between selected and unselected nodes. Next, in the second run, the algorithm will find the solutions for the BOCDP with a random `beta` value for each construction, and a standard First Improve Local Search with a 1-1 node exchange.
 
 ## Code execution
 
@@ -60,7 +60,7 @@ The B-GRASP algorithm is executed in ```src/main.py``` and operates through mult
 
 A trial solution is generated using a greedy randomized approach during the **construction phase**. Elements are selected based on a greedy function, with the selection process randomized using a geometric distribution to give higher probabilities to the most promising candidated. This distribution is controlled by a parameter named beta, which ranges between 0 and 1. When the parameter value is closer to 0, the selection process becomes more uniformly randomized. This stage is coded in ```src/constructives/biased_randomized.py```.
 
-The constructed solution is locally enhanced in the **improvement phase**, typically using a local search method. The scripts related to the local search phase are in ```src/local_search```. In this project the Variable Neighborhood Descent (VND) strategy is used for this stage (```variable_neighborhood_descent.py```), which is based in exploring various neighborhoods in a predetermined, deterministic manner by combining different descent heuristics. The project allows the user to select two approaches for the move operator: in the *First Improvement* approach in ```first_improve.py``` the first movement that results in an improvement is performed, while the *Best Improvement* approach in ```best_improve.py``` involves exploring the entire neighborhood and returning the best solution.
+The constructed solution is locally enhanced in the **improvement phase**, typically using a local search method. The scripts related to the local search phase are in ```src/local_search```. In this project the Variable Neighborhood Descent (VND) strategy is used for this stage (```variable_neighborhood_descent.py```), which is based in exploring various neighborhoods in a predetermined, deterministic manner by combining different descent heuristics. The project allows the user to select two approaches for the move operator: in the *First Improvement* approach in ```first_improve.py``` the first movement that results in an improvement is performed, while the *Fast Improvement* approach in ```fast_improve.py``` involves exchanging the worst selected node with the best unselected node.
 
 
 The scripts in ```src/structure``` are helpers to handle the instance and solution data. This directory also contains a script with functions to check if a solution is non-dominated.

@@ -1,10 +1,8 @@
 '''
-Auxiliar function to apply Variable Neighborhood Descent with Best Improve Local Search.
-The worst selected element and best unselected element are interchanged to improve
-the initial solution.
+Auxiliar function to apply Variable Neighborhood Descent.
 '''
-from local_search import best_improve as bs
-from local_search import first_improve as fs
+from local_search import fast_improve as fas
+from local_search import first_improve as fis
 from structure.solution import Solution
 
 from utils.logger import load_logger
@@ -33,10 +31,10 @@ def improve(sol: Solution, config: dict):
     while improve or nb <= len(neighborhoods):
         switch = neighborhoods[nb]
         logging.info('Local searching in neighbourhood %s with switch type %s.', nb, switch)
-        if ls_scheme == 'Best':
-            improve = bs.try_improvement(sol, switch)
+        if ls_scheme == 'Fast':
+            improve = fas.try_improvement(sol, switch)
         elif ls_scheme == 'First':
-            improve = fs.try_improvement(sol, switch, max_time)
+            improve = fis.try_improvement(sol, switch, max_time)
         if improve:
             logging.info('Improved solution.')
             nb = 1
