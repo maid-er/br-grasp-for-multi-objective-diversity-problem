@@ -24,13 +24,12 @@ def execute(inst: dict, config: dict) -> Solution:
         (Solution): the solution found.
     '''
     # Get config parameters
-    strategy = config.get('construction_method')
     parameters = config.get('parameters')
     ls_strategy = config.get('strategy')
     ls_scheme = config.get('scheme')
 
     logging.info('Executing GRASP algorithm with: ')
-    logging.info('\t%s construction method and parameters %s', strategy, parameters)
+    logging.info('\tBiased construction with parameters %s', parameters)
     logging.info('\t%s Local Search strategy following the %s Improve scheme',
                  ls_strategy, ls_scheme)
 

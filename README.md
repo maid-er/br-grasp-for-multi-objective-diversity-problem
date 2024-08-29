@@ -20,11 +20,11 @@ For example:
 
 ```yaml
 - iterations: 100  # Number of constructions
-  construction_method: 'AltBwS'  # AltBwS or AltInS
+  # Construction stage
   parameters:
     distribution: 'Geometric'  # Triangular or Geometric
     beta: 0.5  # From 0 to 1 // if -1, random selection for each construction
-  local_search: 'Dominance'  # Dominance or Alternate
+  # Local Improvement stage
   strategy: 'VND'  # Standard, or VND
   neighborhoods:
     1: [1, 1]
@@ -33,11 +33,11 @@ For example:
   scheme: 'Best'  # Best, or First
 
 - iterations: 100  # Number of constructions
-  construction_method: 'AltBwS'  # AltBwS or AltInS
+  # Construction stage
   parameters:
     distribution: 'Geometric'  # Triangular or Geometric
     beta: -1  # From 0 to 1 // if -1, random selection for each construction
-  local_search: 'Dominance'  # Dominance or Alternate
+  # Local Improvement stage
   strategy: 'VND'  # Standard, or VND
   neighborhoods:
     1: [1, 1]
