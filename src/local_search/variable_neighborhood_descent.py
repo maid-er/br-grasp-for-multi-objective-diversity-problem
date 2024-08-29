@@ -34,7 +34,8 @@ def improve(sol: Solution, config: dict):
         if ls_scheme == 'Fast':
             improve = fas.try_improvement(sol, switch)
         elif ls_scheme == 'First':
-            improve = fis.try_improvement(sol, switch, max_time)
+            objective = abs_count % 2  # 0: MaxSum, 1: MaxMin
+            improve = fis.try_improvement(sol, objective, switch, max_time)
         if improve:
             logging.info('Improved solution.')
             nb = 1

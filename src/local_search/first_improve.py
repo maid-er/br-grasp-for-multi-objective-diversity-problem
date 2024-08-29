@@ -5,9 +5,9 @@ when the unselected element's result improves the selected one's, they are inter
 in the solution.
 '''
 import datetime
-import random
 from itertools import combinations
 
+from constructives.biased_randomized import create_candidate_list
 from structure.dominance import exchange_is_dominant
 from structure.instance import get_all_pairwise_distances
 from structure.solution import Solution
@@ -17,7 +17,8 @@ from utils.logger import load_logger
 logging = load_logger(__name__)
 
 
-def try_improvement(sol: Solution, switch: list = [1, 1], max_time: int = 5) -> bool:
+def try_improvement(sol: Solution, objective: int,
+                    switch: list = [1, 1], max_time: int = 5) -> bool:
     '''Attempts to improve a solution by selecting and interchanging a selected element (node)
     with an unselected element. The improvement is obtained if the new solution dominates the
     previous solution.
@@ -35,14 +36,12 @@ def try_improvement(sol: Solution, switch: list = [1, 1], max_time: int = 5) -> 
       (bool): `True` if the improvement was successful (i.e., if the objective values are
     dominant and constraints are met with the interchange), and `False` otherwise.
     '''
-    selected, unselected = create_selected_unselected(sol)
+    selected, unselected = create_selected_unselected(sol, objective)
     # Select the first combination of size switch[0] in current solution and the first combination
     # of size switch[1] in unselected candidate list whose exchange makes a dominant new solution
     # that mets the constraints.
     selected_combinations = list(combinations(selected, switch[0]))
     unselected_combinations = list(combinations(unselected, switch[1]))
-    random.shuffle(selected_combinations)
-    random.shuffle(unselected_combinations)
 
     start = datetime.datetime.now()
     for combo_s in selected_combinations:
@@ -76,9 +75,11 @@ def try_improvement(sol: Solution, switch: list = [1, 1], max_time: int = 5) -> 
     return False
 
 
-def create_selected_unselected(sol: Solution):
+def create_selected_unselected(sol: Solution, objective: int):
     '''Takes a solution instance as input and returns two lists - one containing selected items
-    and the other containing unselected items based on the solution.
+    and the other containing unselected items based on the solution. The selected elements are
+    sorted in reverse order according to the objective function. Meanwhile, the unselected
+    elements are sorted from the best candidate to the worst.
 
     Args:
       sol (Solution): contains the solution information.
@@ -87,12 +88,21 @@ def create_selected_unselected(sol: Solution):
       selected (list): contains the candidates selected in the current solution.
       unselected (list): contains the unselected candidates in the current solution.
     '''
+    cl = create_candidate_list(sol)
+
     selected = []
     unselected = []
-    n = sol.instance['n']
-    for v in range(n):
-        if sol.contains(v):
+
+    for v in cl:
+        if sol.contains(v[2]):
             selected.append(v)
         else:
             unselected.append(v)
+
+    selected.sort(key=lambda row: row[objective])  # Sort from worst to best
+    unselected.sort(key=lambda row: -row[objective])  # Sort from best to worst
+    # Get only the node ID
+    selected = [s[2] for s in selected]
+    unselected = [u[2] for u in unselected]
+
     return selected, unselected

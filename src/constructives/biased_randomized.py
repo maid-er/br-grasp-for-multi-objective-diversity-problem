@@ -65,7 +65,7 @@ def construct(inst: dict, parameters: dict) -> Solution:
     return sol
 
 
-def create_candidate_list(sol: Solution, first: int) -> list:
+def create_candidate_list(sol: Solution, first: int = -1) -> list:
     '''The function creates a list of candidate solutions based on the distance to the given
     solution and excluding the first candidate.
 
@@ -77,7 +77,8 @@ def create_candidate_list(sol: Solution, first: int) -> list:
     Returns:
       (list): a list of candidate solutions. Each candidate solution is represented as a list
     containing the sum of the distances to the rest of the nodes in the solution and the index
-    of the candidate solution.
+    of the candidate solution. It defaults to -1 when the objective values of every candidates
+    need to be calculated.
     '''
     n = sol.instance['n']
     cl = []
