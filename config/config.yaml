@@ -9,8 +9,8 @@
     1: [1, 1]
     2: [1, 2]
     3: [2, 1]
-  scheme: 'First'  # Best, or First
+  scheme: 'Fast'  # Fast, or First
   # Limits
   execution_limits:
-    max_time: 150
-    max_local_search_time: 2
+    max_time: 150  # Maximum execution time for B-GRASP with VND
+    max_local_search_time: 2  # Maximum execution time for FiILS without improvements
