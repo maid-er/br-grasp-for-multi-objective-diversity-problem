@@ -24,6 +24,8 @@ def improve(sol: Solution, config: dict):
     else:
         neighborhoods = {1: [1, 1]}
 
+    max_time = config.get('execution_limits').get('max_local_search_time')
+
     nb = 1
     count = 0
     abs_count = 0
@@ -34,7 +36,7 @@ def improve(sol: Solution, config: dict):
         if ls_scheme == 'Best':
             improve = bs.try_improvement(sol, switch)
         elif ls_scheme == 'First':
-            improve = fs.try_improvement(sol, switch)
+            improve = fs.try_improvement(sol, switch, max_time)
         if improve:
             logging.info('Improved solution.')
             nb = 1

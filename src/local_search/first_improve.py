@@ -4,12 +4,17 @@ Objective functions of ramdomly sorted selected and unselected elements are comp
 when the unselected element's result improves the selected one's, they are interchanged
 in the solution.
 '''
+import datetime
 import random
 from itertools import combinations
 
 from structure.dominance import exchange_is_dominant
 from structure.instance import get_all_pairwise_distances
 from structure.solution import Solution
+
+from utils.logger import load_logger
+
+logging = load_logger(__name__)
 
 
 def improve(sol: Solution):
@@ -23,7 +28,7 @@ def improve(sol: Solution):
         improve = try_improvement(sol)
 
 
-def try_improvement(sol: Solution, switch: list = [1, 1]) -> bool:
+def try_improvement(sol: Solution, switch: list = [1, 1], max_time: int = 5) -> bool:
     '''Attempts to improve a solution by selecting and interchanging a selected element (node)
     with an unselected element. The improvement is obtained if the new solution dominates the
     previous solution.
@@ -34,6 +39,8 @@ def try_improvement(sol: Solution, switch: list = [1, 1]) -> bool:
     element defines how many nodes will be removed from the solution and the second element
     determines the number of nodes that will be added to the solution. Defaults to [1, 1] for
     a standard 1-1 exchange.
+      max_time (int): maximum local search execution time in seconds. If no improvement is find
+    in this time, the local search is stopped.
 
     Returns:
       (bool): `True` if the improvement was successful (i.e., if the objective values are
@@ -47,7 +54,13 @@ def try_improvement(sol: Solution, switch: list = [1, 1]) -> bool:
     unselected_combinations = list(combinations(unselected, switch[1]))
     random.shuffle(selected_combinations)
     random.shuffle(unselected_combinations)
+
+    start = datetime.datetime.now()
     for combo_s in selected_combinations:
+        # If time is exceeded break LS without improvement
+        if datetime.timedelta(seconds=max_time) < datetime.datetime.now() - start:
+            logging.info('Unable to find an improvement in the established time.')
+            return False
         pairwise_d = get_all_pairwise_distances(sol.instance, combo_s)
         d_sum_s = [sol.distance_sum_to_solution(v) for v in combo_s] + pairwise_d
         d_min_s = [sol.minimum_distance_to_solution(v) for v in combo_s] + pairwise_d

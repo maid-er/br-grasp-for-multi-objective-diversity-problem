@@ -35,8 +35,13 @@ def execute_instance(path: str, config: dict, results: OutputHandler) -> float:
     # Read instance
     inst = instance.read_instance(path)
 
+    max_time = config.get('execution_limits').get('max_time')
     start = datetime.datetime.now()
     for i in range(config.get('iterations')):
+        # If time is exceeded stop execution
+        if datetime.timedelta(seconds=max_time) < datetime.datetime.now() - start:
+            logging.info('Maximum allowed execution time is exceeded. Total IT: %s', i)
+            break
         # Construct a solution for each iteration
         logging.info(f'Finding solution #{i+1}')
         sol = grasp.execute(inst, config)
