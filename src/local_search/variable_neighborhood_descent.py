@@ -19,9 +19,10 @@ def improve(sol: Solution, config: dict):
       sol (Solution): contains the solution information.
     '''
     ls_scheme = config.get('scheme')
-    neighborhoods = {1: [1, 1],
-                     2: [1, 2],
-                     3: [2, 1]}
+    if config.get('strategy') == 'VND':
+        neighborhoods = config.get('neighborhoods')
+    else:
+        neighborhoods = {1: [1, 1]}
 
     nb = 1
     count = 0
