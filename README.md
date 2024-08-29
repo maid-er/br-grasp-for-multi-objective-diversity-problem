@@ -14,7 +14,9 @@ pip install -r requirements.txt
 ```
 
 ## Configuration
-The repository includes a configuration file ```config/config.yaml``` that allows users to manually define various parameters to customize the algorithm's performance. The configuration file include a list of all the algorithm configurations to be tested in a execution. For example:
+The repository includes a configuration file ```config/config.yaml``` that allows users to manually define several parameters to customize the algorithm's performance. The configuration file includes a list of all the algorithm configurations to be tested in a execution.
+
+For example:
 
 ```yaml
 - iterations: 100  # Number of constructions
@@ -42,7 +44,7 @@ The repository includes a configuration file ```config/config.yaml``` that allow
   scheme: 'Best'  # Best, or First
 ```
 
-In this case the B-GRASP with VND algorithm will be executed twice. In the first place, the algorithm will be configured with a beta value of 0.5 and the neighborhoods to be explored in the Local Search phase will be a 1-1 switch, 1-2 switch, and 2-1 switch between selected and unselected nodes. Next, in the second run, the algorithm will find the solutions for the BOCDP with a random beta value for each construction, and a standard Best Improve Local Search with a 1-1 node exchange.
+In this case the B-GRASP with VND algorithm will be executed twice. In the first place, the algorithm will be configured with a `beta` value of 0.5 and the `neighborhoods` to be explored in the Local Search phase will be a 1-1 switch, 1-2 switch, and 2-1 switch between selected and unselected nodes. Next, in the second run, the algorithm will find the solutions for the BOCDP with a random `beta` value for each construction, and a standard Best Improve Local Search with a 1-1 node exchange.
 
 ## Code execution
 
