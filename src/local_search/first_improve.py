@@ -1,6 +1,6 @@
 '''
 Auxiliar function to apply First Improve Local Search.
-Objective functions of ramdomly sorted selected and unselected elements are compared,
+Objective functions selected and unselected elements are compared iteratively,
 when the unselected element's result improves the selected one's, they are interchanged
 in the solution.
 '''
