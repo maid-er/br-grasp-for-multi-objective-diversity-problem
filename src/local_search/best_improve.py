@@ -1,7 +1,8 @@
 '''
 Auxiliar function to apply Best Improve Local Search.
-The worst selected element and best unselected element are interchanged to improve
-the initial solution.
+Objective functions of a possible switch between every selected and unselected element
+are compared iteratively. All the possible exchanges are evaluated and the exchange that
+leads to a dominant solution is performed.
 '''
 from itertools import combinations
 
