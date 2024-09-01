@@ -3,8 +3,9 @@
 
 def dominates(point_a, point_b):
 
-    cond1 = all(a <= b for a, b in zip(point_a, point_b))
-    cond2 = any(a < b for a, b in zip(point_a, point_b))
+    cond1 = all(a >= b for a, b in zip(point_a, point_b))
+    # cond2 = any(a > b for a, b in zip(point_a, point_b))
+    cond2 = True
 
     return cond1 and cond2
 
