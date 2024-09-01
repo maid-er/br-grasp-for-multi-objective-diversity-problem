@@ -87,6 +87,12 @@ These outputs provide the user with multiple optimal solutions and essential inf
 python .\evaluation\main.py
 ```
 
+The ```select_tuning_files.py``` script can be executed to randomly select the 20% of the instances from every set for the algorithm tuning process.
+
+```console
+python .\evaluation\select_tuning_files.py
+```
+
 It also contains the ```plot_results.py``` script that plots the Pareto Front of a determinate output CSV file with the solution data by executing:
 
 ```console
