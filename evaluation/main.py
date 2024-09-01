@@ -11,12 +11,14 @@ from performance_indicators import set_coverage, epsilon_indicator
 if __name__ == '__main__':
 
     # Evaluated instance set path
-    set_path = os.path.join('output', 'GDP', 'GKD-b_n50')
+    set_path = os.path.join('output', 'GDP_test', 'SOM-a')
 
     general_indicators = pd.DataFrame(columns=['inst', 'config', 'time', 'HV', 'SC', 'eps'])
 
     instances = os.listdir(set_path)
     for count, inst in enumerate(instances):
+        if inst.endswith('.csv'):
+            continue
         print(f'Evaluating instance {count+1}/{len(instances)}')
         inst_path = os.path.join(set_path, inst)
         reference_pareto_front = calculate_reference_front(inst_path)
@@ -66,5 +68,6 @@ if __name__ == '__main__':
 
         # config_comparison.to_csv(os.path.join(inst_path, 'indicators.csv'))
 
+    general_indicators['eps'].replace([np.inf, -np.inf], np.nan, inplace=True)
     general_indicators = general_indicators.groupby(['config']).mean().round(2)
     general_indicators.to_csv(os.path.join(set_path, 'general_indicators.csv'))
