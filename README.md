@@ -1,5 +1,5 @@
 # br-grasp-for-multi-objective-diversity-problem
-This repository contains a Biased GRASP algorithm with VND designed to solve the Bi-Objective Capacitated Diversity Problem (BICDP).
+This repository contains a Biased GRASP algorithm with VND designed to solve the Bi-Objective Generalized Diversity Problem (BOGDP).
 
 ## Development environment
 
