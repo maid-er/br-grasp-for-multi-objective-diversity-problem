@@ -11,7 +11,7 @@ from performance_indicators import set_coverage, epsilon_indicator
 if __name__ == '__main__':
 
     # Evaluated instance set path
-    set_path = os.path.join('output', 'GDP_test', 'SOM-a')
+    set_path = os.path.join('output', 'GDP', 'SOM-a')
 
     general_indicators = pd.DataFrame(columns=['inst', 'config', 'time', 'HV', 'SC', 'eps'])
 
