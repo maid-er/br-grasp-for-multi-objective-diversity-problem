@@ -1,7 +1,8 @@
 '''Auxiliar functions to construct a Biased-Randomized solution'''
-from structure.solution import Solution
 import random
 import math
+
+from structure.solution import Solution
 
 from utils.logger import load_logger
 
