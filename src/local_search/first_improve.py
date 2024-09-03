@@ -53,6 +53,10 @@ def try_improvement(sol: Solution, objective: int,
         d_sum_s = [sol.distance_sum_to_solution(v) for v in combo_s] + pairwise_d
         d_min_s = [sol.minimum_distance_to_solution(v) for v in combo_s] + pairwise_d
         for combo_u in unselected_combinations:
+            # If time is exceeded break LS without improvement
+            if datetime.timedelta(seconds=max_time) < datetime.datetime.now() - start:
+                logging.info('Unable to find an improvement in the established time.')
+                return False
             pairwise_d = get_all_pairwise_distances(sol.instance, combo_u)
             d_sum_u = [sol.distance_sum_to_solution(v, without=combo_s)
                        for v in combo_u] + pairwise_d
