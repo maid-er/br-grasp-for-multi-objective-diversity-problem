@@ -1,6 +1,7 @@
 '''
 Auxiliar function to apply Variable Neighborhood Descent.
 '''
+from local_search import best_improve as bes
 from local_search import fast_improve as fas
 from local_search import first_improve as fis
 from structure.solution import Solution
@@ -31,7 +32,9 @@ def improve(sol: Solution, config: dict):
     while improve or nb <= len(neighborhoods):
         switch = neighborhoods[nb]
         logging.info('Local searching in neighbourhood %s with switch type %s.', nb, switch)
-        if ls_scheme == 'Fast':
+        if ls_scheme == 'Best':
+            improve = bes.try_improvement(sol, switch=switch, max_time=max_time)
+        elif ls_scheme == 'Fast':
             improve = fas.try_improvement(sol, switch)
         elif ls_scheme == 'First':
             objective = abs_count % 2  # 0: MaxSum, 1: MaxMin
