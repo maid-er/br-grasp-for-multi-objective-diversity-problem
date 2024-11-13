@@ -46,8 +46,8 @@ class OutputHandler:
         instance_path = instance.split(os.sep)[1:]
         instance_path = [s.replace('.txt', '') for s in instance_path]
         output_path = os.path.join('output',
-                                   *instance_path,
-                                   f'{params}')
+                                   f'B-GRASP_{params}',
+                                   *instance_path)
 
         os.makedirs(output_path, exist_ok=True)
 

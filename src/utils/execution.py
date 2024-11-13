@@ -75,8 +75,8 @@ def execute_instance(path: str, config: dict, results: OutputHandler) -> float:
     fig = results.pareto_front(result_table, path)
     # Save table and plot with results
     algorithm_params = (f'IT{config.get("iterations")}'
-                        f'_beta{config.get("parameters").get("beta")}'
-                        f'_LS{config.get("scheme")}'
+                        f'_b{config.get("parameters").get("beta")}'
+                        f'_{config.get("scheme")[:3]}'
                         # f'_nb{len(config.get("neighborhoods"))}'
                         ).replace('.', '')
     results.save(result_table, secs, fig, algorithm_params, path)
