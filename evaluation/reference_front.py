@@ -2,14 +2,17 @@ import os
 import pandas as pd
 
 
-def calculate_reference_front(instance_path):
+def calculate_reference_front(result_dir, set, subset, inst):
     '''Calculate reference solution set R'''
-    configurations = os.listdir(instance_path)
+    configurations = os.listdir(result_dir)
 
     all_solution_table = pd.DataFrame(columns=['Solution', 'MaxSum', 'MaxMin', 'Cost', 'Capacity'])
     # Read all the solutions for this instance in a unique DataFrame
     for config in configurations:
-        config_path = os.path.join(instance_path, config)
+        if config.endswith('.csv'):
+            continue
+
+        config_path = os.path.join(result_dir, config, set, subset, inst)
         executions = os.listdir(config_path)
         for exec in executions:
             solutions = pd.read_csv(os.path.join(config_path, exec))
