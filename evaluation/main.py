@@ -13,7 +13,7 @@ if __name__ == '__main__':
 
     # Directory with results
     result_dir = 'output'
-
+    #result_dir = "C:/Users/Antor/Desktop/DOC PAPERS/Multi objective DP/bis/br-grasp-for-multi-objective-diversity-problem/src/output"
     # Plot Pareto Fronts of all the analyzed algorithms and instances
     if PLOT_PARETO_FRONTS:
         common_inst = utils.get_coincident_instances(result_dir, SET, SUBSET)

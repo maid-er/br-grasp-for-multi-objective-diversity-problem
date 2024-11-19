@@ -1,7 +1,7 @@
 '''Auxiliar functions to construct a Biased-Randomized solution'''
 import random
 import math
-
+import copy
 from structure.solution import Solution
 
 from utils.logger import load_logger
@@ -33,7 +33,7 @@ def construct(inst: dict, parameters: dict) -> Solution:
         (Solution): contains the solution information..
     '''
     distribution = parameters.get('distribution')
-
+    set_solution_all = []
     sol = Solution(inst)
     n = inst['n']
     u = random.randint(0, n-1)
@@ -63,7 +63,33 @@ def construct(inst: dict, parameters: dict) -> Solution:
         sol.add_to_solution(cSel[2], cSel[1], cSel[0])
         cl.remove(cSel)
         update_candidate_list(sol, cl, cSel[2])
-    return sol
+
+    set_solution_all.append(copy.deepcopy(sol))
+
+    while sol.satisfies_cost:
+        objective = len(cl) % 2  # 0: MaxSum, 1: MaxMin
+        # objective = 0  # 0: MaxSum, 1: MaxMin
+        cl = [c for c in cl if sol.satisfies_cost([c[2]])]
+        if len(cl) == 0:
+            break
+        cl.sort(key=lambda row: -row[objective])
+        # logging.info('Sorted biased candidate list with %s objective.',
+        # OBJECTIVE_FUNCTIONS.get(objective))
+        if distribution == 'Geometric':
+            beta = parameters.get('beta')
+            beta = beta if beta >= 0 else random.random()
+            selIdx = int(math.log(random.random()) / math.log(1 - beta))
+            selIdx = selIdx % len(cl)
+        elif distribution == 'Triangular':
+            selIdx = int(len(cl) * (1 - math.sqrt(random.random())))
+
+        cSel = cl[selIdx]
+        sol.add_to_solution(cSel[2], cSel[1], cSel[0])
+        cl.remove(cSel)
+        update_candidate_list(sol, cl, cSel[2])
+        set_solution_all.append(copy.deepcopy(sol))
+
+    return set_solution_all
 
 
 def create_candidate_list(sol: Solution, first: int = -1) -> list:

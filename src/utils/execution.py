@@ -44,23 +44,24 @@ def execute_instance(path: str, config: dict, results: OutputHandler) -> float:
             break
         # Construct a solution for each iteration
         logging.info(f'Finding solution #{i+1}')
-        sol = grasp.execute(inst, config)
-        all_solutions.append(sol)
+        solution_set = grasp.execute(inst, config)
+        all_solutions = all_solutions + solution_set
 
-        logging.info('MaxSum objective function value for the best result: %s', sol.of_MaxSum)
-        logging.info('MaxMin objective function value for the best result: %s', sol.of_MaxMin)
+        for sol in solution_set:
+            # logging.info('MaxSum objective function value for the best result: %s', sol.of_MaxSum)
+            # logging.info('MaxMin objective function value for the best result: %s', sol.of_MaxMin)
 
-        selected_nodes = ' - '.join([str(s) for s in sorted(sol.solution_set)])
-        result_table.loc[len(result_table)] = [selected_nodes] + [sol.of_MaxSum,
-                                                                  sol.of_MaxMin,
-                                                                  sol.total_cost,
-                                                                  sol.total_capacity]
+            selected_nodes = ' - '.join([str(s) for s in sorted(sol.solution_set)])
+            result_table.loc[len(result_table)] = [selected_nodes] + [sol.of_MaxSum,
+                                                                      sol.of_MaxMin,
+                                                                      sol.total_cost,
+                                                                      sol.total_capacity]
 
-        logging.info('Final solution:')
-        logging.info('Selected elements: %s', sol.solution_set)
-        logging.info('MaxSum objective function value for the best result: %s', sol.of_MaxSum)
-        logging.info('MaxMin objective function value for the best result: %s', sol.of_MaxMin)
-        logging.info('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
+            # logging.info('Final solution:')
+            # logging.info('Selected elements: %s', sol.solution_set)
+            # logging.info('MaxSum objective function value for the best result: %s', sol.of_MaxSum)
+            # logging.info('MaxMin objective function value for the best result: %s', sol.of_MaxMin)
+            # logging.info('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
 
     # Find non-dominated solutions among all constructions
     is_non_dominated = dominance.get_nondominated_solutions(all_solutions)

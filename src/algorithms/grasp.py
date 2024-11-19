@@ -28,24 +28,26 @@ def execute(inst: dict, config: dict) -> Solution:
     ls_strategy = config.get('strategy')
     ls_scheme = config.get('scheme')
 
-    logging.info('Executing GRASP algorithm with: ')
-    logging.info('\tBiased construction with parameters %s', parameters)
-    logging.info('\t%s Local Search strategy following the %s Improve scheme',
-                 ls_strategy, ls_scheme)
+    # logging.info('Executing GRASP algorithm with: ')
+    # logging.info('\tBiased construction with parameters %s', parameters)
+    # logging.info('\t%s Local Search strategy following the %s Improve scheme',
+    #              ls_strategy, ls_scheme)
 
     # Construction phase (Biased GRASP)
-    sol = biased_randomized.construct(inst, parameters)
-    logging.info("\tConstruction phase:")
-    logging.info('\t\tMaxSum: %s', sol.of_MaxSum)
-    logging.info('\t\tMaxMin: %s', sol.of_MaxMin)
-    logging.info('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
+    set_solutions_all = biased_randomized.construct(inst, parameters)
 
-    # Local Search phase
-    variable_neighborhood_descent.improve(sol, config)
+    for sol in set_solutions_all:
+        # logging.info("\tConstruction phase:")
+        # logging.info('\t\tMaxSum: %s', sol.of_MaxSum)
+        # logging.info('\t\tMaxMin: %s', sol.of_MaxMin)
+        # logging.info('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
 
-    logging.info("\tLocal Search improvement phase:")
-    logging.info('\t\tMaxSum: %s', sol.of_MaxSum)
-    logging.info('\t\tMaxMin: %s', sol.of_MaxMin)
-    logging.info('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
+        # Local Search phase
+        variable_neighborhood_descent.improve(sol, config)
 
-    return sol
+        # logging.info("\tLocal Search improvement phase:")
+        # logging.info('\t\tMaxSum: %s', sol.of_MaxSum)
+        # logging.info('\t\tMaxMin: %s', sol.of_MaxMin)
+        # logging.info('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
+
+    return set_solutions_all

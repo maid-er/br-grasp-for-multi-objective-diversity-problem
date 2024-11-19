@@ -17,6 +17,7 @@ def get_coincident_instances(result_dir: str, inst_set: str, inst_subset: str) -
 
     # Loop all analyzed algorithms
     algorithms_config = os.listdir(result_dir)
+    # algorithms_config = os.listdir("C:/Users/Antor/Desktop/DOC PAPERS/Multi objective DP/nsga-ii-for-multi-objective-diversity-problem/src/output/GKD-b_11_n50_b02_m5_k03")
     for alg in algorithms_config:
         if alg.endswith('.csv'):
             continue
@@ -131,7 +132,7 @@ def calculate_performance_indicators(result_dir, inst_set, inst_subset):
                 eps = epsilon_indicator_mul(current_pareto_front, reference_pareto_front)
 
                 # Save indicators
-                indicators = indicators.append(pd.DataFrame({'HV': [hypervolume],
+                indicators = indicators._append(pd.DataFrame({'HV': [hypervolume],
                                                              'SC': [sc],
                                                              'eps': [eps]}))
 
@@ -143,7 +144,7 @@ def calculate_performance_indicators(result_dir, inst_set, inst_subset):
             summary = pd.DataFrame({'alg_config': [alg]}) \
                 .join(pd.DataFrame(evaluation_table.mean()).transpose())
             summary.drop(columns=['ex_number'], inplace=True)
-            general_indicators = general_indicators.append(
+            general_indicators = general_indicators._append(
                 pd.DataFrame({'inst': [inst]}).join(summary))
 
     # Save table with indicator values for each instance-algorithm

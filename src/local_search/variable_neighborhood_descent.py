@@ -31,21 +31,22 @@ def improve(sol: Solution, config: dict):
     improve = True
     while improve or nb <= len(neighborhoods):
         switch = neighborhoods[nb]
-        logging.info('Local searching in neighbourhood %s with switch type %s.', nb, switch)
+        # logging.info('Local searching in neighbourhood %s with switch type %s.', nb, switch)
         if ls_scheme == 'Best':
             improve = bes.try_improvement(sol, switch=switch, max_time=max_time)
         elif ls_scheme == 'Fast':
             improve = fas.try_improvement(sol, switch)
         elif ls_scheme == 'First':
             objective = abs_count % 2  # 0: MaxSum, 1: MaxMin
+            # objective = 1 # 0: MaxSum, 1: MaxMin
             improve = fis.try_improvement(sol, objective, switch, max_time)
         if improve:
-            logging.info('Improved solution.')
+            # logging.info('Improved solution.')
             nb = 1
         else:
-            logging.info('Unable to improve solution. Change neighborhood.')
+            # logging.info('Unable to improve solution. Change neighborhood.')
             count += 1
             nb += 1
         abs_count += 1
-    logging.info('Local search stopped with %s total IT and %s IT with no improvements.',
-                 abs_count, count)
+    # logging.info('Local search stopped with %s total IT and %s IT with no improvements.',
+    #              abs_count, count)
