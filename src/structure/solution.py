@@ -149,12 +149,12 @@ class Solution:
         '''
         return len(self.solution_set) > 2
 
-    def satisfies_cost(self, u: int, v: int = -1):
+    def satisfies_cost(self, u: int = -1, v: int = -1):
         '''Checks if a solution meets the cost constraint.
 
         Args:
-          u (int): represents the ID of the candidate element (node) that would be added to the
-        solution set.
+          u (int): it is an optional parameter that allows you to specify the ID of the candidate
+        element (node) that might be added to the solution set.
           v (int): it is an optional parameter that allows you to specify the ID of the node that
         might be removed from the solution set.
 
@@ -169,8 +169,9 @@ class Solution:
         if v != -1:
             for q in v:
                 possible_cost -= self.instance['a'][q]
-        for q in u:
-            possible_cost += self.instance['a'][q]
+        if u != -1:
+            for q in u:
+                possible_cost += self.instance['a'][q]
 
         return possible_cost < self.instance['K']
 

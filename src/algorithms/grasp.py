@@ -34,18 +34,19 @@ def execute(inst: dict, config: dict) -> Solution:
                  ls_strategy, ls_scheme)
 
     # Construction phase (Biased GRASP)
-    sol = biased_randomized.construct(inst, parameters)
-    logging.info("\tConstruction phase:")
-    logging.info('\t\tMaxSum: %s', sol.of_MaxSum)
-    logging.info('\t\tMaxMin: %s', sol.of_MaxMin)
-    logging.info('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
+    solution_set = biased_randomized.construct(inst, parameters)
+    # logging.info("\tConstruction phase:")
+    # logging.info('\t\tMaxSum: %s', sol.of_MaxSum)
+    # logging.info('\t\tMaxMin: %s', sol.of_MaxMin)
+    # logging.info('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
 
-    # Local Search phase
-    variable_neighborhood_descent.improve(sol, config)
+    for sol in solution_set:
+        # Local Search phase
+        variable_neighborhood_descent.improve(sol, config)
 
-    logging.info("\tLocal Search improvement phase:")
-    logging.info('\t\tMaxSum: %s', sol.of_MaxSum)
-    logging.info('\t\tMaxMin: %s', sol.of_MaxMin)
-    logging.info('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
+    # logging.info("\tLocal Search improvement phase:")
+    # logging.info('\t\tMaxSum: %s', sol.of_MaxSum)
+    # logging.info('\t\tMaxMin: %s', sol.of_MaxMin)
+    # logging.info('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
 
-    return sol
+    return solution_set
