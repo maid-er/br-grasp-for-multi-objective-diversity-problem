@@ -115,7 +115,7 @@ def calculate_performance_indicators(result_dir, inst_set, inst_subset, instance
             # Loop all the executions run during the experiments (1 csv per execution)
             executions = os.listdir(inst_path)
             for exec in executions:
-                if exec not in ['add_data.csv', 'ex_times.csv']:  # Ignore execution time csv
+                if exec in ['add_data.csv', 'ex_times.csv']:  # Ignore execution time csv
                     continue
                 solutions = pd.read_csv(os.path.join(inst_path, exec))
                 current_pareto_front = solutions[['MaxSum', 'MaxMin']].to_numpy()

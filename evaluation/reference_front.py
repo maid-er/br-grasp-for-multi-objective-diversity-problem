@@ -9,7 +9,7 @@ def calculate_reference_front(result_dir, set, subset, inst):
     all_solution_table = pd.DataFrame(columns=['Solution', 'MaxSum', 'MaxMin', 'Cost', 'Capacity'])
     # Read all the solutions for this instance in a unique DataFrame
     for config in configurations:
-        if config.endswith('.csv'):
+        if config.endswith('.csv') or config.endswith('.html'):
             continue
 
         config_path = os.path.join(result_dir, config, set, subset, inst)
