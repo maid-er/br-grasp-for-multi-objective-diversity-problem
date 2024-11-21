@@ -73,12 +73,13 @@ def plot_pareto_fronts(output_dir: str, inst_set: str, inst_subset: str, instanc
     fig.update_traces(marker={'size': 8})
     fig.update_xaxes(title_text='MaxMin')
     fig.update_yaxes(title_text='MaxSum')
-    fig.update_layout(height=800)
+    fig.update_layout(height=400 * total_rows)
 
+    fig.write_html('output')
     fig.show()
 
 
-def calculate_performance_indicators(result_dir, inst_set, inst_subset):
+def calculate_performance_indicators(result_dir, inst_set, inst_subset, instances: list):
     '''Calculates performance indicator and saves results in a CSV file'''
     # Initialize result summary table
     general_indicators = pd.DataFrame(columns=['inst', 'alg_config', 'time', 'HV', 'SC', 'eps'])
@@ -92,7 +93,6 @@ def calculate_performance_indicators(result_dir, inst_set, inst_subset):
 
         # Evaluated instance set path
         set_path = os.path.join(result_dir, alg, inst_set, inst_subset)
-        instances = os.listdir(set_path)
         for count, inst in enumerate(instances):
             if inst.endswith('.csv'):
                 continue

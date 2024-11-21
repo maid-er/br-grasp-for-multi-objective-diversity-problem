@@ -3,8 +3,8 @@ import utils
 
 
 '''Variables defined by the user'''
-SET = 'GDP'
-SUBSET = 'GKD-b_n50'
+SET = 'pr_test'
+SUBSET = 'aux_sbt'
 PLOT_PARETO_FRONTS = True
 
 
@@ -15,8 +15,8 @@ if __name__ == '__main__':
     result_dir = 'output'
 
     # Plot Pareto Fronts of all the analyzed algorithms and instances
+    common_inst = utils.get_coincident_instances(result_dir, SET, SUBSET)
     if PLOT_PARETO_FRONTS:
-        common_inst = utils.get_coincident_instances(result_dir, SET, SUBSET)
         utils.plot_pareto_fronts(result_dir, SET, SUBSET, common_inst)
 
-    utils.calculate_performance_indicators(result_dir, SET, SUBSET)
+    utils.calculate_performance_indicators(result_dir, SET, SUBSET, common_inst)
