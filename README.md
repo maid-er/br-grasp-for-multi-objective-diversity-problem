@@ -96,10 +96,23 @@ python .\evaluation\main.py
 If the user wants to compare results from an external algorithm, take into account that the structure of the output files should be:
 
 ```
-output/<algorithm+config>/<set>/<subset>/<instance>/<results_N.csv>
+output
+├── <algorithm+config>
+│    └── <set>
+│         └── <subset>
+│              └── <instance>
+│                   ├── ex_times.csv
+│                   └── <results_i.csv>
+└── NSGA-II
+     └── GDP
+          └── GKD-c
+               └── GKD-c_01_n500_b02_m50_k02
+                    ├── ex_times.csv
+                    ├── results_1.csv
+                    └── results_2.csv
 ```
 
-The ```select_tuning_files.py``` script can be executed to randomly select the 20% of the instances from every set for the algorithm tuning process.
+The ```select_tuning_files.py``` script can be executed to randomly select a portion (20% by default) of the instances from every set for the algorithm tuning process.
 
 ```console
 python .\evaluation\select_tuning_files.py
