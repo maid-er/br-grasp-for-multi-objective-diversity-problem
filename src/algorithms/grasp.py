@@ -8,7 +8,7 @@ from utils.logger import load_logger
 logging = load_logger(__name__)
 
 
-def execute(inst: dict, config: dict) -> Solution:
+def execute(inst: dict, config: dict, objective: int) -> Solution:
     '''The function executes a GRASP algorithm with a specified number of iterations and a given
     beta value, selecting the best solution found during the iterations.
 
@@ -28,25 +28,25 @@ def execute(inst: dict, config: dict) -> Solution:
     ls_strategy = config.get('strategy')
     ls_scheme = config.get('scheme')
 
-    logging.info('Executing GRASP algorithm with: ')
-    logging.info('\tBiased construction with parameters %s', parameters)
-    logging.info('\t%s Local Search strategy following the %s Improve scheme',
-                 ls_strategy, ls_scheme)
+    print('Executing GRASP algorithm with: ')
+    print('\tBiased construction with parameters %s', parameters)
+    print('\t%s Local Search strategy following the %s Improve scheme',
+          ls_strategy, ls_scheme)
 
     # Construction phase (Biased GRASP)
-    solution_set = biased_randomized.construct(inst, parameters)
-    # logging.info("\tConstruction phase:")
-    # logging.info('\t\tMaxSum: %s', sol.of_MaxSum)
-    # logging.info('\t\tMaxMin: %s', sol.of_MaxMin)
-    # logging.info('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
+    solution_set = biased_randomized.construct(inst, config, objective)
+    # print("\tConstruction phase:")
+    # print('\t\tMaxSum: %s', sol.of_MaxSum)
+    # print('\t\tMaxMin: %s', sol.of_MaxMin)
+    # print('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
 
     for sol in solution_set:
         # Local Search phase
         variable_neighborhood_descent.improve(sol, config)
 
-    # logging.info("\tLocal Search improvement phase:")
-    # logging.info('\t\tMaxSum: %s', sol.of_MaxSum)
-    # logging.info('\t\tMaxMin: %s', sol.of_MaxMin)
-    # logging.info('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
+    # print("\tLocal Search improvement phase:")
+    # print('\t\tMaxSum: %s', sol.of_MaxSum)
+    # print('\t\tMaxMin: %s', sol.of_MaxMin)
+    # print('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
 
     return solution_set

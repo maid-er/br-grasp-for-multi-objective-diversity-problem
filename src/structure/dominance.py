@@ -3,7 +3,7 @@ from structure.solution import Solution
 
 
 def exchange_is_dominant(sel_maxsum_variability: float, sel_maxmin: float,
-                         unsel_maxsum_variability: float, unsel_maxmin: float):
+                         unsel_maxsum_variability: float, unsel_maxmin: float) -> bool:
     '''
     Checks if selected element(s) is dominated by unselected element(s). A solution
     is dominated if another solution is no worse in all objectives and better in at

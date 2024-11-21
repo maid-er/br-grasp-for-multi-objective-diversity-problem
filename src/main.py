@@ -11,7 +11,7 @@ config_list = read_config('config')
 
 
 if __name__ == '__main__':
-    logging.info('Initializing diversity maximization algorithm...')
+    print('Initializing diversity maximization algorithm...')
 
     path = os.path.join('instances', 'pr_test', 'aux_sbt')
 

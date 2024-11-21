@@ -17,7 +17,7 @@ from utils.logger import load_logger
 logging = load_logger(__name__)
 
 
-def try_improvement(sol: Solution, objective: int,
+def try_improvement(sol: Solution, objective: int, improvement_criteria: str,
                     switch: list = [1, 1], max_time: int = 5) -> bool:
     '''Attempts to improve a solution by selecting and interchanging a selected element (node)
     with an unselected element. The improvement is obtained if the new solution dominates the
@@ -47,7 +47,7 @@ def try_improvement(sol: Solution, objective: int,
     for combo_s in selected_combinations:
         # If time is exceeded break LS without improvement
         if datetime.timedelta(seconds=max_time) < datetime.datetime.now() - start:
-            logging.info('Unable to find an improvement in the established time.')
+            print('Unable to find an improvement in the established time.')
             return False
         pairwise_d = get_all_pairwise_distances(sol.instance, combo_s)
         d_sum_s = [sol.distance_sum_to_solution(v) for v in combo_s] + pairwise_d
@@ -55,7 +55,7 @@ def try_improvement(sol: Solution, objective: int,
         for combo_u in unselected_combinations:
             # If time is exceeded break LS without improvement
             if datetime.timedelta(seconds=max_time) < datetime.datetime.now() - start:
-                logging.info('Unable to find an improvement in the established time.')
+                print('Unable to find an improvement in the established time.')
                 return False
             pairwise_d = get_all_pairwise_distances(sol.instance, combo_u)
             d_sum_u = [sol.distance_sum_to_solution(v, without=combo_s)
@@ -63,10 +63,18 @@ def try_improvement(sol: Solution, objective: int,
             d_min_u = [sol.minimum_distance_to_solution(v, without=combo_s)
                        for v in combo_u] + pairwise_d
 
-            new_dominates_old = exchange_is_dominant(sum(d_sum_s), min(d_min_s),
-                                                     sum(d_sum_u), min(d_min_u))
+            # TODO IMPROVE CODE
+            # Check if new solution improves the latest depending on the selected criteria
+            if improvement_criteria == 'Dom':
+                new_improves_old = exchange_is_dominant(sum(d_sum_s), min(d_min_s),
+                                                        sum(d_sum_u), min(d_min_u))
+            else:
+                if objective == 0:
+                    new_improves_old = sum(d_sum_s) < sum(d_sum_u)
+                else:
+                    new_improves_old = min(d_min_s) < min(d_min_u)
 
-            if new_dominates_old \
+            if new_improves_old \
                 and sol.satisfies_cost(combo_u, combo_s) \
                     and sol.satisfies_capacity(combo_u, combo_s):
 

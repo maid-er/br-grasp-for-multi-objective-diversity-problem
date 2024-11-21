@@ -13,7 +13,7 @@ OBJECTIVE_FUNCTIONS = {0: 'MaxSum',
                        1: 'MaxMin'}
 
 
-def construct(inst: dict, parameters: dict) -> Solution:
+def construct(inst: dict, config: dict, objective: int) -> Solution:
     '''The function constructs a solution for a given instance using a Biased Greedy Randomized
     Adaptive Search (B-GRASP) procedure with specified parameters.
 
@@ -22,7 +22,7 @@ def construct(inst: dict, parameters: dict) -> Solution:
     nodes `n`, the number of nodes to be selected `p`, and a distance matrix `d` representing the
     distances from each node to the rest of the nodes.
     alpha
-      parameters (dict): always contains a 'distibution' key that indicates the probability
+      config (dict): always contains a 'distibution' key that indicates the probability
     distribution that will be used to biase the node selection from the candidate list. If the
     distribution is geometric, it contains another 'beta' key with the its parameter, which
     determines the trade-off between exploration and exploitation in the construction of a solution.
@@ -33,7 +33,8 @@ def construct(inst: dict, parameters: dict) -> Solution:
     Returns:
         (Solution): contains the solution information..
     '''
-    distribution = parameters.get('distribution')
+    mo_construction_approach = config.get('mo_approach_C')
+    distribution = config.get('parameters').get('distribution')
 
     solution_set = []
 
@@ -42,20 +43,19 @@ def construct(inst: dict, parameters: dict) -> Solution:
     u = random.randint(0, n-1)
     sol.add_to_solution(u)
     cl = create_candidate_list(sol, u)
-    while sol.satisfies_cost():
-        objective = len(cl) % 2  # 0: MaxSum, 1: MaxMin
-        cl = [c for c in cl if sol.satisfies_cost([c[2]])]
-        if len(cl) == 0:
-            logging.error('No feasible solution reached in the construction phase.')
-            sol = Solution(inst)
-            sol.of_MaxMin = 0
-            break
+    while sol.satisfies_cost() and len(cl) > 0:
+        # If the approach is to alternate objectives IN each construction,
+        # switch objective in each iteration, else maintain the (input) objective
+        # set by the strategy to alternate objectives BETWEEN constructions.
+        if mo_construction_approach == 'AltInS':
+            objective = len(cl) % 2  # 0: MaxSum, 1: MaxMin
+
+        # cl = [c for c in cl if sol.satisfies_cost([c[2]])]
         cl.sort(key=lambda row: -row[objective])
-        logging.info('Sorted biased candidate list with %s objective.',
-                     OBJECTIVE_FUNCTIONS.get(objective))
+        print('Sorted biased candidate list with %s objective.', OBJECTIVE_FUNCTIONS.get(objective))
 
         if distribution == 'Geometric':
-            beta = parameters.get('beta')
+            beta = config.get('parameters').get('beta')
             beta = beta if beta >= 0 else random.random()
             selIdx = int(math.log(random.random()) / math.log(1 - beta))
             selIdx = selIdx % len(cl)
@@ -69,6 +69,12 @@ def construct(inst: dict, parameters: dict) -> Solution:
 
         if sol.satisfies_capacity() and sol.satisfies_cost():
             solution_set.append(copy.copy(sol))
+
+    if len(solution_set) == 0:
+        logging.error('No feasible solution reached in the construction phase.')
+        sol = Solution(inst)
+        sol.of_MaxMin = 0
+        solution_set.append(sol)
 
     return solution_set
 

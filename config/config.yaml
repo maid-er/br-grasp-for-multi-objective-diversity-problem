@@ -1,9 +1,11 @@
 - iterations: 100  # Number of constructions
   # Construction stage
+  mo_approach_C: 'AltInS'  # AltInS, or AltBwS (default) // for a single objective approach MaxSum or MaxMin
   parameters:
     distribution: 'Geometric'  # Triangular or Geometric
     beta: 0.25  # From 0 to 1 // if -1, random selection for each construction
   # Local Improvement stage
+  mo_approach_LS: 'Dom'  # Dom, or Alt (PR?¿?¿) // for a single objective approach MaxSum or MaxMin
   strategy: 'VND'  # Standard, or VND
   neighborhoods:
     1: [1, 1]
@@ -12,5 +14,6 @@
   scheme: 'First'  # Fast, or First
   # Limits
   execution_limits:
-    max_time: 150  # Maximum execution time for B-GRASP with VND
-    max_local_search_time: 2  # Maximum execution time for FiILS without improvements
+    max_time: 900  # Maximum execution time for B-GRASP with VND
+    max_local_search_time: 15  # Maximum execution time for a LS iteration
+    max_local_search_it: 150  # Maximum number of iterations in the LS

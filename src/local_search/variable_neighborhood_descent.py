@@ -10,6 +10,9 @@ from utils.logger import load_logger
 
 logging = load_logger(__name__)
 
+OBJECTIVE_FUNCTIONS = {0: 'MaxSum',
+                       1: 'MaxMin'}
+
 
 def improve(sol: Solution, config: dict):
     '''Iteratively tries to improve a solution until no further improvements can be made.
@@ -24,28 +27,37 @@ def improve(sol: Solution, config: dict):
         neighborhoods = {1: [1, 1]}
 
     max_time = config.get('execution_limits').get('max_local_search_time')
+    max_it = config.get('execution_limits').get('max_local_search_it')
 
     nb = 1
     count = 0
     abs_count = 0
     improve = True
-    while improve or nb <= len(neighborhoods):
+    while (improve or nb <= len(neighborhoods)) and abs_count < max_it:
+        objective = abs_count % 2  # 0: MaxSum, 1: MaxMin (for Alt approach)
+        # Check if a single objective approach is selected
+        mo_approach = config.get('mo_approach_LS')
+        if mo_approach == 'MaxSum':
+            objective = 0
+        elif mo_approach == 'MaxMin':
+            objective = 1
+
         switch = neighborhoods[nb]
-        logging.info('Local searching in neighbourhood %s with switch type %s.', nb, switch)
+        print('Local searching in neighbourhood %s with switch type %s and %s objective.',
+              nb, switch, OBJECTIVE_FUNCTIONS.get(objective))
         if ls_scheme == 'Best':
             improve = bes.try_improvement(sol, switch=switch, max_time=max_time)
         elif ls_scheme == 'Fast':
             improve = fas.try_improvement(sol, switch)
         elif ls_scheme == 'First':
-            objective = abs_count % 2  # 0: MaxSum, 1: MaxMin
-            improve = fis.try_improvement(sol, objective, switch, max_time)
+            improve = fis.try_improvement(sol, objective, mo_approach, switch, max_time)
         if improve:
-            logging.info('Improved solution.')
+            print('Improved solution.')
             nb = 1
         else:
-            logging.info('Unable to improve solution. Change neighborhood.')
+            print('Unable to improve solution. Change neighborhood.')
             count += 1
             nb += 1
         abs_count += 1
-    logging.info('Local search stopped with %s total IT and %s IT with no improvements.',
-                 abs_count, count)
+    print('Local search stopped with %s total IT and %s IT with no improvements.',
+          abs_count, count)

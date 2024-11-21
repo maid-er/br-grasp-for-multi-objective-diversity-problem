@@ -10,7 +10,7 @@ class OutputHandler:
     def __init__(self):
         '''Initialize OutputHandler'''
         self.execution_n = -1
-
+        # TODO add boolean input for PLOT
         self._get_execution_number()
 
     def pareto_front(self, table: pd.DataFrame, instance: str) -> go.Figure:
@@ -32,7 +32,8 @@ class OutputHandler:
 
         return fig
 
-    def save(self, table: pd.DataFrame, secs: float, figure: go.Figure, params: str, instance: str):
+    def save(self, table: pd.DataFrame, add_data: dict,
+             figure: go.Figure, params: str, instance: str):
         '''
         This function saves the solution DataFrame as a CSV and the Figure as an HTML file in a
         specified directory structure that contains the instance name and execution number as ID.
@@ -55,7 +56,7 @@ class OutputHandler:
                                   f'results_{self.execution_n}.csv'),
                      index=False)
 
-        self._save_execution_time(secs, output_path)
+        self._save_execution_add_data(add_data, output_path)
 
         # figure.write_html(os.path.join(output_path,
         #                                f'solution_{self.execution_n}.html'))
@@ -79,18 +80,17 @@ class OutputHandler:
             with open(execution_file, 'w') as file:
                 file.write(str(int(self.execution_n) + 1))
 
-    def _save_execution_time(self, secs: float, path: str):
+    def _save_execution_add_data(self, add_data: dict, path: str):
         '''
         The function saves algorithm's execution time `secs` in seconds in a csv file.
         '''
-        time_file = os.path.join(path, 'ex_times.csv')
+        time_file = os.path.join(path, 'add_data.csv')
+        new_row = {'ex_number': [self.execution_n]}
+        new_row.update(add_data)
         if os.path.exists(time_file):
             time_table = pd.read_csv(time_file)
-            time_table = time_table.append(
-                pd.DataFrame({'ex_number': [self.execution_n],
-                              'time': [secs]}))
+            time_table = time_table.append(pd.DataFrame(new_row))
         else:
-            time_table = pd.DataFrame({'ex_number': [self.execution_n],
-                                       'time': [secs]})
+            time_table = pd.DataFrame(new_row)
 
         time_table.to_csv(time_file, index=False)

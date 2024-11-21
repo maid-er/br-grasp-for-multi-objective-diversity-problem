@@ -13,7 +13,7 @@ from utils.logger import load_logger
 logging = load_logger(__name__)
 
 
-def try_improvement(sol: Solution, switch: int = [1, 1]) -> bool:
+def try_improvement(sol: Solution, objective: int, switch: int = [1, 1]) -> bool:
     '''Attempts to improve a solution by selecting and interchanging a selected element (node)
     with an unselected element. The improvement is obtained if the new solution dominates the
     previous solution.

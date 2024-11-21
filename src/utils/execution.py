@@ -28,41 +28,46 @@ def execute_instance(path: str, config: dict, results: OutputHandler) -> float:
     Returns:
       (float): returns the total execution time in seconds.
     '''
+    # Initialize list and table to save solutions
     all_solutions = []
     result_table = pd.DataFrame(columns=['Solution', 'MaxSum', 'MaxMin', 'Cost', 'Capacity'])
 
-    logging.info('Solving instance %s:', path)
+    print('Solving instance %s:', path)
     # Read instance
     inst = instance.read_instance(path)
 
     max_time = config.get('execution_limits').get('max_time')
     start = datetime.datetime.now()
+    # Construct a solution for the IT defined in config
     for i in range(config.get('iterations')):
         # If time is exceeded stop execution
         if datetime.timedelta(seconds=max_time) < datetime.datetime.now() - start:
-            logging.info('Maximum allowed execution time is exceeded. Total IT: %s', i)
+            print('Maximum allowed execution time is exceeded. Total IT: %s', i)
             break
-        # Construct a solution for each iteration
-        logging.info(f'Finding solution #{i+1}')
-        solution_set = grasp.execute(inst, config)
-        # all_solutions.append(sol)
+
+        # Define objective considered in this IT
+        construction_approach = config.get('mo_approach_C')
+        objective = i % 2  # 0: MaxSum, 1: MaxMin (for default AltBwC approach)
+
+        # Check if a single objective approach have been defined
+        if construction_approach == 'MaxSum':
+            objective = 0
+        elif construction_approach == 'MaxMin':
+            objective = 1
+
+        # Run B-GRASP-VND
+        print(f'Finding solution #{i+1}')
+        solution_set = grasp.execute(inst, config, objective)
+        # Save solution set found in this IT
         all_solutions += solution_set
 
-        # logging.info('MaxSum objective function value for the best result: %s', sol.of_MaxSum)
-        # logging.info('MaxMin objective function value for the best result: %s', sol.of_MaxMin)
-
+        # Add new solutions to result_table
         for sol in solution_set:
             selected_nodes = ' - '.join([str(s) for s in sorted(sol.solution_set)])
             result_table.loc[len(result_table)] = [selected_nodes] + [sol.of_MaxSum,
                                                                       sol.of_MaxMin,
                                                                       sol.total_cost,
                                                                       sol.total_capacity]
-
-        # logging.info('Final solution:')
-        # logging.info('Selected elements: %s', sol.solution_set)
-        # logging.info('MaxSum objective function value for the best result: %s', sol.of_MaxSum)
-        # logging.info('MaxMin objective function value for the best result: %s', sol.of_MaxMin)
-        # logging.info('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
 
     # Find non-dominated solutions among all constructions
     is_non_dominated = dominance.get_nondominated_solutions(all_solutions)
@@ -71,7 +76,12 @@ def execute_instance(path: str, config: dict, results: OutputHandler) -> float:
     # Compute execution time
     elapsed = datetime.datetime.now() - start
     secs = round(elapsed.total_seconds(), 2)
-    logging.info('Execution time: %s', secs)
+    print('Execution time: %s', secs)
+    add_data = {
+        'time': [secs],
+        'all_sols': [len(all_solutions)],
+        'nd_sols': [len(result_table)]
+    }
 
     # Build and plot Pareto Front
     fig = results.pareto_front(result_table, path)
@@ -81,7 +91,7 @@ def execute_instance(path: str, config: dict, results: OutputHandler) -> float:
                         f'_{config.get("scheme")[:3]}'
                         # f'_nb{len(config.get("neighborhoods"))}'
                         ).replace('.', '')
-    results.save(result_table, secs, fig, algorithm_params, path)
+    results.save(result_table, add_data, fig, algorithm_params, path)
 
 
 def execute_directory(directory: str, config: dict):
