@@ -23,7 +23,7 @@ def get_coincident_instances(result_dir: str, inst_set: str, inst_subset: str) -
 
         subset_path = os.path.join(result_dir, alg, inst_set, inst_subset)
         subset_inst = os.listdir(subset_path)
-        subset_inst = [i for i in subset_inst if i != 'ex_times.csv']
+        subset_inst = [i for i in subset_inst if i not in ['add_data.csv', 'ex_times.csv']]
         instances.append(subset_inst)
 
     common_instances = list(set.intersection(*map(set, instances)))
@@ -46,7 +46,8 @@ def plot_pareto_fronts(output_dir: str, inst_set: str, inst_subset: str, instanc
         col, row = 1, 1
         for count, inst in enumerate(instances):
             inst_path = os.path.join(output_dir, alg, inst_set, inst_subset, inst)
-            file = [f for f in os.listdir(inst_path) if f != 'ex_times.csv'][0]
+            file = [f for f in os.listdir(inst_path)
+                    if f not in ['add_data.csv', 'ex_times.csv']][0]
 
             filename = os.path.join(inst_path, file)
 
@@ -114,7 +115,7 @@ def calculate_performance_indicators(result_dir, inst_set, inst_subset, instance
             # Loop all the executions run during the experiments (1 csv per execution)
             executions = os.listdir(inst_path)
             for exec in executions:
-                if exec == 'ex_times.csv':  # Ignore execution time csv
+                if exec not in ['add_data.csv', 'ex_times.csv']:  # Ignore execution time csv
                     continue
                 solutions = pd.read_csv(os.path.join(inst_path, exec))
                 current_pareto_front = solutions[['MaxSum', 'MaxMin']].to_numpy()
@@ -136,7 +137,10 @@ def calculate_performance_indicators(result_dir, inst_set, inst_subset, instance
                                                              'eps': [eps]}))
 
             # Get table (csv) containing the exection time of all the experiments
-            evaluation_table = pd.read_csv(os.path.join(inst_path, 'ex_times.csv'))
+            if 'add_data.csv' in executions:
+                evaluation_table = pd.read_csv(os.path.join(inst_path, 'add_data.csv'))
+            elif 'ex_times.csv' in executions:
+                evaluation_table = pd.read_csv(os.path.join(inst_path, 'ex_times.csv'))
             evaluation_table = evaluation_table.join(indicators.round(2).reset_index(drop=True))
 
             # Save summary

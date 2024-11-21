@@ -4,7 +4,7 @@ import utils
 
 '''Variables defined by the user'''
 SET = 'pr_test'
-SUBSET = 'aux_sbt'
+SUBSET = 'GKD-b_n50'
 PLOT_PARETO_FRONTS = True
 
 
