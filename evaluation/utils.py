@@ -76,8 +76,9 @@ def plot_pareto_fronts(output_dir: str, inst_set: str, inst_subset: str, instanc
     fig.update_yaxes(title_text='MaxSum')
     fig.update_layout(height=400 * total_rows)
 
+    print('Saving figure')
     fig.write_html('output/fig.html')
-    fig.show()
+    # fig.show()
 
 
 def calculate_performance_indicators(result_dir, inst_set, inst_subset, instances: list):
@@ -88,7 +89,7 @@ def calculate_performance_indicators(result_dir, inst_set, inst_subset, instance
     # Loop all analyzed algorithms
     algorithms_config = os.listdir(result_dir)
     for alg in algorithms_config:
-        if alg.endswith('.csv'):
+        if alg.endswith('.csv') or alg.endswith('.html'):
             continue
         print(f'Evaluating algorithm {alg}')
 
