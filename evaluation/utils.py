@@ -75,7 +75,7 @@ def plot_pareto_fronts(output_dir: str, inst_set: str, inst_subset: str, instanc
     fig.update_yaxes(title_text='MaxSum')
     fig.update_layout(height=400 * total_rows)
 
-    fig.write_html('output')
+    fig.write_html('output/fig.html')
     fig.show()
 
 
