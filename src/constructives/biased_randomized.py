@@ -50,7 +50,9 @@ def construct(inst: dict, config: dict, objective: int) -> Solution:
         if mo_construction_approach == 'AltInS':
             objective = len(cl) % 2  # 0: MaxSum, 1: MaxMin
 
-        # cl = [c for c in cl if sol.satisfies_cost([c[2]])]
+        cl = [c for c in cl if sol.satisfies_cost([c[2]])]
+        if len(cl) == 0:  # If the cost won't be met with any new element
+            break
         cl.sort(key=lambda row: -row[objective])
         print('Sorted biased candidate list with %s objective.', OBJECTIVE_FUNCTIONS.get(objective))
 
