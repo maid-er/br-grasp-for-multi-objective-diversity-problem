@@ -44,7 +44,7 @@ def improve(sol: Solution, config: dict):
 
         switch = neighborhoods[nb]
         print('Local searching in neighbourhood %s with switch type %s and %s objective.',
-              nb, switch, OBJECTIVE_FUNCTIONS.get(objective))
+              nb, switch, 'Dom' if mo_approach == 'Dom' else OBJECTIVE_FUNCTIONS.get(objective))
         if ls_scheme == 'Best':
             improve = bes.try_improvement(sol, switch=switch, max_time=max_time)
         elif ls_scheme == 'Fast':
