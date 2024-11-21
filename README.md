@@ -78,7 +78,7 @@ Upon execution, the algorithm generates the following outputs:
 
 1.	**CSV File:** A file containing the non-dominated solutions found by the algorithm, representing the Pareto Front. The CSV includes columns with the following information for each solution set: the IDs of the selected nodes, the Max-Sum value, the Max-Min value, the total cost, and the total capacity.
 
-    An additional `ex_times.csv` file is generated where the running times of the different executions are saved.
+    An additional `add_data.csv` file is generated where the running times of the different executions are saved.
 
 2.	**Interactive Plot (optional):** A scatter plot of the Pareto Front that visually represents the objective function values (Max-Sum and Max-Min), with cost and capacity values for each alternative solution displayed in the legend.
 
@@ -101,13 +101,13 @@ output
 │    └── <set>
 │         └── <subset>
 │              └── <instance>
-│                   ├── ex_times.csv
+│                   ├── add_data.csv
 │                   └── <results_i.csv>
 └── NSGA-II
      └── GDP
           └── GKD-c
                └── GKD-c_01_n500_b02_m50_k02
-                    ├── ex_times.csv
+                    ├── add_data.csv
                     ├── results_1.csv
                     └── results_2.csv
 ```
