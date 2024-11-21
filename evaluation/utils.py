@@ -95,7 +95,7 @@ def calculate_performance_indicators(result_dir, inst_set, inst_subset, instance
         # Evaluated instance set path
         set_path = os.path.join(result_dir, alg, inst_set, inst_subset)
         for count, inst in enumerate(instances):
-            if inst.endswith('.csv'):
+            if inst.endswith('.csv') or inst.endswith('.html'):
                 continue
             print(f'    Evaluating instance {count+1}/{len(instances)}')
             inst_path = os.path.join(set_path, inst)
