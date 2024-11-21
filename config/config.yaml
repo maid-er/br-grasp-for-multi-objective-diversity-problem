@@ -1,4 +1,5 @@
-- iterations: 100  # Number of constructions
+- experiments: 1  # Number of experiments/executions per instance
+  iterations: 100  # Number of constructions
   # Construction stage
   mo_approach_C: 'AltInS'  # AltInS, or AltBwS (default) // for a single objective approach MaxSum or MaxMin
   parameters:
