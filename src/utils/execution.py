@@ -63,7 +63,7 @@ def execute_instance(path: str, config: dict, results: OutputHandler) -> float:
 
         # Add new solutions to result_table
         for sol in solution_list:
-            selected_nodes = ' - '.join([str(s) for s in sorted(sol.solution_list)])
+            selected_nodes = ' - '.join([str(s) for s in sorted(sol.solution_set)])
             result_table.loc[len(result_table)] = [selected_nodes] + [sol.of_MaxSum,
                                                                       sol.of_MaxMin,
                                                                       sol.total_cost,
