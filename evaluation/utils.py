@@ -18,7 +18,7 @@ def get_coincident_instances(result_dir: str, inst_set: str, inst_subset: str) -
     # Loop all analyzed algorithms
     algorithms_config = os.listdir(result_dir)
     for alg in algorithms_config:
-        if alg.endswith('.csv'):
+        if alg.endswith('.csv') or alg.endswith('.html'):
             continue
 
         subset_path = os.path.join(result_dir, alg, inst_set, inst_subset)
@@ -40,7 +40,7 @@ def plot_pareto_fronts(output_dir: str, inst_set: str, inst_subset: str, instanc
 
     fig = make_subplots(rows=total_rows, cols=2, subplot_titles=instances)
     for alg in os.listdir(output_dir):
-        if alg.endswith('.csv'):
+        if alg.endswith('.csv') or alg.endswith('.html'):
             continue
 
         col, row = 1, 1
@@ -57,9 +57,10 @@ def plot_pareto_fronts(output_dir: str, inst_set: str, inst_subset: str, instanc
             result_table[legend_name] = ('Cost: ' + result_table.Cost.astype(str) +
                                          ' & Capacity: ' + result_table.Capacity.astype(str))
 
+            result_table.sort_values(by=['MaxMin', 'MaxSum'], inplace=True)
             fig.add_scatter(x=result_table['MaxMin'], y=result_table['MaxSum'],
                             text=result_table[legend_name],
-                            mode='markers', line_color=colors[color_count], row=row, col=col,
+                            mode='lines+markers', line_color=colors[color_count], row=row, col=col,
                             name=alg, legendgroup=alg,
                             showlegend=True if count == 0 else False)
 
@@ -71,7 +72,7 @@ def plot_pareto_fronts(output_dir: str, inst_set: str, inst_subset: str, instanc
 
         color_count += 1
 
-    fig.update_traces(marker={'size': 8})
+    fig.update_traces(marker={'size': 6})
     fig.update_xaxes(title_text='MaxMin')
     fig.update_yaxes(title_text='MaxSum')
     fig.update_layout(height=400 * total_rows)
@@ -158,3 +159,7 @@ def calculate_performance_indicators(result_dir, inst_set, inst_subset, instance
     # Save table with mean values of the indicators for each algorithm
     mean_indicators = general_indicators.groupby(['alg_config']).mean().round(2)
     mean_indicators.to_csv(os.path.join(result_dir, 'mean_indicators.csv'))
+
+    # Save table with median values of the indicators for each algorithm
+    mean_indicators = general_indicators.groupby(['alg_config']).median().round(2)
+    mean_indicators.to_csv(os.path.join(result_dir, 'median_indicators.csv'))
