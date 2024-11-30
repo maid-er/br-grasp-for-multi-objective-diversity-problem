@@ -36,7 +36,7 @@ def construct(inst: dict, config: dict, objective: int) -> Solution:
     mo_construction_approach = config.get('mo_approach_C')
     distribution = config.get('parameters').get('distribution')
 
-    solution_set = []
+    solution_list = []
 
     sol = Solution(inst)
     n = inst['n']
@@ -70,15 +70,15 @@ def construct(inst: dict, config: dict, objective: int) -> Solution:
         update_candidate_list(sol, cl, cSel[2])
 
         if sol.satisfies_capacity() and sol.satisfies_cost():
-            solution_set.append(copy.copy(sol))
+            solution_list.append(copy.deepcopy(sol))
 
-    if len(solution_set) == 0:
+    if len(solution_list) == 0:
         logging.error('No feasible solution reached in the construction phase.')
         sol = Solution(inst)
         sol.of_MaxMin = 0
-        solution_set.append(sol)
+        solution_list.append(sol)
 
-    return solution_set
+    return solution_list
 
 
 def create_candidate_list(sol: Solution, first: int = -1) -> list:

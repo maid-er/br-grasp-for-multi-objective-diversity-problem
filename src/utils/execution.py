@@ -57,13 +57,13 @@ def execute_instance(path: str, config: dict, results: OutputHandler) -> float:
 
         # Run B-GRASP-VND
         print(f'Finding solution #{i+1}')
-        solution_set = grasp.execute(inst, config, objective)
+        solution_list = grasp.execute(inst, config, objective)
         # Save solution set found in this IT
-        all_solutions += solution_set
+        all_solutions += solution_list
 
         # Add new solutions to result_table
-        for sol in solution_set:
-            selected_nodes = ' - '.join([str(s) for s in sorted(sol.solution_set)])
+        for sol in solution_list:
+            selected_nodes = ' - '.join([str(s) for s in sorted(sol.solution_list)])
             result_table.loc[len(result_table)] = [selected_nodes] + [sol.of_MaxSum,
                                                                       sol.of_MaxMin,
                                                                       sol.total_cost,

@@ -34,13 +34,13 @@ def execute(inst: dict, config: dict, objective: int) -> Solution:
           ls_strategy, ls_scheme)
 
     # Construction phase (Biased GRASP)
-    solution_set = biased_randomized.construct(inst, config, objective)
+    solution_list = biased_randomized.construct(inst, config, objective)
     # print("\tConstruction phase:")
     # print('\t\tMaxSum: %s', sol.of_MaxSum)
     # print('\t\tMaxMin: %s', sol.of_MaxMin)
     # print('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
 
-    for sol in solution_set:
+    for sol in solution_list:
         # Local Search phase
         variable_neighborhood_descent.improve(sol, config)
 
@@ -49,4 +49,4 @@ def execute(inst: dict, config: dict, objective: int) -> Solution:
     # print('\t\tMaxMin: %s', sol.of_MaxMin)
     # print('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
 
-    return solution_set
+    return solution_list
