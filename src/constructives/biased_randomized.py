@@ -21,26 +21,28 @@ def construct(inst: dict, config: dict, objective: int) -> Solution:
       inst (dict): a dictionary containing the instance data. The dictionary includes the number of
     nodes `n`, the number of nodes to be selected `p`, and a distance matrix `d` representing the
     distances from each node to the rest of the nodes.
-    alpha
-      config (dict): always contains a 'distibution' key that indicates the probability
-    distribution that will be used to biase the node selection from the candidate list. If the
-    distribution is geometric, it contains another 'beta' key with the its parameter, which
-    determines the trade-off between exploration and exploitation in the construction of a solution.
-    The closer 'beta' is from 0, the more uniform random will be the selection, thus, the
-    construction will have a more exploratory behavior. If 'beta' is closer to 1, a greedier
-    solution will be constructed.
+      config (dict): always contains a 'mo_approach_C' key that indicates the strategy used in the
+    construction phase to adapt the GRASP algorithm to the multi-objective problem. Additionally,
+    it contains a 'distibution' key that indicates the probability distribution that will be used
+    to biase the node selection from the candidate list. If the distribution is geometric, it
+    contains another 'beta' key with the its parameter, which determines the trade-off between
+    exploration and exploitation in the construction of a solution. The closer 'beta' is from 0,
+    the more uniform random will be the selection, thus, the construction will have a more
+    exploratory behavior. If 'beta' is closer to 1, a greedier solution will be constructed.
+      objective (int): ID of the objective considered for this iteration. {0: MaxSum, 1: MaxMin}.
 
     Returns:
-        (Solution): contains the solution information..
+        (Solution): contains the solution information.
     '''
+    # Get config parammeters
     mo_construction_approach = config.get('mo_approach_C')
     distribution = config.get('parameters').get('distribution')
 
     solution_list = []
 
-    sol = Solution(inst)
+    sol = Solution(inst)  # Initialize solution
     n = inst['n']
-    u = random.randint(0, n-1)
+    u = random.randint(0, n-1)  # Select first node
     sol.add_to_solution(u)
     cl = create_candidate_list(sol, u)
     while sol.satisfies_cost() and len(cl) > 0:
@@ -50,12 +52,14 @@ def construct(inst: dict, config: dict, objective: int) -> Solution:
         if mo_construction_approach == 'AltInS':
             objective = len(cl) % 2  # 0: MaxSum, 1: MaxMin
 
+        # Filter only nodes that provide a feasible solution
         cl = [c for c in cl if sol.satisfies_cost([c[2]])]
         if len(cl) == 0:  # If the cost won't be met with any new element
             break
         cl.sort(key=lambda row: -row[objective])
         print('Sorted biased candidate list with %s objective.', OBJECTIVE_FUNCTIONS.get(objective))
 
+        # Biased Randomization to select new node to add to solution
         if distribution == 'Geometric':
             beta = config.get('parameters').get('beta')
             beta = beta if beta >= 0 else random.random()
@@ -64,14 +68,17 @@ def construct(inst: dict, config: dict, objective: int) -> Solution:
         elif distribution == 'Triangular':
             selIdx = int(len(cl) * (1 - math.sqrt(random.random())))
 
+        # Add selected node to solution
         cSel = cl[selIdx]
         sol.add_to_solution(cSel[2], cSel[1], cSel[0])
         cl.remove(cSel)
         update_candidate_list(sol, cl, cSel[2])
 
+        # If solution is feasible, save it in the solution list
         if sol.satisfies_capacity() and sol.satisfies_cost():
             solution_list.append(copy.deepcopy(sol))
 
+    # Check if any feasible solution is constructed
     if len(solution_list) == 0:
         logging.error('No feasible solution reached in the construction phase.')
         sol = Solution(inst)
@@ -121,6 +128,8 @@ def update_candidate_list(sol: Solution, cl: list, added: int):
         c = cl[i]
         c_to_added_distance = sol.instance['d'][added][c[2]]
 
+        # Update MaxSum objective value
         c[0] += c_to_added_distance
-        if c_to_added_distance < c[1]:
+        # Update MaxMin objective value
+        if c_to_added_distance < c[1]:  # If the distance to the addedis lower than current MaxMin
             c[1] = c_to_added_distance

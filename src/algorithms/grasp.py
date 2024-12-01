@@ -19,6 +19,7 @@ def execute(inst: dict, config: dict, objective: int) -> Solution:
     node, and a capacity vector `a` with the capacities of each node.
       config (dict): contains the construction and local search strategies defined by the user in
     the config file.
+      objective (int): ID of the objective considered for this iteration. {0: MaxSum, 1: MaxMin}.
 
     Returns:
         (Solution): the solution found.
@@ -40,8 +41,8 @@ def execute(inst: dict, config: dict, objective: int) -> Solution:
     # print('\t\tMaxMin: %s', sol.of_MaxMin)
     # print('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
 
+    # Local Search phase for each constructed solution
     for sol in solution_list:
-        # Local Search phase
         if len(sol.solution_set) > 0:  # Ensure a solution is constructed
             variable_neighborhood_descent.improve(sol, config)
 
