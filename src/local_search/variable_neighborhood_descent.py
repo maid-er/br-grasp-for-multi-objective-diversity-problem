@@ -50,7 +50,7 @@ def improve(sol: Solution, config: dict):
         elif ls_scheme == 'Fast':
             improve = fas.try_improvement(sol, switch)
         elif ls_scheme == 'First':
-            improve = fis.try_improvement(sol, objective, mo_approach, switch, max_time)
+            improve = fis.try_improvement(sol, objective, mo_approach, switch)
         if improve:
             print('Improved solution.')
             nb = 1

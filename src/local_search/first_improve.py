@@ -4,7 +4,6 @@ Objective functions selected and unselected elements are compared iteratively,
 when the unselected element's result improves the selected one's, they are interchanged
 in the solution.
 '''
-import datetime
 from itertools import combinations
 
 from constructives.biased_randomized import create_candidate_list
@@ -18,7 +17,7 @@ logging = load_logger(__name__)
 
 
 def try_improvement(sol: Solution, objective: int, improvement_criteria: str,
-                    switch: list = [1, 1], max_time: int = 5) -> bool:
+                    switch: list = [1, 1]) -> bool:
     '''Attempts to improve a solution by selecting and interchanging a selected element (node)
     with an unselected element. The improvement is obtained if the new solution dominates the
     previous solution.
@@ -37,30 +36,35 @@ def try_improvement(sol: Solution, objective: int, improvement_criteria: str,
     dominant and constraints are met with the interchange), and `False` otherwise.
     '''
     selected, unselected = create_selected_unselected(sol, objective)
+    # Filter only possible dominant solutions for constraint objective
+    constraint_objective = 0 if objective == 1 else 1
+    worst_selected_constraint = min([s[constraint_objective] for s in selected])
+    if not (constraint_objective == 0 and switch[0] < switch[1]):
+        unselected = [u for u in unselected
+                      if u[constraint_objective] > worst_selected_constraint]
+
     # Select the first combination of size switch[0] in current solution and the first combination
     # of size switch[1] in unselected candidate list whose exchange makes a dominant new solution
     # that mets the constraints.
     selected_combinations = list(combinations(selected, switch[0]))
     unselected_combinations = list(combinations(unselected, switch[1]))
 
-    start = datetime.datetime.now()
     for combo_s in selected_combinations:
-        # If time is exceeded break LS without improvement
-        if datetime.timedelta(seconds=max_time) < datetime.datetime.now() - start:
-            print('Unable to find an improvement in the established time.')
-            return False
-        pairwise_d = get_all_pairwise_distances(sol.instance, combo_s)
-        d_sum_s = [sol.distance_sum_to_solution(v) for v in combo_s] + pairwise_d
-        d_min_s = [sol.minimum_distance_to_solution(v) for v in combo_s] + pairwise_d
+        nodes_s = [s[2] for s in combo_s]
+        pairwise_d = get_all_pairwise_distances(sol.instance, nodes_s)
+        d_sum_s = [s[0] for s in combo_s] + pairwise_d
+        d_min_s = [s[1] for s in combo_s] + pairwise_d
         for combo_u in unselected_combinations:
-            # If time is exceeded break LS without improvement
-            if datetime.timedelta(seconds=max_time) < datetime.datetime.now() - start:
-                print('Unable to find an improvement in the established time.')
-                return False
-            pairwise_d = get_all_pairwise_distances(sol.instance, combo_u)
-            d_sum_u = [sol.distance_sum_to_solution(v, without=combo_s)
-                       for v in combo_u] + pairwise_d
-            d_min_u = [sol.minimum_distance_to_solution(v, without=combo_s)
+            nodes_u = [u[2] for u in combo_u]
+            if not (sol.satisfies_cost(nodes_u, nodes_s)
+                    and sol.satisfies_capacity(nodes_u, nodes_s)):
+                # If the constraints are not met with the new combo, try new exchange
+                continue
+            pairwise_d = get_all_pairwise_distances(sol.instance, nodes_u)
+            d_sum_u = [u[0] - sol.instance['d'][u[2]][s[2]]
+                       for u in combo_u
+                       for s in combo_s] + pairwise_d
+            d_min_u = [sol.minimum_distance_to_solution(v[2], without=nodes_s)
                        for v in combo_u] + pairwise_d
 
             # TODO IMPROVE CODE
@@ -74,14 +78,14 @@ def try_improvement(sol: Solution, objective: int, improvement_criteria: str,
                 else:
                     new_improves_old = min(d_min_s) < min(d_min_u)
 
-            if new_improves_old \
-                and sol.satisfies_cost(combo_u, combo_s) \
-                    and sol.satisfies_capacity(combo_u, combo_s):
+            if new_improves_old:  # \
+                # and sol.satisfies_cost(nodes_u, nodes_s) \
+                #     and sol.satisfies_capacity(nodes_u, nodes_s):
 
-                for v in combo_u:
-                    sol.add_to_solution(v, min(d_min_u), sum(d_sum_u))
-                for u in combo_s:
-                    sol.remove_from_solution(u, min(d_min_s), sum(d_sum_s))
+                for u in nodes_u:
+                    sol.add_to_solution(u, min(d_min_u), sum(d_sum_u))
+                for s in nodes_s:
+                    sol.remove_from_solution(s, min(d_min_s), sum(d_sum_s))
 
                 return True
     return False
@@ -113,8 +117,5 @@ def create_selected_unselected(sol: Solution, objective: int):
 
     selected.sort(key=lambda row: row[objective])  # Sort from worst to best
     unselected.sort(key=lambda row: -row[objective])  # Sort from best to worst
-    # Get only the node ID
-    selected = [s[2] for s in selected]
-    unselected = [u[2] for u in unselected]
 
     return selected, unselected

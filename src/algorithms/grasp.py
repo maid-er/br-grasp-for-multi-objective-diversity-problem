@@ -42,7 +42,8 @@ def execute(inst: dict, config: dict, objective: int) -> Solution:
 
     for sol in solution_list:
         # Local Search phase
-        variable_neighborhood_descent.improve(sol, config)
+        if len(sol.solution_set) > 0:  # Ensure a solution is constructed
+            variable_neighborhood_descent.improve(sol, config)
 
     # print("\tLocal Search improvement phase:")
     # print('\t\tMaxSum: %s', sol.of_MaxSum)
