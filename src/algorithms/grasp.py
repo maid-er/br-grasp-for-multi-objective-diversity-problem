@@ -42,7 +42,7 @@ def execute(inst: dict, config: dict, objective: int) -> Solution:
     # print('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
 
     # Local Search phase for each constructed solution
-    for sol in solution_list:
+    for sol in [solution_list[i] for i in (0, -1)]:
         if len(sol.solution_set) > 0:  # Ensure a solution is constructed
             variable_neighborhood_descent.improve(sol, config)
 

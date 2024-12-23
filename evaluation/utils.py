@@ -60,7 +60,7 @@ def plot_pareto_fronts(output_dir: str, inst_set: str, inst_subset: str, instanc
             result_table.sort_values(by=['MaxMin', 'MaxSum'], inplace=True)
             fig.add_scatter(x=result_table['MaxMin'], y=result_table['MaxSum'],
                             text=result_table[legend_name],
-                            mode='lines+markers', line_color=colors[color_count], row=row, col=col,
+                            mode='markers', line_color=colors[color_count], row=row, col=col,
                             name=alg, legendgroup=alg,
                             showlegend=True if count == 0 else False)
 

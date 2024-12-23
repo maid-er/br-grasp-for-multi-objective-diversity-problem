@@ -1,5 +1,6 @@
 '''Main function'''
 import os
+import random
 
 from utils import execution
 from utils.config import read_config
@@ -9,6 +10,8 @@ logging = load_logger(__name__)
 
 config_list = read_config('config')
 
+
+random.seed(10)
 
 if __name__ == '__main__':
     print('Initializing diversity maximization algorithm...')
