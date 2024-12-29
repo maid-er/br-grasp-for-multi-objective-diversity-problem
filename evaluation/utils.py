@@ -27,6 +27,8 @@ def get_coincident_instances(result_dir: str, inst_set: str, inst_subset: str) -
         instances.append(subset_inst)
 
     common_instances = list(set.intersection(*map(set, instances)))
+    common_instances = [i for i in common_instances
+                        if not (('b03' in i) and ('k02' in i))]
 
     return common_instances
 

@@ -57,17 +57,17 @@ def execute_instance(path: str, config: dict, results: OutputHandler) -> float:
 
         # Run B-GRASP-VND
         print(f'Finding solution #{i+1}')
-        solution_list = grasp.execute(inst, config, objective)
+        sol = grasp.execute(inst, config, objective, i)
         # Save solution set found in this IT
-        all_solutions += solution_list
+        all_solutions += [sol]
 
         # Add new solutions to result_table
-        for sol in solution_list:
-            selected_nodes = ' - '.join([str(s) for s in sorted(sol.solution_set)])
-            result_table.loc[len(result_table)] = [selected_nodes] + [sol.of_MaxSum,
-                                                                      sol.of_MaxMin,
-                                                                      sol.total_cost,
-                                                                      sol.total_capacity]
+        # for sol in solution_list:
+        selected_nodes = ' - '.join([str(s) for s in sorted(sol.solution_set)])
+        result_table.loc[len(result_table)] = [selected_nodes] + [sol.of_MaxSum,
+                                                                  sol.of_MaxMin,
+                                                                  sol.total_cost,
+                                                                  sol.total_capacity]
 
     # Find non-dominated solutions among all constructions
     is_non_dominated = dominance.get_nondominated_solutions(all_solutions)

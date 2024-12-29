@@ -8,7 +8,7 @@ from utils.logger import load_logger
 logging = load_logger(__name__)
 
 
-def execute(inst: dict, config: dict, objective: int) -> Solution:
+def execute(inst: dict, config: dict, objective: int, iteration: int) -> Solution:
     '''The function executes a GRASP algorithm with a specified number of iterations and a given
     beta value, selecting the best solution found during the iterations.
 
@@ -35,20 +35,23 @@ def execute(inst: dict, config: dict, objective: int) -> Solution:
           ls_strategy, ls_scheme)
 
     # Construction phase (Biased GRASP)
-    solution_list = biased_randomized.construct(inst, config, objective)
+    if iteration % 4 in {0, 1}:
+        sol = biased_randomized.construct(inst, config, objective)
+    elif iteration % 4 in {2, 3}:
+        sol = biased_randomized.deconstruct(inst, config, objective)
     # print("\tConstruction phase:")
     # print('\t\tMaxSum: %s', sol.of_MaxSum)
     # print('\t\tMaxMin: %s', sol.of_MaxMin)
     # print('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
 
     # Local Search phase for each constructed solution
-    for sol in [solution_list[i] for i in (0, -1)]:
-        if len(sol.solution_set) > 0:  # Ensure a solution is constructed
-            variable_neighborhood_descent.improve(sol, config)
+    # for sol in [solution_list[i] for i in (0, -1)]:
+    if len(sol.solution_set) > 0:  # Ensure a solution is constructed
+        variable_neighborhood_descent.improve(sol, config)
 
     # print("\tLocal Search improvement phase:")
     # print('\t\tMaxSum: %s', sol.of_MaxSum)
     # print('\t\tMaxMin: %s', sol.of_MaxMin)
     # print('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
 
-    return solution_list
+    return sol
