@@ -36,19 +36,11 @@ def execute(inst: dict, config: dict, objective: int) -> Solution:
 
     # Construction phase (Biased GRASP)
     solution_list = biased_randomized.construct(inst, config, objective)
-    # print("\tConstruction phase:")
-    # print('\t\tMaxSum: %s', sol.of_MaxSum)
-    # print('\t\tMaxMin: %s', sol.of_MaxMin)
-    # print('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
 
-    # Local Search phase for each constructed solution
-    for sol in [solution_list[i] for i in (0, -1)]:
+    # Local Search phase
+    for sol in [solution_list[i] for i in (0, -1)]:  # Apply LS only yo 1st and last solutions
         if len(sol.solution_set) > 0:  # Ensure a solution is constructed
             variable_neighborhood_descent.improve(sol, config)
 
-    # print("\tLocal Search improvement phase:")
-    # print('\t\tMaxSum: %s', sol.of_MaxSum)
-    # print('\t\tMaxMin: %s', sol.of_MaxMin)
-    # print('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
-
+    # Return all the solution set
     return solution_list
