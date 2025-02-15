@@ -39,19 +39,10 @@ def execute(inst: dict, config: dict, objective: int, iteration: int) -> Solutio
         sol = biased_randomized.construct(inst, config, objective)
     elif iteration % 4 in {2, 3}:
         sol = biased_randomized.deconstruct(inst, config, objective)
-    # print("\tConstruction phase:")
-    # print('\t\tMaxSum: %s', sol.of_MaxSum)
-    # print('\t\tMaxMin: %s', sol.of_MaxMin)
-    # print('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
 
     # Local Search phase for each constructed solution
     # for sol in [solution_list[i] for i in (0, -1)]:
     if len(sol.solution_set) > 0:  # Ensure a solution is constructed
         variable_neighborhood_descent.improve(sol, config)
-
-    # print("\tLocal Search improvement phase:")
-    # print('\t\tMaxSum: %s', sol.of_MaxSum)
-    # print('\t\tMaxMin: %s', sol.of_MaxMin)
-    # print('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
 
     return sol
