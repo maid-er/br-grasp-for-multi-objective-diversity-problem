@@ -39,9 +39,12 @@ def try_improvement(sol: Solution, objective: int, improvement_criteria: str,
     dominant and constraints are met with the interchange), and `False` otherwise.
     '''
     selected, unselected = create_selected_unselected(sol, objective)
+
     # Filter only possible dominant solutions for both objectives
-    for constraint_objective in [0, 1]:
+    for constraint_objective in [0]:
         worst_selected_constraint = min([s[constraint_objective] for s in selected])
+        # If the objective is MaxSum, we can't know if switching 1 node for 2 unselected
+        # nodes with lower values will result in a lower sum, so don't discard them
         if not (constraint_objective == 0 and switch[0] < switch[1]):
             unselected = [u for u in unselected
                           if u[constraint_objective] > worst_selected_constraint]
@@ -55,14 +58,21 @@ def try_improvement(sol: Solution, objective: int, improvement_criteria: str,
     selected_combinations = list(combinations(selected, switch[0]))
     # Build all the possible combinations of switch[1] elements among the unselected nodes
     unselected_combinations = list(combinations(unselected, switch[1]))
+    # Filter only combinations with a higher pairwise distance than current solution's MaxMin
+    if switch[1] > 1:
+        unselected_combinations = [combo_u for combo_u in unselected_combinations
+                                   if min(get_all_pairwise_distances(sol.instance,
+                                                                     [u[2] for u
+                                                                      in combo_u])) > sol.of_MaxMin]
 
     # For all the possible combinations between the selected elements
     for combo_s in selected_combinations:
         nodes_s = [s[2] for s in combo_s]  # Get node IDs
         # Pairwise distances between all the nodes in combo_s
         pairwise_d = get_all_pairwise_distances(sol.instance, nodes_s)
-        d_sum_s = [s[0] for s in combo_s] + pairwise_d
-        d_min_s = [s[1] for s in combo_s] + pairwise_d
+        # Negative pairwise distance because it is considered twice (if there are 2 nodes)
+        d_sum_s = [s[0] for s in combo_s] + [-d for d in pairwise_d]
+        d_min_s = [s[1] for s in combo_s]  # + pairwise_d
         # For all the possible combinations between the unselected elements
         for combo_u in unselected_combinations:
             nodes_u = [u[2] for u in combo_u]  # Get node IDs
@@ -74,9 +84,8 @@ def try_improvement(sol: Solution, objective: int, improvement_criteria: str,
             pairwise_d = get_all_pairwise_distances(sol.instance, nodes_u)
             # Calculate d_sum_u for each node in combo_u removing the potential removed nodes in
             # combo_s from solution
-            d_sum_u = [u[0] - sol.instance['d'][u[2]][s[2]]
-                       for u in combo_u
-                       for s in combo_s] + pairwise_d
+            d_sum_u = [u[0] - sum([sol.instance['d'][u[2]][s[2]] for s in combo_s])
+                       for u in combo_u] + pairwise_d
             # Calculate d_min_u for each node in combo_u without considering the potential removed
             # nodes in combo_s
             d_min_u = [sol.minimum_distance_to_solution(v[2], without=nodes_s)
@@ -93,14 +102,13 @@ def try_improvement(sol: Solution, objective: int, improvement_criteria: str,
                 else:
                     new_improves_old = min(d_min_s) < min(d_min_u)
 
-            if new_improves_old:  # \
-                # and sol.satisfies_cost(nodes_u, nodes_s) \
-                #     and sol.satisfies_capacity(nodes_u, nodes_s):
-
-                for u in nodes_u:
-                    sol.add_to_solution(u, min(d_min_u), sum(d_sum_u))
+            if new_improves_old:
+                # Remove worst selected node(s) from solution
                 for s in nodes_s:
-                    sol.remove_from_solution(s, min(d_min_s), sum(d_sum_s))
+                    sol.remove_from_solution(s)
+                # Add best unselected node(s) to solution
+                for u in nodes_u:
+                    sol.add_to_solution(u)
 
                 return True
     return False
