@@ -39,12 +39,12 @@ def try_improvement(sol: Solution, objective: int, improvement_criteria: str,
     dominant and constraints are met with the interchange), and `False` otherwise.
     '''
     selected, unselected = create_selected_unselected(sol, objective)
-    # Filter only possible dominant solutions for constraint objective
-    constraint_objective = 0 if objective == 1 else 1
-    worst_selected_constraint = min([s[constraint_objective] for s in selected])
-    if not (constraint_objective == 0 and switch[0] < switch[1]):
-        unselected = [u for u in unselected
-                      if u[constraint_objective] > worst_selected_constraint]
+    # Filter only possible dominant solutions for both objectives
+    for constraint_objective in [0, 1]:
+        worst_selected_constraint = min([s[constraint_objective] for s in selected])
+        if not (constraint_objective == 0 and switch[0] < switch[1]):
+            unselected = [u for u in unselected
+                          if u[constraint_objective] > worst_selected_constraint]
 
     # First Improvement strategy:
     # Select the first combination of size switch[0] in current solution and the first combination
