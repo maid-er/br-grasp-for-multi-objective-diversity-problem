@@ -41,7 +41,7 @@ def try_improvement(sol: Solution, objective: int, improvement_criteria: str,
     selected, unselected = create_selected_unselected(sol, objective)
 
     # Filter only possible dominant solutions for both objectives
-    for constraint_objective in [0]:
+    for constraint_objective in [0, 1]:
         worst_selected_constraint = min([s[constraint_objective] for s in selected])
         # If the objective is MaxSum, we can't know if switching 1 node for 2 unselected
         # nodes with lower values will result in a lower sum, so don't discard them
