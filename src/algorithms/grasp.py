@@ -1,4 +1,6 @@
 '''GRASP execution function (construction and LS calls)'''
+import copy
+
 from constructives import biased_randomized
 from local_search import variable_neighborhood_descent
 from structure.solution import Solution
@@ -8,7 +10,7 @@ from utils.logger import load_logger
 logging = load_logger(__name__)
 
 
-def execute(inst: dict, config: dict, objective: int) -> Solution:
+def execute(inst: dict, config: dict, objective: int, iteration: int) -> Solution:
     '''The function executes a GRASP algorithm with a specified number of iterations and a given
     beta value, selecting the best solution found during the iterations.
 
@@ -35,20 +37,24 @@ def execute(inst: dict, config: dict, objective: int) -> Solution:
           ls_strategy, ls_scheme)
 
     # Construction phase (Biased GRASP)
-    solution_list = biased_randomized.construct(inst, config, objective)
-    # print("\tConstruction phase:")
-    # print('\t\tMaxSum: %s', sol.of_MaxSum)
-    # print('\t\tMaxMin: %s', sol.of_MaxMin)
-    # print('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
+    if iteration % 4 in {0, 1}:
+        solution_list = biased_randomized.construct(inst, config, objective)
+    elif iteration % 4 in {2, 3}:
+        solution_list = biased_randomized.deconstruct(inst, config, objective)
 
-    # Local Search phase for each constructed solution
-    for sol in [solution_list[i] for i in (0, -1)]:
+    c_sol_list = copy.deepcopy(solution_list)
+
+    # Local Search phase
+    if len(solution_list) > 1:
+        ls_sols = [0, -1]
+    elif len(solution_list) == 1:
+        ls_sols = [0]
+
+    for sol in [solution_list[i] for i in ls_sols]:  # Apply LS only to 1st and last solutions
         if len(sol.solution_set) > 0:  # Ensure a solution is constructed
             variable_neighborhood_descent.improve(sol, config)
 
-    # print("\tLocal Search improvement phase:")
-    # print('\t\tMaxSum: %s', sol.of_MaxSum)
-    # print('\t\tMaxMin: %s', sol.of_MaxMin)
-    # print('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
+    # c_sol_list = [c_sol_list[i] for i in [0, -1]]
+    # solution_list = [solution_list[i] for i in [0, -1]]
 
-    return solution_list
+    return c_sol_list, solution_list
