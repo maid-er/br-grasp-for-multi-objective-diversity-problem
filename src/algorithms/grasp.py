@@ -37,11 +37,12 @@ def execute(inst: dict, config: dict, objective: int, iteration: int) -> Solutio
           ls_strategy, ls_scheme)
 
     # Construction phase (Biased GRASP)
-    solution_list = biased_randomized.construct(inst, config, objective)
-    # print("\tConstruction phase:")
-    # print('\t\tMaxSum: %s', sol.of_MaxSum)
-    # print('\t\tMaxMin: %s', sol.of_MaxMin)
-    # print('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
+    if iteration % 4 in {0, 1}:
+        solution_list = biased_randomized.construct(inst, config, objective)
+    elif iteration % 4 in {2, 3}:
+        solution_list = biased_randomized.deconstruct(inst, config, objective)
+
+    c_sol_list = copy.deepcopy(solution_list)
 
     # Local Search phase
     if len(solution_list) > 1:
@@ -53,9 +54,7 @@ def execute(inst: dict, config: dict, objective: int, iteration: int) -> Solutio
         if len(sol.solution_set) > 0:  # Ensure a solution is constructed
             variable_neighborhood_descent.improve(sol, config)
 
-    # print("\tLocal Search improvement phase:")
-    # print('\t\tMaxSum: %s', sol.of_MaxSum)
-    # print('\t\tMaxMin: %s', sol.of_MaxMin)
-    # print('Cost: %s, Capacity: %s', sol.total_cost, sol.total_capacity)
+    # c_sol_list = [c_sol_list[i] for i in [0, -1]]
+    # solution_list = [solution_list[i] for i in [0, -1]]
 
-    return solution_list
+    return c_sol_list, solution_list
