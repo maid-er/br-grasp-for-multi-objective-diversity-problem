@@ -29,7 +29,9 @@ def execute_instance(path: str, config: dict, results: OutputHandler) -> float:
       (float): returns the total execution time in seconds.
     '''
     # Initialize list and table to save solutions
-    all_solutions = []
+    all_c_solutions = []  # Solutions from construction stage
+    all_solutions = []  # Final solutions after the LS stage
+    c_result_table = pd.DataFrame(columns=['Solution', 'MaxSum', 'MaxMin', 'Cost', 'Capacity'])
     result_table = pd.DataFrame(columns=['Solution', 'MaxSum', 'MaxMin', 'Cost', 'Capacity'])
 
     print('Solving instance %s:', path)
@@ -57,21 +59,31 @@ def execute_instance(path: str, config: dict, results: OutputHandler) -> float:
 
         # Run B-GRASP-VND
         print(f'Finding solution #{i+1}')
-        sol = grasp.execute(inst, config, objective, i)
+        c_sol_list, solution_list = grasp.execute(inst, config, objective, i)
         # Save solution set found in this IT
-        all_solutions += [sol]
+        all_c_solutions += c_sol_list
+        all_solutions += solution_list
 
         # Add new solutions to result_table
         # for sol in solution_list:
-        selected_nodes = ' - '.join([str(s) for s in sorted(sol.solution_set)])
-        result_table.loc[len(result_table)] = [selected_nodes] + [sol.of_MaxSum,
-                                                                  sol.of_MaxMin,
-                                                                  sol.total_cost,
-                                                                  sol.total_capacity]
+        for c_sol in c_sol_list:
+            selected_nodes = ' - '.join([str(s) for s in sorted(c_sol.solution_set)])
+            c_result_table.loc[len(c_result_table)] = [selected_nodes] + [c_sol.of_MaxSum,
+                                                                      c_sol.of_MaxMin,
+                                                                      c_sol.total_cost,
+                                                                      c_sol.total_capacity]
+
+        # Add new solutions to result_table
+        for sol in solution_list:
+            selected_nodes = ' - '.join([str(s) for s in sorted(sol.solution_set)])
+            result_table.loc[len(result_table)] = [selected_nodes] + [sol.of_MaxSum,
+                                                                      sol.of_MaxMin,
+                                                                      sol.total_cost,
+                                                                      sol.total_capacity]
 
     # Find non-dominated solutions among all constructions
     is_non_dominated = dominance.get_nondominated_solutions(all_solutions)
-    result_table = result_table[is_non_dominated].reset_index(drop=True)
+    dom_result_table = result_table[is_non_dominated].reset_index(drop=True)
 
     # Compute execution time
     elapsed = datetime.datetime.now() - start
@@ -80,18 +92,18 @@ def execute_instance(path: str, config: dict, results: OutputHandler) -> float:
     add_data = {
         'time': [secs],
         'all_sols': [len(all_solutions)],
-        'nd_sols': [len(result_table)]
+        'nd_sols': [len(dom_result_table)]
     }
 
     # Build and plot Pareto Front
-    fig = results.pareto_front(result_table, path)
+    fig = results.pareto_front(dom_result_table, path)
     # Save table and plot with results
     algorithm_params = (f'IT{config.get("iterations")}'
                         f'_b{config.get("parameters").get("beta")}'
                         f'_{config.get("scheme")[:3]}'
                         # f'_nb{len(config.get("neighborhoods"))}'
                         ).replace('.', '')
-    results.save(result_table, add_data, fig, algorithm_params, path)
+    results.save(dom_result_table, result_table, c_result_table, add_data, fig, algorithm_params, path)
 
 
 def execute_directory(directory: str, config: dict):

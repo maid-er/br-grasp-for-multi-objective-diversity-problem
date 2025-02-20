@@ -1,10 +1,10 @@
 - experiments: 1  # Number of experiments/executions per instance
   iterations: 100  # Number of constructions
   # Construction stage
-  mo_approach_C: 'AltInS'  # AltInS, or AltBwS (default) // for a single objective approach MaxSum or MaxMin
+  mo_approach_C: 'AltBwS'  # AltInS, or AltBwS (default) // for a single objective approach MaxSum or MaxMin
   parameters:
     distribution: 'Geometric'  # Triangular or Geometric
-    beta: 0.25  # From 0 to 1 // if -1, random selection for each construction
+    beta: -1  # From 0 to 1 // if -1, random selection for each construction
   # Local Improvement stage
   mo_approach_LS: 'Dom'  # Dom, or Alt (PR?¿?¿) // for a single objective approach MaxSum or MaxMin
   strategy: 'VND'  # Standard, or VND

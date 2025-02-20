@@ -1,4 +1,6 @@
 '''GRASP execution function (construction and LS calls)'''
+import copy
+
 from constructives import biased_randomized
 from local_search import variable_neighborhood_descent
 from structure.solution import Solution
@@ -36,13 +38,23 @@ def execute(inst: dict, config: dict, objective: int, iteration: int) -> Solutio
 
     # Construction phase (Biased GRASP)
     if iteration % 4 in {0, 1}:
-        sol = biased_randomized.construct(inst, config, objective)
+        solution_list = biased_randomized.construct(inst, config, objective)
     elif iteration % 4 in {2, 3}:
-        sol = biased_randomized.deconstruct(inst, config, objective)
+        solution_list = biased_randomized.deconstruct(inst, config, objective)
 
-    # Local Search phase for each constructed solution
-    # for sol in [solution_list[i] for i in (0, -1)]:
-    if len(sol.solution_set) > 0:  # Ensure a solution is constructed
-        variable_neighborhood_descent.improve(sol, config)
+    c_sol_list = copy.deepcopy(solution_list)
 
-    return sol
+    # Local Search phase
+    if len(solution_list) > 1:
+        ls_sols = [0, -1]
+    elif len(solution_list) == 1:
+        ls_sols = [0]
+
+    for sol in [solution_list[i] for i in ls_sols]:  # Apply LS only to 1st and last solutions
+        if len(sol.solution_set) > 0:  # Ensure a solution is constructed
+            variable_neighborhood_descent.improve(sol, config)
+
+    # c_sol_list = [c_sol_list[i] for i in [0, -1]]
+    # solution_list = [solution_list[i] for i in [0, -1]]
+
+    return c_sol_list, solution_list

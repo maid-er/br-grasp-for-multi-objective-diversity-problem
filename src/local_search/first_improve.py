@@ -47,7 +47,10 @@ def try_improvement(sol: Solution, objective: int, improvement_criteria: str,
         # nodes with lower values will result in a lower sum, so don't discard them
         if not (constraint_objective == 0 and switch[0] < switch[1]):
             unselected = [u for u in unselected
-                          if u[constraint_objective] > worst_selected_constraint]
+                          if u[constraint_objective] >= worst_selected_constraint]
+        else:
+            # TODO añadir para caso MaxSum y switch 1-2
+            pass
 
     # First Improvement strategy:
     # Select the first combination of size switch[0] in current solution and the first combination

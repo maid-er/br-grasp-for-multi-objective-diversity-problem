@@ -3,7 +3,7 @@ import utils
 
 
 '''Variables defined by the user'''
-SET = 'pr_test'
+SET = 'GDP'
 SUBSET = 'GKD-b_n50'
 PLOT_PARETO_FRONTS = True
 

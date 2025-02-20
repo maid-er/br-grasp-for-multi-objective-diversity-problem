@@ -16,7 +16,7 @@ random.seed(10)
 if __name__ == '__main__':
     print('Initializing diversity maximization algorithm...')
 
-    path = os.path.join('instances', 'pr_test', 'GKD-b_n50')
+    path = os.path.join('instances', 'GDP', 'GKD-b_n50')
 
     for config in config_list:
         # execution.execute_instance(path, config)

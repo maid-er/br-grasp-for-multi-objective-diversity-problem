@@ -1,6 +1,7 @@
 '''Auxiliar functions to construct a Biased-Randomized solution'''
-import random
+import copy
 import math
+import random
 
 from structure.solution import Solution
 
@@ -37,12 +38,14 @@ def construct(inst: dict, config: dict, objective: int) -> Solution:
     mo_construction_approach = config.get('mo_approach_C')
     distribution = config.get('parameters').get('distribution')
 
+    solution_list = []
+
     sol = Solution(inst)  # Initialize solution
     n = inst['n']
     u = random.randint(0, n-1)  # Select first node
     sol.add_to_solution(u)
     cl = create_candidate_list(sol, u)
-    while not sol.satisfies_capacity() and len(cl) > 0:
+    while sol.satisfies_cost() and len(cl) > 0:
         # If the approach is to alternate objectives IN each construction,
         # switch objective in each iteration, else maintain the (input) objective
         # set by the strategy to alternate objectives BETWEEN constructions.
@@ -52,9 +55,9 @@ def construct(inst: dict, config: dict, objective: int) -> Solution:
         # Filter only nodes that provide a feasible solution
         cl = [c for c in cl if sol.satisfies_cost([c[2]])]
         if len(cl) == 0:  # If the cost won't be met with any new element
-            logging.error('No feasible solution reached in the construction phase.')
-            sol = Solution(inst)
-            sol.of_MaxMin = 0
+            # logging.error('No feasible solution reached in the construction phase.')
+            # sol = Solution(inst)
+            # sol.of_MaxMin = 0
             break
         cl.sort(key=lambda row: -row[objective])
         print('Sorted biased candidate list with %s objective.', OBJECTIVE_FUNCTIONS.get(objective))
@@ -74,7 +77,18 @@ def construct(inst: dict, config: dict, objective: int) -> Solution:
         cl.remove(cSel)
         update_candidate_list(sol, cl, added=cSel[2])
 
-    return sol
+        # If solution is feasible, save it in the solution list
+        if sol.satisfies_capacity() and sol.satisfies_cost():
+            solution_list.append(copy.deepcopy(sol))
+
+    # Check if any feasible solution is constructed
+    if len(solution_list) == 0:
+        logging.error('No feasible solution reached in the construction phase.')
+        sol = Solution(inst)
+        sol.of_MaxMin = 0
+        solution_list.append(sol)
+
+    return solution_list
 
 
 def deconstruct(inst: dict, config: dict, objective: int) -> Solution:
@@ -102,13 +116,15 @@ def deconstruct(inst: dict, config: dict, objective: int) -> Solution:
     mo_construction_approach = config.get('mo_approach_C')
     distribution = config.get('parameters').get('distribution')
 
+    solution_list = []
+
     sol = Solution(inst)  # Initialize solution
     n = inst['n']
     # Generate initial solution set with all the nodes
     for u in range(n):
         sol.add_to_solution(u)
     cl = create_candidate_list(sol)
-    while not sol.satisfies_cost() and len(cl) > 0:
+    while sol.satisfies_capacity() and len(cl) > 0:
         # If the approach is to alternate objectives IN each construction,
         # switch objective in each iteration, else maintain the (input) objective
         # set by the strategy to alternate objectives BETWEEN constructions.
@@ -118,9 +134,9 @@ def deconstruct(inst: dict, config: dict, objective: int) -> Solution:
         # Filter only nodes that provide a feasible solution
         cl = [c for c in cl if sol.satisfies_capacity(v=[c[2]])]
         if len(cl) == 0:  # If the capacity won't be met with any new element
-            logging.error('No feasible solution reached in the construction phase.')
-            sol = Solution(inst)
-            sol.of_MaxMin = 0
+            # logging.error('No feasible solution reached in the construction phase.')
+            # sol = Solution(inst)
+            # sol.of_MaxMin = 0
             break
         cl.sort(key=lambda row: row[objective])
         print('Sorted biased candidate list with %s objective.', OBJECTIVE_FUNCTIONS.get(objective))
@@ -140,7 +156,18 @@ def deconstruct(inst: dict, config: dict, objective: int) -> Solution:
         cl.remove(cSel)
         update_candidate_list(sol, cl, removed=cSel[2])
 
-    return sol
+        # If solution is feasible, save it in the solution list
+        if sol.satisfies_capacity() and sol.satisfies_cost():
+            solution_list.append(copy.deepcopy(sol))
+
+    # Check if any feasible solution is constructed
+    if len(solution_list) == 0:
+        logging.error('No feasible solution reached in the construction phase.')
+        sol = Solution(inst)
+        sol.of_MaxMin = 0
+        solution_list.append(sol)
+
+    return solution_list
 
 
 def create_candidate_list(sol: Solution, first: int = -1) -> list:
